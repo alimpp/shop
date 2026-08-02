@@ -1,0 +1,143 @@
+@import "tailwindcss" theme(static);
+@import "@nuxt/ui";
+@plugin "@tailwindcss/typography";
+
+@theme static {
+  --font-sans: 'Vazir', sans-serif;
+  --color-green-50: #EFFDF5;
+  --color-green-100: #D9FBE8;
+  --color-green-200: #B3F5D1;
+  --color-green-300: #75EDAE;
+  --color-green-400: #00DC82;
+  --color-green-500: #00C16A;
+  --color-green-600: #00A155;
+  --color-green-700: #007F45;
+  --color-green-800: #016538;
+  --color-green-900: #0A5331;
+  --color-green-950: #052E16;
+}
+
+select:not([multiple]) {
+  height: 2.75rem;
+}
+
+input::placeholder,
+textarea::placeholder {
+  font-size: 0.75rem;
+}
+
+@media (max-width: 767px) {
+  [data-slot="base"]:has([data-slot="leadingIcon"]),
+  [data-slot="base"]:has([data-slot="trailingIcon"]),
+  [data-slot="base"]:has([data-slot="leadingAvatar"]),
+  [data-slot="base"]:has([data-slot="trailingClear"]) {
+    font-size: 0 !important;
+    gap: 0 !important;
+  }
+
+  [data-slot="base"]:has([data-slot="leadingIcon"]) [data-slot="leadingIcon"],
+  [data-slot="base"]:has([data-slot="trailingIcon"]) [data-slot="trailingIcon"],
+  [data-slot="base"]:has([data-slot="leadingAvatar"]) [data-slot="leadingAvatar"],
+  [data-slot="base"]:has([data-slot="trailingClear"]) [data-slot="trailingClear"] {
+    font-size: 1rem !important;
+  }
+}
+
+
+[data-slot="content"] {
+    direction: rtl !important;
+}
+
+[data-slot="content"] input {
+    direction: rtl !important;
+    text-align: right !important;
+}
+
+[data-slot="content"] [role="option"] {
+    direction: rtl !important;
+    text-align: right !important;
+}
+
+[data-slot="content"] [data-slot="label"] {
+    text-align: right !important;
+}
+
+.message-body ul {
+  list-style-type: disc;
+  padding-right: 1.25rem;
+  margin: 0.25rem 0;
+}
+
+.message-body ol {
+  list-style-type: decimal;
+  padding-right: 1.25rem;
+  margin: 0.25rem 0;
+}
+
+.message-body strong {
+  font-weight: 700;
+}
+
+.message-body em {
+  font-style: italic;
+}
+
+.message-body u {
+  text-decoration: underline;
+}
+
+.message-body s {
+  text-decoration: line-through;
+}
+
+.message-body blockquote {
+  border-right: 3px solid var(--ui-border-accented);
+  padding-right: 0.75rem;
+  color: var(--ui-text-muted);
+  margin: 0.25rem 0;
+}
+
+.message-body p {
+  margin: 0 0 0.25rem;
+}
+
+.message-body [style*="text-align: center"] {
+  text-align: center;
+}
+
+.message-body [style*="text-align: left"] {
+  text-align: left;
+}
+
+.message-body [style*="text-align: right"] {
+  text-align: right;
+}
+
+.message-body a {
+  color: var(--ui-primary);
+  text-decoration: underline;
+}
+
+.message-body a:hover {
+  opacity: 0.8;
+}
+
+.fade-animation {
+    animation: 0.3s fade;
+}
+
+@keyframes fade {
+    0%{opacity: 0;}
+    100%{opacity: 1;}
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}

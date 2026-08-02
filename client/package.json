@@ -1,0 +1,44 @@
+{
+  "name": "nuxt-ui-template-dashboard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "typecheck": "nuxt typecheck"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.111",
+    "@iconify-json/simple-icons": "^1.2.85",
+    "@internationalized/date": "^3.12.2",
+    "@nuxt/ui": "^4.8.2",
+    "@tailwindcss/typography": "^0.5.20",
+    "@tanstack/table-core": "^8.21.3",
+    "@tiptap/extension-placeholder": "^3.26.1",
+    "@tiptap/extension-text-align": "^3.26.1",
+    "@tiptap/extension-underline": "^3.26.1",
+    "@tiptap/starter-kit": "^3.26.1",
+    "@tiptap/vue-3": "^3.26.1",
+    "@unovis/ts": "^1.6.5",
+    "@unovis/vue": "^1.6.5",
+    "@vueuse/core": "^14.3.0",
+    "@vueuse/nuxt": "^14.3.0",
+    "date-fns": "^4.4.0",
+    "nuxt": "^4.4.8",
+    "scule": "^1.3.0",
+    "tailwindcss": "^4.3.0",
+    "vue": "^3.5.35",
+    "vue3-toastify": "^0.2.9",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.15.2",
+    "prettier": "^3.8.4",
+    "typescript": "^6.0.3",
+    "vue-tsc": "^3.3.3"
+  },
+  "packageManager": "pnpm@11.5.2"
+}

@@ -1,0 +1,55 @@
+import {
+    IsBoolean,
+    IsNumber,
+    IsOptional,
+    IsString,
+    Min,
+} from 'class-validator';
+
+
+export class CreateProductVariantDto {
+
+
+  @IsString()
+  name!: string;
+
+
+  @IsString()
+  sku!: string;
+
+
+  @IsOptional()
+  @IsString()
+  barcode?: string;
+
+
+  @IsNumber()
+  @Min(0)
+  price!: number;
+
+
+  @IsOptional()
+  @IsNumber()
+  salePrice?: number;
+
+
+  @IsOptional()
+  @IsNumber()
+  stock?: number;
+
+
+  @IsOptional()
+  @IsBoolean()
+  isDefault?: boolean;
+
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+
+  @IsOptional()
+  @IsString()
+  image?: string;
+
+}
