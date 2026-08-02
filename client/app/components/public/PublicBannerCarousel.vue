@@ -139,7 +139,7 @@ onBeforeUnmount(() => {
           <div class="w-full px-5 sm:px-8 lg:px-16 xl:px-24">
             <Transition :name="`content-${slideDirection}`" mode="out-in">
               <div :key="currentBanner.id" class="ml-auto max-w-xl text-right">
-                <div class="rounded-[2rem] border border-white/10 bg-black/28 p-5 shadow-2xl ring-1 ring-white/10 backdrop-blur-md sm:p-7 lg:p-8">
+                <div class="rounded-[2rem] border border-white/10 bg-black/5 p-5 shadow-2xl ring-1 ring-white/10 backdrop-blur-sm sm:p-7 lg:p-8">
                   <p
                     v-if="currentBanner.subtitle"
                     class="mb-3 text-[14px] font-normal text-white/75 sm:text-[16px]"
