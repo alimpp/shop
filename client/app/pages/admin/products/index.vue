@@ -351,14 +351,6 @@ watch(isDetailsModalOpen, (isOpen) => {
 
         <template #right>
           <UButton
-            color="neutral"
-            variant="outline"
-            icon="i-lucide-sliders-horizontal"
-            @click="openFiltersDrawer"
-          >
-            فیلترها
-          </UButton>
-          <UButton
             color="primary"
             icon="i-lucide-package-plus"
             @click="openCreateModal"
@@ -368,11 +360,19 @@ watch(isDetailsModalOpen, (isOpen) => {
           <UButton
             color="neutral"
             variant="outline"
+            icon="i-lucide-sliders-horizontal"
+            @click="openFiltersDrawer"
+          >
+           <span>فیلترها</span>
+          </UButton>
+          <UButton
+            color="neutral"
+            variant="outline"
             icon="i-lucide-refresh-cw"
             :loading="loading"
             @click="refreshPage"
           >
-            بروزرسانی
+            <span>بروزرسانی</span>
           </UButton>
         </template>
       </UDashboardNavbar>
@@ -440,3 +440,9 @@ watch(isDetailsModalOpen, (isOpen) => {
     </template>
   </UDashboardPanel>
 </template>
+
+<style scoped>
+@media (max-width: 767px) {
+  span{display: none;}
+}
+</style>
