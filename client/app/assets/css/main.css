@@ -27,12 +27,11 @@ textarea::placeholder {
 }
 
 @media (max-width: 767px) {
-  [data-slot="base"]:has([data-slot="leadingIcon"]),
-  [data-slot="base"]:has([data-slot="trailingIcon"]),
-  [data-slot="base"]:has([data-slot="leadingAvatar"]),
-  [data-slot="base"]:has([data-slot="trailingClear"]) {
-    font-size: 0 !important;
-    gap: 0 !important;
+  [data-slot="base"]:has([data-slot="leadingIcon"]) [data-slot="label"],
+  [data-slot="base"]:has([data-slot="trailingIcon"]) [data-slot="label"],
+  [data-slot="base"]:has([data-slot="leadingAvatar"]) [data-slot="label"],
+  [data-slot="base"]:has([data-slot="trailingClear"]) [data-slot="label"] {
+    display: none !important;
   }
 
   [data-slot="base"]:has([data-slot="leadingIcon"]) [data-slot="leadingIcon"],
@@ -40,9 +39,20 @@ textarea::placeholder {
   [data-slot="base"]:has([data-slot="leadingAvatar"]) [data-slot="leadingAvatar"],
   [data-slot="base"]:has([data-slot="trailingClear"]) [data-slot="trailingClear"] {
     font-size: 1rem !important;
+    display: inline-flex !important;
+  }
+
+  [data-slot="base"]:has([data-slot="leadingIcon"]),
+  [data-slot="base"]:has([data-slot="trailingIcon"]),
+  [data-slot="base"]:has([data-slot="leadingAvatar"]),
+  [data-slot="base"]:has([data-slot="trailingClear"]) {
+    /* gap: 0.5rem !important; */
   }
 }
 
+button {
+  padding: 10px;
+}
 
 [data-slot="content"] {
     direction: rtl !important;

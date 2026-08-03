@@ -133,38 +133,44 @@ onBeforeUnmount(() => {
         <div class="pointer-events-none absolute inset-0 bg-black/35" />
         <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/15" />
 
-        <div class="pointer-events-none absolute inset-0 bg-white/5 backdrop-blur-[2px]" />
+        <div class="pointer-events-none absolute inset-0 bg-white/5 backdrop-blur-[1px]" />
 
         <div class="absolute inset-0 flex items-center">
           <div class="w-full px-5 sm:px-8 lg:px-16 xl:px-24">
             <Transition :name="`content-${slideDirection}`" mode="out-in">
               <div :key="currentBanner.id" class="ml-auto max-w-xl text-right">
-                <div class="rounded-[2rem] border border-white/10 bg-black/5 p-5 shadow-2xl ring-1 ring-white/10 backdrop-blur-sm sm:p-7 lg:p-8">
+                <div class="rounded-[2rem] sm:p-7 lg:p-8">
+                  <h1 class="text-[20px] font-bold leading-tight text-white sm:text-[24px] lg:text-[24px]">
+                    {{ currentBanner.title }}
+                  </h1>
                   <p
                     v-if="currentBanner.subtitle"
-                    class="mb-3 text-[14px] font-normal text-white/75 sm:text-[16px]"
+                    class="pt-3 text-[14px] font-normal text-white/75 sm:text-[16px]"
                   >
                     {{ currentBanner.subtitle }}
                   </p>
 
-                  <h1 class="text-[20px] font-bold leading-tight text-white sm:text-[24px] lg:text-[24px]">
-                    {{ currentBanner.title }}
-                  </h1>
-
                   <p
                     v-if="currentBanner.description"
-                    class="mt-4 text-[12px] leading-7 text-white/85"
+                    class="pt-1 text-[12px] leading-7 text-white/85"
                   >
                     {{ currentBanner.description }}
                   </p>
 
-                  <div class="mt-6">
+                  <div class="mt-6 flex">
                     <UButton
                       color="neutral"
                       class="bg-white text-black hover:bg-white/90"
                       @click="handleObserve"
                     >
                       مشاهده
+                    </UButton>
+                    <UButton
+                      color="neutral"
+                      class="bg-primary text-black hover:bg-white/90 mx-2"
+                      @click="handleObserve"
+                    >
+                    محصولات ما
                     </UButton>
                   </div>
                 </div>

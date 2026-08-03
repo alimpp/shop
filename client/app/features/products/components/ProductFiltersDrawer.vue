@@ -2,7 +2,7 @@
 import type { TCategory } from "~/features/categories/types/index.type";
 import type {
   TProductAttributeWithValues,
-  TProductBrandRef
+  TProductBrandRef,
 } from "../types/index.type";
 
 const props = defineProps<{
@@ -27,36 +27,56 @@ const emit = defineEmits<{
 
 const openModel = computed({
   get: () => props.open,
-  set: (value: boolean) => emit("update:open", value)
+  set: (value: boolean) => emit("update:open", value),
 });
 
 const searchInputModel = computed({
   get: () => props.searchInput,
-  set: (value: string) => emit("update:searchInput", value)
+  set: (value: string) => emit("update:searchInput", value),
 });
 
 const selectedCategoryIdModel = computed({
   get: () => props.selectedCategoryId,
-  set: (value: string) => emit("update:selectedCategoryId", value)
+  set: (value: string) => emit("update:selectedCategoryId", value),
 });
 
 const selectedBrandIdModel = computed({
   get: () => props.selectedBrandId,
-  set: (value: string) => emit("update:selectedBrandId", value)
+  set: (value: string) => emit("update:selectedBrandId", value),
 });
 
 const sortedCategories = computed(() =>
-  [...props.categories].sort((a, b) => a.name.localeCompare(b.name, "fa"))
+  [...props.categories].sort((a, b) => a.name.localeCompare(b.name, "fa")),
 );
 
 const sortedBrands = computed(() =>
-  [...props.brands].sort((a, b) => a.name.localeCompare(b.name, "fa"))
+  [...props.brands].sort((a, b) => a.name.localeCompare(b.name, "fa")),
 );
 
-function getAttributeItems(attribute: TProductAttributeWithValues): Array<{ label: string; value: string }> {
+function getCategoryItems(): Array<{ label: string; value: string }> {
+  return sortedCategories.value.map((c) => ({ label: c.name, value: c.id }));
+}
+
+function getBrandItems(): Array<{ label: string; value: string }> {
+  return sortedBrands.value.map((b) => ({ label: b.name, value: b.id }));
+}
+
+const selectedCategoryForSelect = computed({
+  get: () => (props.selectedCategoryId ? props.selectedCategoryId : null),
+  set: (value: string | null) => emit("update:selectedCategoryId", value ?? ""),
+});
+
+const selectedBrandForSelect = computed({
+  get: () => (props.selectedBrandId ? props.selectedBrandId : null),
+  set: (value: string | null) => emit("update:selectedBrandId", value ?? ""),
+});
+
+function getAttributeItems(
+  attribute: TProductAttributeWithValues,
+): Array<{ label: string; value: string }> {
   return (attribute.values ?? []).map((value) => ({
     label: value.value,
-    value: value.id
+    value: value.id,
   }));
 }
 
@@ -64,9 +84,12 @@ function getAttributeSelection(attributeId: string): string[] {
   return props.attributeSelections[attributeId] ?? [];
 }
 
-function updateAttributeSelection(attributeId: string, value: string[] | undefined): void {
+function updateAttributeSelection(
+  attributeId: string,
+  value: string[] | undefined,
+): void {
   const nextSelections: Record<string, string[]> = {
-    ...props.attributeSelections
+    ...props.attributeSelections,
   };
 
   if (!value?.length) {
@@ -88,10 +111,7 @@ function clearFilters(): void {
 </script>
 
 <template>
-  <USlideover
-    v-model:open="openModel"
-    title="فیلتر محصولات"
-  >
+  <USlideover v-model:open="openModel" title="فیلتر محصولات">
     <template #body>
       <div class="space-y-4">
         <UFormField label="جستجو" name="search">
@@ -103,35 +123,34 @@ function clearFilters(): void {
         </UFormField>
 
         <UFormField label="دسته‌بندی" name="categoryId">
-          <select
-            v-model="selectedCategoryIdModel"
-            class="w-full rounded-md border border-default bg-default px-3 py-2 text-sm outline-none"
-          >
-            <option value="">همه دسته‌بندی‌ها</option>
-            <option
-              v-for="category in sortedCategories"
-              :key="category.id"
-              :value="category.id"
-            >
-              {{ category.name }}
-            </option>
-          </select>
+          <USelect
+            v-model="selectedCategoryForSelect"
+            :items="getCategoryItems()"
+            value-key="value"
+            label-key="label"
+            :ui="{
+              base: 'px-3',
+              value: 'truncate text-default',
+              placeholder: 'truncate text-dimmed',
+            }"
+            placeholder="همه دسته‌بندی‌ها"
+            class="w-full"
+          />
         </UFormField>
 
         <UFormField label="برند" name="brandId">
-          <select
-            v-model="selectedBrandIdModel"
-            class="w-full rounded-md border border-default bg-default px-3 py-2 text-sm outline-none"
-          >
-            <option value="">همه برندها</option>
-            <option
-              v-for="brand in sortedBrands"
-              :key="brand.id"
-              :value="brand.id"
-            >
-              {{ brand.name }}
-            </option>
-          </select>
+          <USelect
+            v-model="selectedBrandForSelect"
+            :items="getBrandItems()"
+            value-key="value"
+            label-key="label"
+            :ui="{
+              value: 'truncate text-default',
+              placeholder: 'truncate text-dimmed',
+            }"
+            placeholder="همه برندها"
+            class="w-full"
+          />
         </UFormField>
 
         <div
@@ -142,14 +161,23 @@ function clearFilters(): void {
             v-for="attribute in filterAttributes"
             :key="attribute.id"
             :label="attribute.name"
+            class="w-full"
           >
-            <USelectMenu
+            <USelect
+              class="w-full"
               :model-value="getAttributeSelection(attribute.id)"
               multiple
               value-key="value"
+              label-key="label"
               :items="getAttributeItems(attribute)"
+              :ui="{
+                value: 'truncate text-default',
+                placeholder: 'truncate text-dimmed',
+              }"
               :placeholder="`انتخاب ${attribute.name}`"
-              @update:model-value="updateAttributeSelection(attribute.id, $event)"
+              @update:model-value="
+                updateAttributeSelection(attribute.id, $event)
+              "
             />
           </UFormField>
         </div>

@@ -6,7 +6,8 @@ export default defineAppConfig({
     },
     button: {
       slots: {
-        base: 'cursor-pointer h-11'
+        base: 'cursor-pointer h-auto min-h-11',
+        label: 'sm:truncate'
       }
     },
     input: {
@@ -21,14 +22,22 @@ export default defineAppConfig({
     },
     select: {
       slots: {
-        base: 'h-11',
-        placeholder: 'text-xs'
+        base: 'h-11 px-3 relative',
+        /* show selected value right-aligned */
+        placeholder: 'sm:truncate text-right w-full',
+        value: 'sm:truncate text-right w-full',
+        /* offset leading/trailing icons from edges for balanced spacing */
+        leading: 'absolute inset-y-0 end-3 flex items-center',
+        trailing: 'absolute inset-y-0 start-3 flex items-center'
       }
     },
     selectMenu: {
       slots: {
-        base: 'h-11',
-        placeholder: 'text-xs'
+        base: 'h-11 px-3 relative',
+        placeholder: 'sm:truncate text-right w-full',
+        value: 'sm:truncate text-right w-full',
+        leading: 'absolute inset-y-0 end-3 flex items-center',
+        trailing: 'absolute inset-y-0 start-3 flex items-center'
       }
     },
     locale: {
