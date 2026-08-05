@@ -14,7 +14,8 @@ const segmentLabels: Record<string, string> = {
   attributes: "ویژگی‌ها",
   auth: "احراز هویت",
   login: "ورود",
-  files: "فایل‌ها"
+  files: "فایل‌ها",
+  stories: "استوری‌ها",
 };
 
 const breadcrumbItems = computed(() => {

@@ -5,6 +5,7 @@ import { BannersDS } from "~/features/banners/data/index.store";
 import { AttributesDS } from "~/features/attributes/data/index.store";
 import { ProductsDS } from "~/features/products/data/index.store";
 import { AdminDS } from "~/features/profile/admin/data/index.store";
+import { StoriesDS } from "~/features/stories/data/index.store";
 
 export const initializeStores = () => {
   CategoriesDS.getInstance();
@@ -13,6 +14,7 @@ export const initializeStores = () => {
   BannersDS.getInstance();
   AttributesDS.getInstance();
   ProductsDS.getInstance();
+  StoriesDS.getInstance();
   AdminDS.getInstance();
 };
 
@@ -25,3 +27,4 @@ export const useBrandsDS = () => BrandsDS.getInstance();
 export const useBannersDS = () => BannersDS.getInstance();
 export const useAttributesDS = () => AttributesDS.getInstance();
 export const useProductsDS = () => ProductsDS.getInstance();
+export const useStoriesDS = () => StoriesDS.getInstance();

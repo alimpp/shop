@@ -32,6 +32,12 @@ export const navigation: AppNavigationItem[][] = [
       permission: true,
     },
     {
+      label: "استوری‌ها",
+      icon: "i-lucide-book-open",
+      to: "/admin/stories",
+      permission: true,
+    },
+    {
       label: "برندها",
       icon: "i-lucide-badge-percent",
       to: "/admin/brands",

@@ -11,6 +11,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { FileModule } from './file/file.module';
 import { OtpModule } from './otp/otp.module';
 import { ProductModule } from './product/product.module';
+import { StoryModule } from './story/story.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -23,6 +24,7 @@ import { UsersModule } from './users/users.module';
     BannersModule,
     CategoriesModule,
     ProductModule,
+    StoryModule,
     TypeOrmModule.forRoot(pgConfig),
   ],
   controllers: [AppController],
