@@ -13,6 +13,12 @@ const actions = computed(() => [
     icon: "i-lucide-shopping-cart",
     label: "سبد خرید",
     to: "/cart"
+  },
+  {
+    key: "search",
+    icon: "iconamoon:search",
+    label: "جستجو",
+    to: "/search"
   }
 ]);
 

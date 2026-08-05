@@ -75,7 +75,15 @@ onMounted(async () => {
 
     <BaseDivider class="mt-20" title="دسته بندی ها" subtitle="تمام دسته بندی ها در فروشگاه پرایم" />
 
-    <PublicCategoryGrid v-if="categories.length > 0" :categories="categories" />
+    <UContainer>
+      <PublicCategoryGrid v-if="categories.length > 0" :categories="categories" />
+    </UContainer>
+
+    <BaseDivider class="mt-20" title="محصولات پرفروش" subtitle="پرفروش ترین محصولات در فروشگاه پرایم" />
+
+    <UContainer>
+      <PublicBestSellers />
+    </UContainer>
 
     <PublicStoryViewer
       :is-open="isStoryViewerOpen"
