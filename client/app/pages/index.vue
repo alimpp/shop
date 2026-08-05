@@ -73,6 +73,8 @@ onMounted(async () => {
 
     <PublicBannerCarousel :banners="banners" />
 
+    <BaseDivider class="mt-20" title="دسته بندی ها" subtitle="تمام دسته بندی ها در فروشگاه پرایم" />
+
     <PublicCategoryGrid v-if="categories.length > 0" :categories="categories" />
 
     <PublicStoryViewer
