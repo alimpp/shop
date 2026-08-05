@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  modules: ["@nuxt/eslint", "@nuxt/ui", "@vueuse/nuxt"],
+  modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxt/image", "@vueuse/nuxt"],
 
   runtimeConfig: {
     public: {
