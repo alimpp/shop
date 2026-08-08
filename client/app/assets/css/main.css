@@ -2,6 +2,14 @@
 @import "@nuxt/ui";
 @plugin "@tailwindcss/typography";
 
+:root {
+  --ui-bg: #121212;
+}
+
+body {
+  background-color: #121212;
+}
+
 @theme static {
   --font-sans: 'Vazir', sans-serif;
   --color-green-50: #EFFDF5;

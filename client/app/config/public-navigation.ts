@@ -13,7 +13,7 @@ export const publicNavigation: PublicNavigationItem[] = [
   {
     label: "محصولات",
     icon: "i-lucide-package-search",
-    to: "/#products"
+    to: "/products"
   },
   {
     label: "بلاگ",

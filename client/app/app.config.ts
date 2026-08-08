@@ -29,7 +29,13 @@ export default defineAppConfig({
         /* offset leading/trailing icons from edges for balanced spacing */
         leading: 'absolute inset-y-0 end-3 flex items-center',
         trailing: 'absolute inset-y-0 start-3 flex items-center'
-      }
+      },
+      /* neutralise theme's trailing icon padding so both sides share px-3 */
+      compoundVariants: ['xs', 'sm', 'md', 'lg', 'xl'].map((size) => ({
+        trailing: true,
+        size,
+        class: 'pe-3'
+      }))
     },
     selectMenu: {
       slots: {
@@ -38,7 +44,12 @@ export default defineAppConfig({
         value: 'sm:truncate text-right w-full',
         leading: 'absolute inset-y-0 end-3 flex items-center',
         trailing: 'absolute inset-y-0 start-3 flex items-center'
-      }
+      },
+      compoundVariants: ['xs', 'sm', 'md', 'lg', 'xl'].map((size) => ({
+        trailing: true,
+        size,
+        class: 'pe-3'
+      }))
     },
     locale: {
       search: 'جستجو...',
