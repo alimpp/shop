@@ -174,19 +174,14 @@ watch(
           </UFormField>
 
           <UFormField label="والد" name="parentId">
-            <select
+            <USelect
               v-model="state.parentId"
-              class="w-full rounded-md border border-default bg-default px-3 py-2 text-sm outline-none"
-            >
-              <option value="">بدون والد</option>
-              <option
-                v-for="category in parentCategories"
-                :key="category.id"
-                :value="category.id"
-              >
-                {{ category.name }}
-              </option>
-            </select>
+              :items="parentCategories"
+              value-key="id"
+              label-key="name"
+              placeholder="بدون والد"
+              class="w-full"
+            />
           </UFormField>
 
           <UFormField label="ترتیب نمایش" name="sortOrder">

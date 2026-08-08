@@ -84,12 +84,12 @@ const statusOptions = [
   { label: "پیش‌نویس", value: "draft" },
   { label: "منتشر شده", value: "published" },
   { label: "آرشیو", value: "archived" }
-] as const;
+];
 
 const visibilityOptions = [
   { label: "عمومی", value: "public" },
   { label: "مخفی", value: "hidden" }
-] as const;
+];
 
 const uuidField = z.union([
   z.literal(""),
@@ -301,11 +301,15 @@ function removeOption(index: number): void {
   state.options.splice(index, 1);
 }
 
-function handleOptionAttributeChange(index: number): void {
+function handleOptionAttributeChange(index: number, attributeId: string): void {
   const option = state.options[index];
   if (!option) {
     return;
   }
+  if (option.attributeId === attributeId) {
+    return;
+  }
+  option.attributeId = attributeId;
   option.valueIds = [];
 }
 
@@ -696,65 +700,45 @@ watch(
 
             <div class="grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
               <UFormField label="دسته‌بندی" name="categoryId">
-                <select
+                <USelect
                   v-model="state.categoryId"
-                  class="w-full rounded-md border border-default bg-default px-3 py-2 text-sm outline-none"
-                >
-                  <option value="">انتخاب دسته‌بندی</option>
-                  <option
-                    v-for="category in sortedCategories"
-                    :key="category.id"
-                    :value="category.id"
-                  >
-                    {{ category.name }}
-                  </option>
-                </select>
+                  :items="sortedCategories"
+                  value-key="id"
+                  label-key="name"
+                  placeholder="انتخاب دسته‌بندی"
+                  class="w-full"
+                />
               </UFormField>
 
               <UFormField label="برند" name="brandId">
-                <select
+                <USelect
                   v-model="state.brandId"
-                  class="w-full rounded-md border border-default bg-default px-3 py-2 text-sm outline-none"
-                >
-                  <option value="">بدون برند</option>
-                  <option
-                    v-for="brand in sortedBrands"
-                    :key="brand.id"
-                    :value="brand.id"
-                  >
-                    {{ brand.name }}
-                  </option>
-                </select>
+                  :items="sortedBrands"
+                  value-key="id"
+                  label-key="name"
+                  placeholder="بدون برند"
+                  class="w-full"
+                />
               </UFormField>
 
               <UFormField label="وضعیت" name="status">
-                <select
+                <USelect
                   v-model="state.status"
-                  class="w-full rounded-md border border-default bg-default px-3 py-2 text-sm outline-none"
-                >
-                  <option
-                    v-for="option in statusOptions"
-                    :key="option.value"
-                    :value="option.value"
-                  >
-                    {{ option.label }}
-                  </option>
-                </select>
+                  :items="statusOptions"
+                  value-key="value"
+                  label-key="label"
+                  class="w-full"
+                />
               </UFormField>
 
               <UFormField label="نمایش" name="visibility">
-                <select
+                <USelect
                   v-model="state.visibility"
-                  class="w-full rounded-md border border-default bg-default px-3 py-2 text-sm outline-none"
-                >
-                  <option
-                    v-for="option in visibilityOptions"
-                    :key="option.value"
-                    :value="option.value"
-                  >
-                    {{ option.label }}
-                  </option>
-                </select>
+                  :items="visibilityOptions"
+                  value-key="value"
+                  label-key="label"
+                  class="w-full"
+                />
               </UFormField>
             </div>
           </section>
@@ -803,20 +787,15 @@ watch(
                 </div>
 
                 <UFormField :name="`options.${index}.attributeId`" label="ویژگی">
-                  <select
-                    v-model="option.attributeId"
-                    class="w-full rounded-md border border-default bg-default px-3 py-2 text-sm outline-none"
-                    @change="handleOptionAttributeChange(index)"
-                  >
-                    <option value="">انتخاب ویژگی</option>
-                    <option
-                      v-for="attribute in sortedAttributes"
-                      :key="attribute.id"
-                      :value="attribute.id"
-                    >
-                      {{ attribute.name }}
-                    </option>
-                  </select>
+                  <USelect
+                    :model-value="option.attributeId"
+                    :items="sortedAttributes"
+                    value-key="id"
+                    label-key="name"
+                    placeholder="انتخاب ویژگی"
+                    class="w-full"
+                    @update:model-value="(value) => handleOptionAttributeChange(index, String(value ?? ''))"
+                  />
                 </UFormField>
 
                 <UFormField :name="`options.${index}.valueIds`" label="مقادیر">
@@ -863,18 +842,14 @@ watch(
               label="تصویر شاخص"
               name="thumbnailUrl"
             >
-              <select
+              <USelect
                 v-model="state.thumbnailUrl"
-                class="w-full rounded-md border border-default bg-default px-3 py-2 text-sm outline-none"
-              >
-                <option
-                  v-for="url in state.mediaUrls"
-                  :key="url"
-                  :value="url"
-                >
-                  {{ url }}
-                </option>
-              </select>
+                :items="state.mediaUrls.map((url) => ({ label: url, value: url }))"
+                value-key="value"
+                label-key="label"
+                placeholder="انتخاب تصویر شاخص"
+                class="w-full"
+              />
             </UFormField>
 
             <UFormField label="تصویر OG" name="ogImage">
