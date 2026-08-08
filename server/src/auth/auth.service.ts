@@ -68,6 +68,36 @@ export class AuthService {
     return user;
   }
 
+  async loginUser(phoneNumber: string, otp: string) {
+    const isValid = await this.otpService.verifyOtp(phoneNumber, otp);
+
+    if (!isValid) {
+      throw new UnauthorizedException('کد تایید نامعتبر است');
+    }
+
+    let user = await this.usersService.getUserByPhone(phoneNumber);
+
+    if (!user) {
+      user = await this.usersService.createUser({
+        phone: phoneNumber,
+        fristname: '',
+        lastname: '',
+        email: '',
+        avatarUrl: '',
+      });
+    }
+
+    const payload = {
+      sub: user.id,
+      phoneNumber: user.phone,
+    };
+
+    return {
+      user,
+      token: this.jwtService.sign(payload),
+    };
+  }
+
   async login(dto: LoginDto) {
     const admin = await this.adminService.findAdmin(dto.username, dto.password);
 
@@ -82,15 +112,6 @@ export class AuthService {
       username: admin.username,
       token,
     };
-  }
-
-  async loginUser(userId: number) {
-    const payload: AuthJwtPayload = {
-      sub: userId,
-      role: 'admin',
-    };
-
-    return this.jwtService.sign(payload);
   }
 
   async adminLogin(adminId: string) {

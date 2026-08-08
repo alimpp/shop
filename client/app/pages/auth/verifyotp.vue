@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { authController } from "../../controllers/auth/index.controller";
+import { authController } from "../../features/auth/controllers/index.controller";
 
 definePageMeta({
-  layout: "auth",
+  layout: "auth-user",
 });
 
 const toast = useToast();
@@ -24,7 +24,9 @@ async function sendCodeAgain() {
   timer.value = 120;
   startTimer();
 
-  const res = await authController.loginWithPhone(phone.value);
+  const res = await authController.loginWithPhone({
+    phoneNumber: phone.value,
+  });
 
   toast.add({
     title: res.message,
@@ -37,9 +39,9 @@ async function verifyOtp() {
 
   loading.value = true;
 
-  const res = await authController.verifyOtp({
-    mobile: phone.value,
-    code: code.value,
+  const res = await authController.loginUser({
+    phoneNumber: phone.value,
+    otp: code.value,
   });
 
   toast.add({

@@ -34,7 +34,7 @@ function formatCurrency(value: number): string {
 <template>
   <div
     data-product-card
-    class="group flex h-full flex-col overflow-hidden rounded-[5px] bg-[#151515] shadow-sm transition-all duration-300 text-[#fff]"
+    class="group flex h-full flex-col overflow-hidden rounded-[5px] bg-[#151515] shadow-xs shadow-primary/10 transition-all duration-300 text-[#fff]"
   >
     <div class="relative aspect-square w-full overflow-hidden bg-gray-100">
       <NuxtImg

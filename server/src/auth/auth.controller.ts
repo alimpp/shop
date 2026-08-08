@@ -25,4 +25,15 @@ export class AuthController {
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
+
+  @Post('user/otp')
+  requestUserOtp(@Body() dto: RequestOtpDto) {
+    return this.authService.requestOtp(dto.phoneNumber);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('user/login')
+  loginUser(@Body() dto: VerifyOtpDto) {
+    return this.authService.loginUser(dto.phoneNumber, dto.otp);
+  }
 }

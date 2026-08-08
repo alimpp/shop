@@ -6,7 +6,7 @@ const actions = computed(() => [
     key: "profile",
     icon: "i-lucide-user-round",
     label: token.value ? "پروفایل" : "ورود",
-    to: token.value ? "/profile" : "/auth/login"
+    to: token.value ? "/profile" : "/auth/login-by-phone"
   },
   {
     key: "cart",

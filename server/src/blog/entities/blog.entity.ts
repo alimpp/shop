@@ -66,6 +66,16 @@ export class Blog {
   viewCount!: number;
 
   @Column({
+    default: 0,
+  })
+  likeCount!: number;
+
+  @Column({
+    default: 0,
+  })
+  commentCount!: number;
+
+  @Column({
     type: 'timestamp',
     nullable: true,
   })

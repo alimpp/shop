@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { z } from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
-import { authController } from "../../controllers/auth/index.controller";
+import { authController } from "../../features/auth/controllers/index.controller";
 
 definePageMeta({
-  layout: "auth",
+  layout: "auth-user",
 });
 
 const toast = useToast();
@@ -31,7 +31,9 @@ const fields = [
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true;
-  const serverResponse = await authController.loginWithPhone(event.data.phone);
+  const serverResponse = await authController.loginWithPhone({
+    phoneNumber: event.data.phone,
+  });
   toast.add({
     title: serverResponse.message,
     color: serverResponse.success ? "success" : "error",
