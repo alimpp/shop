@@ -38,6 +38,12 @@ export const navigation: AppNavigationItem[][] = [
       permission: true,
     },
     {
+      label: "بلاگ‌ها",
+      icon: "i-lucide-newspaper",
+      to: "/admin/blogs",
+      permission: true,
+    },
+    {
       label: "برندها",
       icon: "i-lucide-badge-percent",
       to: "/admin/brands",

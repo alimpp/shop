@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { BannersModule } from './banners/banners.module';
+import { BlogModule } from './blog/blog.module';
 import { CategoriesModule } from './categories/categories.module';
 import { FileModule } from './file/file.module';
 import { OtpModule } from './otp/otp.module';
@@ -22,6 +23,7 @@ import { UsersModule } from './users/users.module';
     OtpModule,
     AdminModule,
     BannersModule,
+    BlogModule,
     CategoriesModule,
     ProductModule,
     StoryModule,
