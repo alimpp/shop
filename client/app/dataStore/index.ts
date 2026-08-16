@@ -9,6 +9,7 @@ import { useUserProfileDS as getProfileDS } from '~/features/profile/user/data/i
 import { useCartDS as getCartDS } from '~/features/cart/data/index.store'
 import { StoriesDS } from '~/features/stories/data/index.store'
 import { BlogsDS } from '~/features/blogs/data/index.store'
+import { ChatDS } from '~/features/chat/data/index.store'
 
 export const initializeStores = () => {
   CategoriesDS.getInstance()
@@ -20,6 +21,7 @@ export const initializeStores = () => {
   StoriesDS.getInstance()
   BlogsDS.getInstance()
   AdminDS.getInstance()
+  ChatDS.getInstance()
   getProfileDS()
   getCartDS()
 }
@@ -37,3 +39,4 @@ export const useAttributesDS = () => AttributesDS.getInstance()
 export const useProductsDS = () => ProductsDS.getInstance()
 export const useStoriesDS = () => StoriesDS.getInstance()
 export const useBlogsDS = () => BlogsDS.getInstance()
+export const useChatDS = () => ChatDS.getInstance()

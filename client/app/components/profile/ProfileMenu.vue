@@ -74,9 +74,9 @@ const menuItems: ProfileMenuItem[] = [
   },
   {
     key: 'support',
-    icon: 'i-lucide-headset',
-    label: 'ارتباط با پشتیبانی',
-    description: 'برقراری ارتباط با تیم پشتیبانی',
+    icon: 'i-lucide-message-circle',
+    label: 'چت پشتیبانی',
+    description: 'گفتگو با تیم پشتیبانی',
     to: '/profile/support'
   }
 ]

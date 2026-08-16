@@ -22,12 +22,16 @@ class AuthController extends BaseController<AuthService> {
   public async login(payload: TLoginPayload): Promise<ControllerResponse> {
     const response: ServerResponse<TLoginData> =
       await this.service.login(payload);
-console.log(response);
 
     if (response.success) {
       const token = useCookie("token");
       token.value = response.data.token || "";
       this.adminDS.setIsAuth(true);
+      this.adminDS.setAdmin({
+        id: response.data.id,
+        username: response.data.username,
+        role: "admin",
+      });
     }
 
     return this.handleResponse(response);

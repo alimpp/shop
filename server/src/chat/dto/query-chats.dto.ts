@@ -7,6 +7,12 @@ export enum ChatStatusFilter {
   CLOSED = 'closed',
 }
 
+export enum ChatReadFilter {
+  ALL = 'all',
+  READ = 'read',
+  UNREAD = 'unread',
+}
+
 export class QueryChatsDto {
   @IsOptional()
   @Type(() => Number)
@@ -24,4 +30,8 @@ export class QueryChatsDto {
   @IsOptional()
   @IsEnum(ChatStatusFilter, { message: 'فیلتر وضعیت نامعتبر است' })
   status?: ChatStatusFilter;
+
+  @IsOptional()
+  @IsEnum(ChatReadFilter, { message: 'فیلتر خوانده‌شدن نامعتبر است' })
+  filter?: ChatReadFilter;
 }

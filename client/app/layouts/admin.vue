@@ -8,9 +8,12 @@ const links = computed(() => navigation);
 
 onMounted(async () => {
   const token = useCookie<string>("token");
-  // if (token.value) {
-  //   await userController.getPorfile();
-  // }
+  if (token.value) {
+    const { profileAdminController } = await import(
+      "~/features/profile/admin/controllers/index.controller"
+    );
+    await profileAdminController.getAdminProfile();
+  }
 });
 </script>
 

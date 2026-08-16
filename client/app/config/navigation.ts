@@ -61,5 +61,11 @@ export const navigation: AppNavigationItem[][] = [
       to: "/admin/files",
       permission: true,
     },
+    {
+      label: "چت پشتیبانی",
+      icon: "i-lucide-message-circle",
+      to: "/admin/chat",
+      permission: true,
+    },
   ],
 ];

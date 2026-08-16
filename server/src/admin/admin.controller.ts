@@ -15,6 +15,6 @@ export class AdminController {
   @UseGuards(JwtAuthGuard)
   @Get('/info')
   async getAdmin(@Req() req) {
-    return await this.adminService.getAdmin(req.user.id);
+    return await this.adminService.getAdmin(req.user.sub);
   }
 }
