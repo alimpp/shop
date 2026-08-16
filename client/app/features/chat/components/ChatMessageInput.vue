@@ -14,12 +14,21 @@ const emit = defineEmits<{
 const inputText = ref("");
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
+const canSend = computed(
+  () => Boolean(inputText.value.trim()) && !props.sending
+);
+
 function handleSend(): void {
   const text = inputText.value.trim();
   if (!text || props.sending) return;
 
   emit("send", text);
   inputText.value = "";
+  nextTick(() => {
+    if (textareaRef.value) {
+      textareaRef.value.style.height = "auto";
+    }
+  });
 }
 
 function handleKeydown(event: KeyboardEvent): void {
@@ -32,53 +41,90 @@ function handleKeydown(event: KeyboardEvent): void {
 function autoResize(): void {
   if (!textareaRef.value) return;
   textareaRef.value.style.height = "auto";
-  textareaRef.value.style.height = Math.min(textareaRef.value.scrollHeight, 120) + "px";
+  textareaRef.value.style.height =
+    Math.min(textareaRef.value.scrollHeight, 120) + "px";
 }
 
 watch(inputText, () => {
   nextTick(autoResize);
 });
+
+watch(
+  () => props.replyTo,
+  (value) => {
+    if (value) {
+      nextTick(() => textareaRef.value?.focus());
+    }
+  }
+);
 </script>
 
 <template>
-  <div class="border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-3">
-    <div
-      v-if="replyTo"
-      class="flex items-center gap-2 mb-2 px-3 py-2 rounded-lg bg-neutral-50 dark:bg-neutral-800 border-r-2 border-primary-400"
+  <div
+    class="shrink-0 border-t border-default bg-default/80 px-3 py-3 backdrop-blur-md"
+  >
+    <Transition
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="translate-y-1 opacity-0"
+      enter-to-class="translate-y-0 opacity-100"
+      leave-active-class="transition duration-150 ease-in"
+      leave-from-class="translate-y-0 opacity-100"
+      leave-to-class="translate-y-1 opacity-0"
     >
-      <div class="flex-1 min-w-0">
-        <div class="text-xs font-medium text-primary-600 dark:text-primary-400">
-          پاسخ به {{ replyTo.sender?.displayName || "پیام" }}
-        </div>
-        <div class="text-xs text-neutral-500 dark:text-neutral-400 truncate">
-          {{ replyTo.content || "پیام حذف شده" }}
+      <div
+        v-if="replyTo"
+        class="mb-2.5 flex items-stretch gap-0 overflow-hidden rounded-2xl bg-elevated ring-1 ring-default"
+      >
+        <div class="w-1 shrink-0 bg-primary" />
+        <div class="flex min-w-0 flex-1 items-center gap-2 px-3 py-2.5">
+          <div
+            class="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"
+          >
+            <UIcon name="i-lucide-reply" class="size-3.5" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-[11px] font-semibold text-primary">
+              پاسخ به {{ replyTo.sender?.displayName || "پیام" }}
+            </p>
+            <p class="truncate text-xs text-toned">
+              {{ replyTo.content || "پیام حذف شده" }}
+            </p>
+          </div>
+          <button
+            type="button"
+            class="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-default hover:text-highlighted"
+            title="لغو پاسخ"
+            @click="emit('cancelReply')"
+          >
+            <UIcon name="i-lucide-x" class="size-4" />
+          </button>
         </div>
       </div>
-      <button
-        class="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
-        @click="emit('cancelReply')"
-      >
-        <UIcon name="i-lucide-x" class="w-4 h-4" />
-      </button>
-    </div>
+    </Transition>
 
     <div class="flex items-end gap-2">
-      <textarea
-        ref="textareaRef"
-        v-model="inputText"
-        placeholder="پیام خود را بنویسید..."
-        rows="1"
-        class="flex-1 resize-none rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3.5 py-2.5 text-sm text-neutral-800 dark:text-neutral-200 placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all"
-        :disabled="sending"
-        @keydown="handleKeydown"
-      />
+      <div
+        class="flex min-h-11 flex-1 items-end rounded-2xl bg-elevated ring-1 ring-default transition-shadow focus-within:ring-2 focus-within:ring-primary/40"
+      >
+        <textarea
+          ref="textareaRef"
+          v-model="inputText"
+          placeholder="پیام خود را بنویسید..."
+          rows="1"
+          class="max-h-[120px] min-h-11 flex-1 resize-none bg-transparent px-3.5 py-3 text-sm leading-5 text-highlighted placeholder:text-muted focus:outline-none disabled:opacity-60"
+          :disabled="sending"
+          @keydown="handleKeydown"
+        />
+      </div>
 
       <UButton
         color="primary"
         icon="i-lucide-send"
+        square
+        size="lg"
         :loading="sending"
-        :disabled="!inputText.trim() || sending"
-        class="shrink-0 rounded-xl px-3 py-2.5"
+        :disabled="!canSend"
+        class="size-11 shrink-0 rounded-2xl"
         @click="handleSend"
       />
     </div>

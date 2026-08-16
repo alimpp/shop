@@ -149,32 +149,37 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex h-full min-h-0 flex-col">
+  <div class="flex h-full min-h-0 flex-col bg-default/40">
     <div
       id="chat-messages-container"
-      class="min-h-0 flex-1 overflow-y-auto py-3"
+      class="min-h-0 flex-1 overflow-y-auto scroll-smooth px-1 py-4"
     >
       <div v-if="loading" class="flex h-full items-center justify-center">
         <UIcon
           name="i-lucide-loader-2"
-          class="h-6 w-6 animate-spin text-primary-500"
+          class="size-6 animate-spin text-primary"
         />
       </div>
 
       <div
         v-else-if="messages.length === 0"
-        class="flex h-full items-center justify-center"
+        class="flex h-full items-center justify-center px-6"
       >
-        <div class="text-center text-neutral-400 dark:text-neutral-500">
-          <UIcon
-            name="i-lucide-message-circle"
-            class="mx-auto mb-2 h-12 w-12 opacity-50"
-          />
-          <p class="text-sm">هنوز پیامی وجود ندارد</p>
+        <div class="text-center">
+          <div
+            class="mx-auto mb-3 flex size-14 items-center justify-center rounded-2xl bg-elevated ring-1 ring-default"
+          >
+            <UIcon
+              name="i-lucide-messages-square"
+              class="size-7 text-toned"
+            />
+          </div>
+          <p class="text-sm font-medium text-highlighted">هنوز پیامی نیست</p>
+          <p class="mt-1 text-xs text-toned">اولین پیام را ارسال کنید</p>
         </div>
       </div>
 
-      <div v-else class="space-y-1">
+      <div v-else class="space-y-0.5">
         <ChatMessage
           v-for="(message, index) in messages"
           :key="message.id"
