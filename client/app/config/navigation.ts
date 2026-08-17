@@ -67,5 +67,11 @@ export const navigation: AppNavigationItem[][] = [
       to: "/admin/chat",
       permission: true,
     },
+    {
+      label: "اعلان‌ها",
+      icon: "i-lucide-bell",
+      to: "/admin/notifications",
+      permission: true,
+    },
   ],
 ];
