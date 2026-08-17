@@ -1,105 +1,93 @@
 <script setup lang="ts">
-import { notificationController } from "~/features/notifications/controllers/index.controller";
+import { notificationController } from '~/features/notifications/controllers/index.controller'
+import { useNotificationsDS } from '~/features/notifications/data/index.store'
 import type {
   TCreateNotificationPayload,
-  TNotificationType,
-} from "~/features/notifications/types/index.type";
-import { NOTIFICATION_TYPE_LABELS } from "~/features/notifications/types/index.type";
+  TNotificationType
+} from '~/features/notifications/types/index.type'
+import { NOTIFICATION_TYPE_LABELS } from '~/features/notifications/types/index.type'
 
 definePageMeta({
-  layout: "admin",
-  middleware: "auth",
-});
+  layout: 'admin',
+  middleware: 'auth'
+})
 
-const toast = useToast();
+const toast = useToast()
+const notificationsDS = useNotificationsDS()
 
-const loadingUsers = ref(true);
-const submitting = ref(false);
-
-const users = ref<
-  Array<{ id: string; fristname: string; lastname: string; phone: string }>
->([]);
+const users = computed(() => notificationsDS.getUsers)
+const loadingUsers = computed(() => notificationsDS.getUsersLoading)
+const submitting = computed(() => notificationsDS.getSubmitting)
 
 const form = reactive({
-  userId: "" as string | undefined,
-  title: "",
-  description: "",
-  type: "message" as TNotificationType,
-});
+  userId: '' as string | undefined,
+  title: '',
+  description: '',
+  type: 'message' as TNotificationType
+})
 
 const typeItems = (
   Object.entries(NOTIFICATION_TYPE_LABELS) as Array<[TNotificationType, string]>
-).map(([value, label]) => ({ value, label }));
+).map(([value, label]) => ({ value, label }))
 
 const userItems = computed(() =>
-  users.value.map((user) => {
-    const name = [user.fristname, user.lastname].filter(Boolean).join(" ");
-    return {
-      value: user.id,
-      label: name ? `${name} — ${user.phone}` : user.phone || user.id,
-    };
-  })
-);
+  users.value.map(user => ({
+    value: user.id,
+    label: user.displayLabel
+  }))
+)
 
 const canSubmit = computed(
   () =>
-    Boolean(form.userId) &&
-    Boolean(form.title.trim()) &&
-    Boolean(form.description.trim()) &&
-    Boolean(form.type) &&
-    !submitting.value
-);
+    Boolean(form.userId)
+    && Boolean(form.title.trim())
+    && Boolean(form.description.trim())
+    && Boolean(form.type)
+    && !submitting.value
+)
 
 async function fetchUsers(): Promise<void> {
-  loadingUsers.value = true;
-  const response = await notificationController.getUsers();
-  loadingUsers.value = false;
+  const response = await notificationController.getUsers()
 
   if (!response.success) {
     toast.add({
-      title: response.message || "دریافت کاربران ناموفق بود",
-      color: "error",
-    });
-    return;
+      title: response.message || 'دریافت کاربران ناموفق بود',
+      color: 'error'
+    })
   }
-
-  users.value = response.data || [];
 }
 
 async function handleSubmit(): Promise<void> {
-  if (!canSubmit.value || !form.userId) return;
-
-  submitting.value = true;
+  if (!canSubmit.value || !form.userId) return
 
   const payload: TCreateNotificationPayload = {
     userId: form.userId,
     title: form.title.trim(),
     description: form.description.trim(),
-    type: form.type,
-  };
+    type: form.type
+  }
 
-  const response = await notificationController.createNotification(payload);
-  submitting.value = false;
+  const response = await notificationController.createNotification(payload)
 
   toast.add({
     title:
-      response.message ||
-      (response.success
-        ? "اعلان با موفقیت ارسال شد"
-        : "ارسال اعلان ناموفق بود"),
-    color: response.success ? "success" : "error",
-  });
+      response.message
+      || (response.success
+        ? 'اعلان با موفقیت ارسال شد'
+        : 'ارسال اعلان ناموفق بود'),
+    color: response.success ? 'success' : 'error'
+  })
 
   if (response.success) {
-    form.title = "";
-    form.description = "";
-    form.type = "message";
+    form.title = ''
+    form.description = ''
+    form.type = 'message'
   }
 }
 
 onMounted(() => {
-  fetchUsers();
-});
+  fetchUsers()
+})
 </script>
 
 <template>
@@ -128,7 +116,10 @@ onMounted(() => {
           <div
             class="space-y-4 rounded-2xl border border-default bg-elevated p-5 sm:p-6"
           >
-            <div v-if="loadingUsers" class="flex justify-center py-10">
+            <div
+              v-if="loadingUsers"
+              class="flex justify-center py-10"
+            >
               <UIcon
                 name="i-lucide-loader-2"
                 class="size-6 animate-spin text-primary"
@@ -136,7 +127,10 @@ onMounted(() => {
             </div>
 
             <template v-else>
-              <UFormField label="کاربر" required>
+              <UFormField
+                label="کاربر"
+                required
+              >
                 <USelect
                   v-model="form.userId"
                   :items="userItems"
@@ -145,7 +139,10 @@ onMounted(() => {
                 />
               </UFormField>
 
-              <UFormField label="نوع اعلان" required>
+              <UFormField
+                label="نوع اعلان"
+                required
+              >
                 <USelect
                   v-model="form.type"
                   :items="typeItems"
@@ -153,7 +150,10 @@ onMounted(() => {
                 />
               </UFormField>
 
-              <UFormField label="عنوان" required>
+              <UFormField
+                label="عنوان"
+                required
+              >
                 <UInput
                   v-model="form.title"
                   placeholder="مثلاً: سفارش شما ثبت شد"
@@ -162,7 +162,10 @@ onMounted(() => {
                 />
               </UFormField>
 
-              <UFormField label="توضیحات" required>
+              <UFormField
+                label="توضیحات"
+                required
+              >
                 <UTextarea
                   v-model="form.description"
                   placeholder="متن اعلان را بنویسید..."

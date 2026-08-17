@@ -18,6 +18,7 @@ import { StoryModule } from './story/story.module';
 import { UsersModule } from './users/users.module';
 import { ChatModule } from './chat/chat.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     StoryModule,
     ChatModule,
     NotificationsModule,
+    CartModule,
     TypeOrmModule.forRoot(pgConfig),
   ],
   controllers: [AppController],

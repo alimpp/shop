@@ -2,14 +2,17 @@
 import { interactionsController } from '~/features/interactions/controllers/index.controller'
 import { favoritesController } from '~/features/favorites/controllers/index.controller'
 import { productsController } from '~/features/products/controllers/index.controller'
-import { useCartDS } from '~/dataStore'
+import { cartController } from '~/features/cart/controllers/index.controller'
+import { useInteractionsDS } from '~/features/interactions/data/index.store'
+import { useFavoritesDS } from '~/features/favorites/data/index.store'
 import { TInteractionTargetType } from '~/features/interactions/types/index.type'
-import type { TComment } from '~/features/interactions/types/index.type'
 import type { TProduct, TProductVariant } from '~/features/products/types/index.type'
 
 const route = useRoute()
 const toast = useToast()
-const cartDS = useCartDS()
+const addingToCart = ref(false)
+const interactionsDS = useInteractionsDS()
+const favoritesDS = useFavoritesDS()
 
 const slug = String(route.params.slug ?? '')
 
@@ -17,21 +20,22 @@ const product = ref<TProduct | null>(null)
 const loading = ref(true)
 const notFound = ref(false)
 
-const liked = ref(false)
-const likeCount = ref(0)
-const likeLoading = ref(false)
-
-const favorited = ref(false)
-const favoriteLoading = ref(false)
-
-const comments = ref<TComment[]>([])
-const commentsMeta = ref<{ total: number; page: number; limit: number; totalPages: number } | null>(null)
-const commentsLoading = ref(false)
-const commentsLoaded = ref(false)
 const commentText = ref('')
-const commentSubmitting = ref(false)
-const commentsPage = ref(1)
 const commentsLimit = 10
+
+const liked = computed(() => interactionsDS.getLiked)
+const likeCount = computed(() => interactionsDS.getLikeCount)
+const likeLoading = computed(() => interactionsDS.getLikeLoading)
+const comments = computed(() => interactionsDS.getComments)
+const commentsMeta = computed(() => interactionsDS.getCommentsMeta)
+const commentsLoading = computed(() => interactionsDS.getCommentsLoading)
+const commentsLoaded = computed(() => interactionsDS.getCommentsLoaded)
+const commentSubmitting = computed(() => interactionsDS.getCommentSubmitting)
+const hasMoreComments = computed(() => interactionsDS.getHasMoreComments)
+const favorited = computed(() =>
+  product.value ? favoritesDS.isFavorited(product.value.id) : false
+)
+const favoriteLoading = computed(() => favoritesDS.getSubmitting)
 
 const selectedMediaIndex = ref(0)
 const quantity = ref(1)
@@ -75,10 +79,24 @@ const discountPercent = computed(() => {
 
 const stock = computed(() => {
   const variant = activeVariant.value
-  return variant ? variant.stock : (product.value?.stock ?? 0)
+  if (variant) {
+    return variant.stock
+  }
+  return product.value?.stock ?? 0
 })
 
-const isOutOfStock = computed(() => stock.value <= 0)
+const isOutOfStock = computed(() => {
+  const variant = activeVariant.value
+  if (variant) {
+    if (!variant.manageStock || variant.allowBackorder) return false
+    return variant.stock <= 0
+  }
+
+  const p = product.value
+  if (!p) return true
+  if (!p.manageStock || p.allowBackorder) return false
+  return (p.stock ?? 0) <= 0
+})
 
 const activeVariant = computed<TProductVariant | null>(() => {
   if (!product.value?.variants?.length || !selectedVariantId.value) {
@@ -86,6 +104,89 @@ const activeVariant = computed<TProductVariant | null>(() => {
   }
   return product.value.variants.find(v => v.id === selectedVariantId.value) ?? null
 })
+
+const hasVariants = computed(() => Boolean(product.value?.variants?.length))
+
+function pickDefaultVariant(p: TProduct): TProductVariant | null {
+  const active = (p.variants ?? []).filter(variant => variant.isActive !== false)
+  if (!active.length) return null
+  return active.find(variant => variant.isDefault) ?? active[0] ?? null
+}
+
+function applyProductDefaults(p: TProduct): void {
+  Object.keys(selectedOptions).forEach((key) => {
+    delete selectedOptions[key]
+  })
+  selectedVariantId.value = ''
+
+  const defaultVariant = pickDefaultVariant(p)
+  if (defaultVariant) {
+    selectedVariantId.value = defaultVariant.id
+
+    for (const variantValue of defaultVariant.values ?? []) {
+      const attributeId =
+        variantValue.attributeValue?.attributeId
+        || variantValue.attributeValue?.attribute?.id
+      if (!attributeId) continue
+
+      const option = p.options?.find(
+        item => item.attributeId === attributeId || item.attribute?.id === attributeId
+      )
+      if (!option) continue
+
+      const optionKey = option.attribute?.slug ?? option.attributeId
+      const optionValue = option.values?.find(
+        value => value.attributeValueId === variantValue.attributeValueId
+      )
+      if (optionValue) {
+        selectedOptions[optionKey] = optionValue.id
+      }
+    }
+  }
+
+  ensureOptionDefaults(p)
+
+  if (p.variants?.length) {
+    const matched = resolveVariantFromOptions()
+    if (matched) {
+      selectedVariantId.value = matched.id
+    } else if (!selectedVariantId.value && defaultVariant) {
+      selectedVariantId.value = defaultVariant.id
+    }
+  }
+}
+
+function ensureOptionDefaults(p: TProduct): void {
+  p.options?.forEach((option) => {
+    const optionKey = option.attribute?.slug ?? option.attributeId
+    if (selectedOptions[optionKey]) return
+    const firstValue = option.values?.[0]
+    if (firstValue) {
+      selectedOptions[optionKey] = firstValue.id
+    }
+  })
+}
+
+function ensureCartSelections(): void {
+  if (!product.value) return
+
+  ensureOptionDefaults(product.value)
+
+  if (!product.value.variants?.length) return
+
+  if (!selectedVariantId.value) {
+    selectedVariantId.value =
+      resolveVariantFromOptions()?.id
+      ?? pickDefaultVariant(product.value)?.id
+      ?? ''
+    return
+  }
+
+  const matched = resolveVariantFromOptions()
+  if (matched) {
+    selectedVariantId.value = matched.id
+  }
+}
 
 function requireLogin(): boolean {
   if (!isLoggedIn.value) {
@@ -107,19 +208,9 @@ async function loadProduct(): Promise<TProduct | null> {
 
   if (response.success && response.data) {
     product.value = response.data
-    likeCount.value = response.data.likeCount ?? 0
-
-    const defaultVariant = response.data.variants?.find(v => v.isDefault) ?? response.data.variants?.[0]
-    if (defaultVariant) {
-      selectedVariantId.value = defaultVariant.id
-    }
-
-    response.data.options?.forEach((option) => {
-      const optionKey = option.attribute?.slug ?? option.attributeId
-      if (!selectedOptions[optionKey]) {
-        selectedOptions[optionKey] = ''
-      }
-    })
+    interactionsDS.setEntity(TInteractionTargetType.PRODUCT, response.data.id)
+    interactionsDS.setLikeCount(response.data.likeCount ?? 0)
+    applyProductDefaults(response.data)
   } else {
     notFound.value = true
     if (import.meta.client) {
@@ -145,6 +236,7 @@ watchEffect(() => {
 
   if (ssrProduct.value && !product.value) {
     product.value = ssrProduct.value
+    applyProductDefaults(ssrProduct.value)
   }
 
   if (!ssrPending.value && !ssrProduct.value && !product.value) {
@@ -155,57 +247,46 @@ watchEffect(() => {
 
 async function loadLikeStatus(): Promise<void> {
   if (!product.value || !isLoggedIn.value) return
-  const response = await interactionsController.getLikeStatus({
+  await interactionsController.getLikeStatus({
     entityType: TInteractionTargetType.PRODUCT,
     entityId: product.value.id
   })
-  if (response.success) {
-    liked.value = response.data
-  }
 }
 
 async function loadFavoriteStatus(): Promise<void> {
   if (!product.value || !isLoggedIn.value) return
-  const response = await favoritesController.getFavorites(1, 100)
-  if (response.success && response.data) {
-    favorited.value = response.data.items.some(item => item.id === product.value?.id)
-  }
+  await favoritesController.getFavorites(1, 100)
 }
 
 async function toggleLike(): Promise<void> {
   if (!product.value || !requireLogin()) return
   if (likeLoading.value) return
 
-  likeLoading.value = true
   const response = await interactionsController.toggleLike({
     entityType: TInteractionTargetType.PRODUCT,
     entityId: product.value.id
   })
 
-  if (response.success && response.data) {
-    liked.value = response.data.liked
-    likeCount.value = response.data.likeCount
-  } else {
+  if (!response.success) {
     toast.add({
       title: response.message,
       color: 'error'
     })
   }
-
-  likeLoading.value = false
 }
 
 async function toggleFavorite(): Promise<void> {
   if (!product.value || !requireLogin()) return
   if (favoriteLoading.value) return
 
-  favoriteLoading.value = true
-  const response = await favoritesController.toggleFavorite(product.value.id)
+  const response = await favoritesController.toggleFavorite(
+    product.value.id,
+    product.value
+  )
 
   if (response.success && response.data) {
-    favorited.value = response.data.favorited
     toast.add({
-      title: favorited.value ? 'به علاقه مندی ها اضافه شد' : 'از علاقه مندی ها حذف شد',
+      title: response.data.favorited ? 'به علاقه مندی ها اضافه شد' : 'از علاقه مندی ها حذف شد',
       color: 'success'
     })
   } else {
@@ -214,43 +295,18 @@ async function toggleFavorite(): Promise<void> {
       color: 'error'
     })
   }
-
-  favoriteLoading.value = false
 }
 
 async function loadComments(page = 1): Promise<void> {
   if (!product.value) return
 
-  commentsLoading.value = true
-  const response = await interactionsController.getComments({
+  await interactionsController.getComments({
     entityType: TInteractionTargetType.PRODUCT,
     entityId: product.value.id,
     page,
     limit: commentsLimit
   })
-
-  if (response.success && response.data) {
-    if (page === 1) {
-      comments.value = response.data.items
-    } else {
-      comments.value = [...comments.value, ...response.data.items]
-    }
-    commentsMeta.value = {
-      total: response.data.total,
-      page: response.data.page,
-      limit: response.data.limit,
-      totalPages: response.data.totalPages
-    }
-    commentsPage.value = page
-  }
-
-  commentsLoading.value = false
-  commentsLoaded.value = true
 }
-
-const hasMoreComments = computed(() =>
-  Boolean(commentsMeta.value && commentsPage.value < commentsMeta.value.totalPages)
-)
 
 async function submitComment(): Promise<void> {
   if (!product.value || !requireLogin()) return
@@ -262,7 +318,6 @@ async function submitComment(): Promise<void> {
   }
   if (commentSubmitting.value) return
 
-  commentSubmitting.value = true
   const response = await interactionsController.createComment({
     entityType: TInteractionTargetType.PRODUCT,
     entityId: product.value.id,
@@ -272,29 +327,87 @@ async function submitComment(): Promise<void> {
   if (response.success) {
     commentText.value = ''
     toast.add({ title: 'کامنت شما ثبت شد', color: 'success' })
-    await loadComments(1)
   } else {
     toast.add({
       title: response.message,
       color: 'error'
     })
   }
-
-  commentSubmitting.value = false
 }
 
-function addToCart(): void {
-  if (!product.value) return
+function resolveVariantFromOptions(): TProductVariant | null {
+  if (!product.value?.variants?.length) return null
 
-  cartDS.add({
-    productId: product.value.id,
-    name: product.value.name,
-    slug: product.value.slug,
-    price: product.value.price,
-    salePrice: product.value.salePrice,
-    image: product.value.medias[0]?.url ?? '',
-    quantity: quantity.value
+  const selectedAttributeValueIds = Object.entries(selectedOptions)
+    .map(([optionKey, optionValueId]) => {
+      if (!optionValueId) return null
+      const option = product.value?.options?.find(
+        item => (item.attribute?.slug ?? item.attributeId) === optionKey
+      )
+      const optionValue = option?.values?.find(value => value.id === optionValueId)
+      return optionValue?.attributeValueId ?? null
+    })
+    .filter((id): id is string => Boolean(id))
+
+  if (!selectedAttributeValueIds.length) {
+    return activeVariant.value ?? pickDefaultVariant(product.value)
+  }
+
+  const matches = product.value.variants.filter((variant) => {
+    if (variant.isActive === false) return false
+    const variantValueIds = (variant.values ?? []).map(value => value.attributeValueId)
+    return selectedAttributeValueIds.every(id => variantValueIds.includes(id))
   })
+
+  const exact = matches.find(
+    variant => (variant.values ?? []).length === selectedAttributeValueIds.length
+  )
+
+  return exact ?? matches[0] ?? activeVariant.value ?? pickDefaultVariant(product.value)
+}
+
+async function addToCart(): Promise<void> {
+  if (!product.value || addingToCart.value) return
+  if (!requireLogin()) return
+
+  if (isOutOfStock.value) {
+    toast.add({
+      title: 'این محصول در حال حاضر موجود نیست',
+      color: 'warning'
+    })
+    return
+  }
+
+  ensureCartSelections()
+
+  const payload: { productId: string; quantity: number; variantId?: string } = {
+    productId: product.value.id,
+    quantity: quantity.value
+  }
+
+  if (hasVariants.value) {
+    const variant =
+      resolveVariantFromOptions()
+      ?? activeVariant.value
+      ?? pickDefaultVariant(product.value)
+
+    if (variant) {
+      payload.variantId = variant.id
+      selectedVariantId.value = variant.id
+    }
+  }
+
+  addingToCart.value = true
+  const response = await cartController.addItem(payload)
+  addingToCart.value = false
+
+  if (!response.success) {
+    toast.add({
+      title: response.message || 'افزودن به سبد خرید ناموفق بود',
+      color: 'error'
+    })
+    return
+  }
 
   toast.add({
     title: 'به سبد خرید اضافه شد',
@@ -304,6 +417,13 @@ function addToCart(): void {
 
 function selectOption(slug: string, valueId: string): void {
   selectedOptions[slug] = valueId
+
+  if (!hasVariants.value) return
+
+  const matched = resolveVariantFromOptions()
+  if (matched) {
+    selectedVariantId.value = matched.id
+  }
 }
 
 useSeoMeta({
@@ -451,7 +571,7 @@ onMounted(async () => {
           :liked="liked"
           :like-count="likeCount"
           :like-loading="likeLoading"
-          :comment-count="commentsMeta?.total ?? product.commentCount ?? 0"
+          :comment-count="commentsMeta.total || product.commentCount || 0"
           :view-count="product.viewCount ?? 0"
           @like="toggleLike"
         />
@@ -499,7 +619,7 @@ onMounted(async () => {
 
       <PublicProductComments
         :comments="comments"
-        :comment-count="commentsMeta?.total ?? product.commentCount ?? 0"
+        :comment-count="commentsMeta.total || product.commentCount || 0"
         :is-logged-in="isLoggedIn"
         v-model:comment-text="commentText"
         :comment-submitting="commentSubmitting"
@@ -507,7 +627,7 @@ onMounted(async () => {
         :comments-loaded="commentsLoaded"
         :has-more-comments="hasMoreComments"
         @submit="submitComment"
-        @load-more="loadComments(commentsPage + 1)"
+        @load-more="loadComments(commentsMeta.page + 1)"
       />
     </div>
   </div>

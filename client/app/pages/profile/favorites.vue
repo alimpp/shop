@@ -1,20 +1,16 @@
 <script setup lang="ts">
 import ProfileShell from '~/components/profile/ProfileShell.vue'
 import { favoritesController } from '~/features/favorites/controllers/index.controller'
-import type { TFavoriteProduct } from '~/features/favorites/types/index.type'
+import { useFavoritesDS } from '~/features/favorites/data/index.store'
 
-definePageMeta({ title: "علاقه‌مندی‌ها", robots: "noindex, nofollow" })
-
+definePageMeta({ title: 'علاقه‌مندی‌ها', robots: 'noindex, nofollow' })
 
 const toast = useToast()
+const favoritesDS = useFavoritesDS()
 
-const favoritesLoading = ref(false)
-const favorites = ref<TFavoriteProduct[]>([])
-
-function mainImageOf(item: TFavoriteProduct): string | undefined {
-  const thumbnail = item.medias?.find(media => media.isThumbnail)
-  return thumbnail?.url || item.medias?.[0]?.url
-}
+const favorites = computed(() => favoritesDS.getItems)
+const favoritesLoading = computed(() => favoritesDS.getLoading)
+const submitting = computed(() => favoritesDS.getSubmitting)
 
 function formatPrice(value: number | string | undefined | null): string {
   const numeric = Number(value)
@@ -23,19 +19,14 @@ function formatPrice(value: number | string | undefined | null): string {
 }
 
 async function loadFavorites(): Promise<void> {
-  favoritesLoading.value = true
   const response = await favoritesController.getFavorites(1, 100)
 
-  if (response.success && response.data) {
-    favorites.value = response.data.items as unknown as TFavoriteProduct[]
-  } else {
+  if (!response.success) {
     toast.add({
       title: response.message,
       color: 'error'
     })
   }
-
-  favoritesLoading.value = false
 }
 
 async function removeFavorite(productId: string): Promise<void> {
@@ -43,12 +34,8 @@ async function removeFavorite(productId: string): Promise<void> {
 
   toast.add({
     title: response.message || 'از علاقه مندی ها حذف شد',
-    color: 'success'
+    color: response.success ? 'success' : 'error'
   })
-
-  if (response.success) {
-    favorites.value = favorites.value.filter(item => item.id !== productId)
-  }
 }
 
 onMounted(() => {
@@ -114,9 +101,9 @@ onMounted(() => {
           :ui="{ body: 'p-0' }"
         >
           <NuxtImg
-            v-if="mainImageOf(item)"
-            :src="mainImageOf(item)!"
-            :alt="String(item.name ?? '')"
+            v-if="item.mainImage"
+            :src="item.mainImage"
+            :alt="item.name"
             class="aspect-square w-full object-cover"
             loading="lazy"
           />
@@ -146,6 +133,7 @@ onMounted(() => {
                 variant="ghost"
                 size="sm"
                 icon="i-lucide-trash-2"
+                :loading="submitting"
                 @click="removeFavorite(item.id)"
               >
                 حذف

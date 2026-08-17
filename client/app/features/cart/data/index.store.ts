@@ -1,35 +1,27 @@
-import { reactive } from 'vue'
-
 import { BaseStore } from '~/core/BaseStore'
 import { StoreManager } from '~/core/StoreManager'
+import { CartItemModel } from '../models/index.model'
 
-export interface TCartItem {
-  productId: string
-  name: string
-  slug: string
-  price: number
-  salePrice?: number
-  image: string
-  quantity: number
-}
+import type { TCartItem, TCartResponse } from '../types/index.type'
 
 interface ICartState {
-  items: TCartItem[]
+  items: CartItemModel[]
+  totalQuantity: number
+  totalPrice: number
+  itemCount: number
+  loading: boolean
+  submitting: boolean
+  hydrated: boolean
 }
 
-const STORAGE_KEY = 'cart-items'
+const emptyTotals = () => ({
+  items: [] as CartItemModel[],
+  totalQuantity: 0,
+  totalPrice: 0,
+  itemCount: 0
+})
 
-function loadFromStorage(): TCartItem[] {
-  if (import.meta.server) return []
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as TCartItem[]) : []
-  } catch {
-    return []
-  }
-}
-
-class CartDS extends BaseStore<ICartState> {
+export class CartDS extends BaseStore<ICartState> {
   private static _instance: CartDS
 
   public static getInstance(): CartDS {
@@ -40,81 +32,81 @@ class CartDS extends BaseStore<ICartState> {
   }
 
   private constructor() {
-    super(
-      'cart',
-      reactive({
-        items: loadFromStorage()
-      }) as ICartState
-    )
+    super('cart', {
+      ...emptyTotals(),
+      loading: false,
+      submitting: false,
+      hydrated: false
+    })
     StoreManager.register(this)
   }
 
-  public get getItems(): TCartItem[] {
+  public get getItems(): CartItemModel[] {
     return this._state.items
   }
 
+  public get getTotalQuantity(): number {
+    return this._state.totalQuantity
+  }
+
   public get getCount(): number {
-    return this._state.items.reduce((sum, item) => sum + item.quantity, 0)
+    return this._state.totalQuantity
   }
 
-  public get getTotal(): number {
-    return this._state.items.reduce(
-      (sum, item) => sum + item.quantity * (item.salePrice ?? item.price),
-      0
-    )
+  public get getTotalPrice(): number {
+    return this._state.totalPrice
   }
 
-  private persist(): void {
-    if (import.meta.client) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this._state.items))
-    }
+  public get getItemCount(): number {
+    return this._state.itemCount
   }
 
-  public add(item: TCartItem): void {
-    const existing = this._state.items.find(
-      cartItem => cartItem.productId === item.productId
-    )
-
-    if (existing) {
-      existing.quantity += item.quantity
-    } else {
-      this._state.items.push({ ...item })
-    }
-
-    this.persist()
+  public get getLoading(): boolean {
+    return this._state.loading
   }
 
-  public updateQuantity(productId: string, quantity: number): void {
-    const item = this._state.items.find(
-      cartItem => cartItem.productId === productId
-    )
-
-    if (!item) return
-
-    item.quantity = Math.max(1, quantity)
-    this.persist()
+  public get getSubmitting(): boolean {
+    return this._state.submitting
   }
 
-  public remove(productId: string): void {
-    const index = this._state.items.findIndex(
-      cartItem => cartItem.productId === productId
-    )
-
-    if (index !== -1) {
-      this._state.items.splice(index, 1)
-      this.persist()
-    }
+  public get getHydrated(): boolean {
+    return this._state.hydrated
   }
 
-  public clear(): void {
-    this._state.items = []
-    if (import.meta.client) {
-      localStorage.removeItem(STORAGE_KEY)
-    }
+  public setLoading(loading: boolean): void {
+    this._state.loading = loading
+  }
+
+  public setSubmitting(submitting: boolean): void {
+    this._state.submitting = submitting
+  }
+
+  public setCart(cart: TCartResponse): void {
+    this._state.items = (cart.items ?? []).map(item => new CartItemModel(item))
+    this._state.totalQuantity = cart.totalQuantity ?? 0
+    this._state.totalPrice = cart.totalPrice ?? 0
+    this._state.itemCount = cart.itemCount ?? 0
+    this._state.hydrated = true
+  }
+
+  public setItems(items: TCartItem[]): void {
+    this._state.items = items.map(item => new CartItemModel(item))
+  }
+
+  public clearLocal(): void {
+    Object.assign(this._state, {
+      ...emptyTotals(),
+      hydrated: true
+    })
   }
 
   public reset(): void {
-    this.clear()
+    Object.assign(this._state, {
+      ...emptyTotals(),
+      loading: false,
+      submitting: false,
+      hydrated: false
+    })
   }
 }
 

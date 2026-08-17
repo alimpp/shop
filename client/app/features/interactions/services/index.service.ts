@@ -12,7 +12,7 @@ import type {
   TLikeToggleResult
 } from '../types/index.type'
 
-export class InteractionsService extends BaseApp<{ id: string }> {
+export class InteractionsService extends BaseApp<TComment> {
   constructor() {
     super('interactions')
   }

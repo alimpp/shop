@@ -2,9 +2,12 @@ import type { ServerResponse } from '~/types/common'
 
 import { BaseApp } from '~/core/BaseApp'
 
-import type { TFavoritesResponse } from '../types/index.type'
+import type {
+  TFavoriteProduct,
+  TFavoritesResponse
+} from '../types/index.type'
 
-export class FavoritesService extends BaseApp<{ id: string }> {
+export class FavoritesService extends BaseApp<TFavoriteProduct> {
   constructor() {
     super('favorites')
   }

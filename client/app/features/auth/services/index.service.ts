@@ -4,12 +4,13 @@ import { BaseApp } from "~/core/BaseApp";
 import type {
   TLoginPayload,
   TLoginData,
+  TUserData,
   TUserLoginPayload,
   TUserLoginData,
   TUserOtpPayload,
 } from "../types/index.type";
 
-export class AuthService extends BaseApp<any> {
+export class AuthService extends BaseApp<TUserData> {
   constructor() {
     super("auth");
   }
