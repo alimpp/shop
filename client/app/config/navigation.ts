@@ -68,6 +68,12 @@ export const navigation: AppNavigationItem[][] = [
       permission: true,
     },
     {
+      label: "کاربران",
+      icon: "i-lucide-users",
+      to: "/admin/users",
+      permission: true,
+    },
+    {
       label: "سفارش‌ها",
       icon: "i-lucide-shopping-bag",
       to: "/admin/orders",

@@ -508,6 +508,47 @@ export class ChatService {
     }
   }
 
+  async findOrCreateSupportChatForUser(userId: string, adminId: string) {
+    const existing = await this.participantRepository
+      .createQueryBuilder('participant')
+      .innerJoinAndSelect('participant.chat', 'chat')
+      .leftJoinAndSelect('participant.user', 'user')
+      .where('participant.userId = :userId', { userId })
+      .andWhere('chat.status = :status', { status: 'open' })
+      .orderBy('chat.updated_at', 'DESC')
+      .getOne();
+
+    if (existing?.chat) {
+      await this.addAdminToChat(existing.chatId, adminId);
+      return {
+        id: existing.chat.id,
+        subject: existing.chat.subject,
+        status: existing.chat.status,
+        created_at: existing.chat.created_at,
+        user: existing.user
+          ? {
+              id: existing.user.id,
+              fristname: existing.user.fristname,
+              lastname: existing.user.lastname,
+              avatarUrl: existing.user.avatarUrl,
+              phone: existing.user.phone,
+            }
+          : null,
+      };
+    }
+
+    const created = await this.createChat({ subject: 'چت پشتیبانی' }, userId);
+    await this.addAdminToChat(created.id, adminId);
+
+    return {
+      id: created.id,
+      subject: created.subject,
+      status: created.status,
+      created_at: created.created_at,
+      user: null,
+    };
+  }
+
   private async ensureChatExists(chatId: string) {
     const exists = await this.chatRepository.count({ where: { id: chatId } });
     if (!exists) {

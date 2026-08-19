@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Blog } from '../blog/entities/blog.entity';
 import { Product } from '../product/entities/product.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -177,6 +177,155 @@ export class InteractionsService {
     return {
       message: 'کامنت با موفقیت حذف شد',
     };
+  }
+
+  async findLikesByUser(userId: string, page = 1, limit = 50) {
+    const [likes, total] = await this.likeRepository.findAndCount({
+      where: { userId },
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const items = await this.hydrateInteractionTargets(
+      likes.map((like) => ({
+        id: like.id,
+        entityType: like.entityType,
+        entityId: like.entityId,
+        createdAt: like.createdAt,
+      })),
+    );
+
+    return {
+      items,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit) || 1,
+    };
+  }
+
+  async findCommentsByUser(userId: string, page = 1, limit = 50) {
+    const [comments, total] = await this.commentRepository.findAndCount({
+      where: { userId },
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const targets = await this.hydrateInteractionTargets(
+      comments.map((comment) => ({
+        id: comment.id,
+        entityType: comment.entityType,
+        entityId: comment.entityId,
+        createdAt: comment.createdAt,
+      })),
+    );
+
+    const targetMap = new Map(targets.map((item) => [item.id, item]));
+
+    return {
+      items: comments.map((comment) => {
+        const target = targetMap.get(comment.id);
+        return {
+          id: comment.id,
+          content: comment.content,
+          entityType: comment.entityType,
+          entityId: comment.entityId,
+          createdAt: comment.createdAt,
+          title: target?.title ?? 'مورد حذف‌شده',
+          slug: target?.slug ?? '',
+          image: target?.image ?? '',
+          href: target?.href ?? '',
+        };
+      }),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit) || 1,
+    };
+  }
+
+  async countByUser(userId: string) {
+    const [likes, comments] = await Promise.all([
+      this.likeRepository.count({ where: { userId } }),
+      this.commentRepository.count({ where: { userId } }),
+    ]);
+
+    return { likes, comments };
+  }
+
+  private async hydrateInteractionTargets(
+    rows: Array<{
+      id: string;
+      entityType: TargetType;
+      entityId: string;
+      createdAt: Date;
+    }>,
+  ) {
+    const productIds = [
+      ...new Set(
+        rows
+          .filter((row) => row.entityType === TargetType.PRODUCT)
+          .map((row) => row.entityId),
+      ),
+    ];
+    const blogIds = [
+      ...new Set(
+        rows
+          .filter((row) => row.entityType === TargetType.BLOG)
+          .map((row) => row.entityId),
+      ),
+    ];
+
+    const products: Product[] = productIds.length
+      ? await this.productRepository.find({
+          where: { id: In(productIds) },
+          relations: { medias: true },
+        })
+      : [];
+    const blogs: Blog[] = blogIds.length
+      ? await this.blogRepository.find({
+          where: { id: In(blogIds) },
+        })
+      : [];
+
+    const productMap = new Map<string, Product>(
+      products.map((item) => [item.id, item]),
+    );
+    const blogMap = new Map<string, Blog>(blogs.map((item) => [item.id, item]));
+
+    return rows.map((row) => {
+      if (row.entityType === TargetType.PRODUCT) {
+        const product = productMap.get(row.entityId);
+        const image =
+          product?.medias?.find((media) => media.isThumbnail)?.url ||
+          product?.medias?.[0]?.url ||
+          '';
+        return {
+          id: row.id,
+          entityType: row.entityType,
+          entityId: row.entityId,
+          createdAt: row.createdAt,
+          title: product?.name ?? 'محصول حذف‌شده',
+          slug: product?.slug ?? '',
+          image,
+          href: product?.slug ? `/products/${product.slug}` : '',
+        };
+      }
+
+      const blog = blogMap.get(row.entityId);
+      return {
+        id: row.id,
+        entityType: row.entityType,
+        entityId: row.entityId,
+        createdAt: row.createdAt,
+        title: blog?.title ?? 'بلاگ حذف‌شده',
+        slug: blog?.slug ?? '',
+        image: blog?.coverImage ?? '',
+        href: blog?.slug ? `/blog/${blog.slug}` : '',
+      };
+    });
   }
 
   private async ensureTargetExists(

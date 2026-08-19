@@ -15,6 +15,7 @@ import { NotificationsDS } from '~/features/notifications/data/index.store'
 import { InteractionsDS } from '~/features/interactions/data/index.store'
 import { AddressesDS } from '~/features/addresses/data/index.store'
 import { OrdersDS } from '~/features/orders/data/index.store'
+import { UsersDS } from '~/features/users/data/index.store'
 
 export const initializeStores = () => {
   CategoriesDS.getInstance()
@@ -32,6 +33,7 @@ export const initializeStores = () => {
   InteractionsDS.getInstance()
   AddressesDS.getInstance()
   OrdersDS.getInstance()
+  UsersDS.getInstance()
   getProfileDS()
   getCartDS()
 }
@@ -55,3 +57,4 @@ export const useNotificationsDS = () => NotificationsDS.getInstance()
 export const useInteractionsDS = () => InteractionsDS.getInstance()
 export const useAddressesDS = () => AddressesDS.getInstance()
 export const useOrdersDS = () => OrdersDS.getInstance()
+export const useUsersDS = () => UsersDS.getInstance()
