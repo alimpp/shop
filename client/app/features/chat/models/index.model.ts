@@ -87,6 +87,31 @@ export class ChatMessageModel implements TChatMessage {
       day: "numeric",
     });
   }
+
+  get contentParts(): Array<{ text: string; href?: string }> {
+    const content = this.content ?? "";
+    if (!content) return [];
+
+    const parts: Array<{ text: string; href?: string }> = [];
+    const matcher = /(https?:\/\/[^\s]+)/g;
+    let lastIndex = 0;
+    let match: RegExpExecArray | null = matcher.exec(content);
+
+    while (match) {
+      if (match.index > lastIndex) {
+        parts.push({ text: content.slice(lastIndex, match.index) });
+      }
+      parts.push({ text: match[0], href: match[0] });
+      lastIndex = match.index + match[0].length;
+      match = matcher.exec(content);
+    }
+
+    if (lastIndex < content.length) {
+      parts.push({ text: content.slice(lastIndex) });
+    }
+
+    return parts.length ? parts : [{ text: content }];
+  }
 }
 
 class ChatUserModel implements TChatUser {

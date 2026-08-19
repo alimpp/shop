@@ -20,6 +20,7 @@ defineProps<{
       <div class="message-body text-sm leading-8 text-toned">
         {{ description }}
       </div>
+      <slot name="after-description" />
     </div>
 
     <div

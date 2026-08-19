@@ -7,6 +7,7 @@ import { useInteractionsDS } from '~/features/interactions/data/index.store'
 import { useFavoritesDS } from '~/features/favorites/data/index.store'
 import { TInteractionTargetType } from '~/features/interactions/types/index.type'
 import type { TProduct, TProductVariant } from '~/features/products/types/index.type'
+import ProductSupportAsk from '~/features/products/components/ProductSupportAsk.vue'
 
 const route = useRoute()
 const toast = useToast()
@@ -631,7 +632,11 @@ onMounted(async () => {
       <PublicProductDetails
         :description="product.description"
         :specifications="product.specifications"
-      />
+      >
+        <template #after-description>
+          <ProductSupportAsk :product="product" />
+        </template>
+      </PublicProductDetails>
 
       <PublicProductComments
         :comments="comments"

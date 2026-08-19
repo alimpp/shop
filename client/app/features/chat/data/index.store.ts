@@ -183,3 +183,5 @@ export class ChatDS extends BaseStore<IChatState> {
     this._state.submitting = false;
   }
 }
+
+export const useChatDS = () => ChatDS.getInstance();

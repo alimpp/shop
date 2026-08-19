@@ -99,3 +99,10 @@ export interface TSendMessagePayload {
   content: string;
   replyToId?: string;
 }
+
+export function buildProductSupportMessage(
+  productName: string,
+  productUrl: string
+): string {
+  return `${productName.trim()}\n${productUrl.trim()}\nراجع به این محصول من رو راهنمایی می‌کنی؟`;
+}

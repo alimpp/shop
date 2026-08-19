@@ -101,6 +101,68 @@ class ChatController extends BaseController<ChatService> {
     return this.handleResponse(response);
   }
 
+  public async sendProductInquiry(
+    content: string
+  ): Promise<ControllerResponse<TChatMessage>> {
+    this.chatDS.setSending(true);
+
+    const listResponse: ServerResponse<TChatListData> =
+      await this.service.getChatsForUser({ limit: 20 });
+
+    if (!listResponse.success) {
+      this.chatDS.setSending(false);
+      return {
+        success: false,
+        message: listResponse.message ?? "دریافت چت پشتیبانی ناموفق بود",
+        data: undefined as unknown as TChatMessage,
+      };
+    }
+
+    if (listResponse.data) {
+      this.chatDS.setChats(listResponse.data.items);
+      this.chatDS.setMeta(listResponse.data.meta);
+    }
+
+    let chatId =
+      this.chatDS.getChats.find((chat) => chat.status === "open")?.id;
+
+    if (!chatId) {
+      const created: ServerResponse<TChat> = await this.service.createChat({
+        subject: "چت پشتیبانی",
+      });
+
+      if (!created.success || !created.data?.id) {
+        this.chatDS.setSending(false);
+        return {
+          success: false,
+          message: created.message ?? "ایجاد چت پشتیبانی ناموفق بود",
+          data: undefined as unknown as TChatMessage,
+        };
+      }
+
+      this.chatDS.addChat(created.data);
+      this.chatDS.setSelectedChat(created.data);
+      chatId = created.data.id;
+    } else {
+      const selected =
+        this.chatDS.getChats.find((chat) => chat.id === chatId) ?? null;
+      if (selected) {
+        this.chatDS.setSelectedChat(selected);
+      }
+    }
+
+    const response: ServerResponse<TChatMessage> =
+      await this.service.sendMessage(chatId, { content });
+
+    if (response.success && response.data) {
+      this.chatDS.addMessage(response.data);
+      this.chatDS.updateLastMessage(chatId, response.data);
+    }
+
+    this.chatDS.setSending(false);
+    return this.handleResponse(response);
+  }
+
   public async createChat(
     payload: TCreateChatPayload
   ): Promise<ControllerResponse<TChat>> {

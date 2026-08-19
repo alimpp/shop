@@ -150,8 +150,8 @@
     "semantic_hash": ""
   },
   "client/app/components/public/PublicProductDetails.vue": {
-    "mtime": 1786772742.831992,
-    "ast_hash": "66f819cfec774b247ec042f8d20ee066",
+    "mtime": 1787135767.9254014,
+    "ast_hash": "0156904f2f5dfee28cdf54aa742806d8",
     "semantic_hash": ""
   },
   "client/app/components/public/PublicProductFilters.vue": {
@@ -510,8 +510,8 @@
     "semantic_hash": ""
   },
   "client/app/features/chat/components/ChatMessage.vue": {
-    "mtime": 1786965460.59882,
-    "ast_hash": "477b395a15be2ca56d7ed16f94f41073",
+    "mtime": 1787135791.0716124,
+    "ast_hash": "178daf016a8290d4c96271caa6878ea0",
     "semantic_hash": ""
   },
   "client/app/features/chat/components/ChatMessageInput.vue": {
@@ -525,18 +525,18 @@
     "semantic_hash": ""
   },
   "client/app/features/chat/controllers/index.controller.ts": {
-    "mtime": 1786889769.6373827,
-    "ast_hash": "6d61e3d8cd788590de650defa7a576b4",
+    "mtime": 1787136307.1404514,
+    "ast_hash": "469605794c63238324bbec551a3f88e9",
     "semantic_hash": ""
   },
   "client/app/features/chat/data/index.store.ts": {
-    "mtime": 1786889769.6373827,
-    "ast_hash": "327a042e02f26c8008174f71520e9569",
+    "mtime": 1787135762.1143486,
+    "ast_hash": "9b7ea8380cecb91399dee52aad5ef71a",
     "semantic_hash": ""
   },
   "client/app/features/chat/models/index.model.ts": {
-    "mtime": 1786874396.9488933,
-    "ast_hash": "6659e5466a17d9ec8f128b3256ced2ee",
+    "mtime": 1787135790.4164953,
+    "ast_hash": "b1652e14829a3daca46d1d3c87527dcb",
     "semantic_hash": ""
   },
   "client/app/features/chat/services/index.service.ts": {
@@ -545,8 +545,8 @@
     "semantic_hash": ""
   },
   "client/app/features/chat/types/index.type.ts": {
-    "mtime": 1786889769.6373827,
-    "ast_hash": "0936f1c1daac6f0dec30759d47b4a207",
+    "mtime": 1787135725.046011,
+    "ast_hash": "46f7229e92fa19b71d36fb89c6f916bb",
     "semantic_hash": ""
   },
   "client/app/features/favorites/controllers/index.controller.ts": {
@@ -860,8 +860,8 @@
     "semantic_hash": ""
   },
   "client/app/pages/products/[slug].vue": {
-    "mtime": 1787127650.9806433,
-    "ast_hash": "6fdbea6aee92fbeaeb201d54eed9fb2a",
+    "mtime": 1787135769.8409927,
+    "ast_hash": "2a5a6ab002e3d2f4b1d363ea35db997c",
     "semantic_hash": ""
   },
   "client/app/pages/products/index.vue": {
@@ -2417,6 +2417,11 @@
   "client/app/features/orders/components/OrderDetailView.vue": {
     "mtime": 1787130622.954655,
     "ast_hash": "a7fb785590e0d708f8995e9a12f8a3df",
+    "semantic_hash": ""
+  },
+  "client/app/features/products/components/ProductSupportAsk.vue": {
+    "mtime": 1787135744.8694463,
+    "ast_hash": "97e5950ce2121afffc8d09b8dca727b9",
     "semantic_hash": ""
   }
 }

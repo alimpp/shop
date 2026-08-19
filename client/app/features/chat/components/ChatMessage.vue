@@ -130,7 +130,23 @@ const avatarSrc = computed(() => props.message.sender?.avatarUrl || undefined);
           :class="message.replyTo && !message.isDeleted ? 'pt-1.5' : ''"
         >
           <span v-if="message.isDeleted">پیام حذف شده</span>
-          <span v-else class="whitespace-pre-wrap">{{ message.content }}</span>
+          <span v-else class="whitespace-pre-wrap">
+            <template
+              v-for="(part, index) in message.contentParts"
+              :key="index"
+            >
+              <a
+                v-if="part.href"
+                :href="part.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="underline underline-offset-4"
+                :class="isOwnMessage ? 'text-white' : 'text-primary'"
+                @click.stop
+              >{{ part.text }}</a>
+              <span v-else>{{ part.text }}</span>
+            </template>
+          </span>
         </div>
       </div>
 
