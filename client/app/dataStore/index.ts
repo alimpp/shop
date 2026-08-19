@@ -13,6 +13,7 @@ import { ChatDS } from '~/features/chat/data/index.store'
 import { FavoritesDS } from '~/features/favorites/data/index.store'
 import { NotificationsDS } from '~/features/notifications/data/index.store'
 import { InteractionsDS } from '~/features/interactions/data/index.store'
+import { AddressesDS } from '~/features/addresses/data/index.store'
 
 export const initializeStores = () => {
   CategoriesDS.getInstance()
@@ -28,6 +29,7 @@ export const initializeStores = () => {
   FavoritesDS.getInstance()
   NotificationsDS.getInstance()
   InteractionsDS.getInstance()
+  AddressesDS.getInstance()
   getProfileDS()
   getCartDS()
 }
@@ -49,3 +51,4 @@ export const useChatDS = () => ChatDS.getInstance()
 export const useFavoritesDS = () => FavoritesDS.getInstance()
 export const useNotificationsDS = () => NotificationsDS.getInstance()
 export const useInteractionsDS = () => InteractionsDS.getInstance()
+export const useAddressesDS = () => AddressesDS.getInstance()

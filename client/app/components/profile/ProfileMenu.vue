@@ -62,7 +62,7 @@ const menuItems: ProfileMenuItem[] = [
     key: 'addresses',
     icon: 'i-lucide-map-pin',
     label: 'آدرس‌های ارسال شما',
-    description: '',
+    description: 'آدرس‌های ثبت‌شده برای ارسال سفارش',
     to: '/profile/addresses'
   },
   {
