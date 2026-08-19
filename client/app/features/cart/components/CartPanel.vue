@@ -2,6 +2,8 @@
 import { cartController } from '~/features/cart/controllers/index.controller'
 import { useCartDS } from '~/features/cart/data/index.store'
 import type { CartItemModel } from '~/features/cart/models/index.model'
+import CheckoutAddressModal from '~/features/orders/components/CheckoutAddressModal.vue'
+import { ordersController } from '~/features/orders/controllers/index.controller'
 
 withDefaults(
   defineProps<{
@@ -24,6 +26,7 @@ const totalPrice = computed(() => cartDS.getTotalPrice)
 const itemCount = computed(() => cartDS.getItemCount)
 
 const updatingItemId = ref<string | null>(null)
+const checkoutOpen = ref(false)
 
 function formatPrice(value: number): string {
   return new Intl.NumberFormat('fa-IR').format(value)
@@ -90,6 +93,30 @@ async function removeItem(item: CartItemModel): Promise<void> {
     title: 'آیتم از سبد حذف شد',
     color: 'success'
   })
+}
+
+async function openCheckout(): Promise<void> {
+  if (!items.value.length || submitting.value) return
+  checkoutOpen.value = true
+}
+
+async function confirmCheckout(addressId: string): Promise<void> {
+  const response = await ordersController.createOrder({ addressId })
+
+  if (!response.success || !response.data) {
+    toast.add({
+      title: response.message || 'ثبت سفارش ناموفق بود',
+      color: 'error'
+    })
+    return
+  }
+
+  checkoutOpen.value = false
+  toast.add({
+    title: 'سفارش با موفقیت ثبت شد',
+    color: 'success'
+  })
+  await navigateTo(`/profile/orders/${response.data.id}`)
 }
 
 async function clearCart(): Promise<void> {
@@ -364,11 +391,19 @@ onMounted(() => {
           color="primary"
           size="lg"
           icon="i-lucide-credit-card"
-          disabled
+          :loading="submitting"
+          @click="openCheckout"
         >
-          ادامه خرید (به‌زودی)
+          پرداخت و ثبت سفارش
         </UButton>
       </aside>
     </div>
+
+    <CheckoutAddressModal
+      v-model:open="checkoutOpen"
+      :submitting="submitting"
+      :paid-amount="totalPrice"
+      @confirm="confirmCheckout"
+    />
   </div>
 </template>

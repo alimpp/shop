@@ -14,6 +14,7 @@ import { FavoritesDS } from '~/features/favorites/data/index.store'
 import { NotificationsDS } from '~/features/notifications/data/index.store'
 import { InteractionsDS } from '~/features/interactions/data/index.store'
 import { AddressesDS } from '~/features/addresses/data/index.store'
+import { OrdersDS } from '~/features/orders/data/index.store'
 
 export const initializeStores = () => {
   CategoriesDS.getInstance()
@@ -30,6 +31,7 @@ export const initializeStores = () => {
   NotificationsDS.getInstance()
   InteractionsDS.getInstance()
   AddressesDS.getInstance()
+  OrdersDS.getInstance()
   getProfileDS()
   getCartDS()
 }
@@ -52,3 +54,4 @@ export const useFavoritesDS = () => FavoritesDS.getInstance()
 export const useNotificationsDS = () => NotificationsDS.getInstance()
 export const useInteractionsDS = () => InteractionsDS.getInstance()
 export const useAddressesDS = () => AddressesDS.getInstance()
+export const useOrdersDS = () => OrdersDS.getInstance()

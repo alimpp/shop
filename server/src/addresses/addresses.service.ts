@@ -57,6 +57,10 @@ export class AddressesService {
     return { id: address.id };
   }
 
+  async findOwned(userId: string, id: string) {
+    return this.toResponse(await this.getOwned(userId, id));
+  }
+
   private async getOwned(userId: string, id: string) {
     const address = await this.addressRepository.findOne({ where: { id } });
 

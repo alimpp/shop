@@ -59,6 +59,7 @@ export class ProductService {
     await this.ensureBrandExists(dto.brandId);
     this.ensureValidSalePrice(dto.price, dto.salePrice, 'محصول');
     this.ensureValidVariantSalePrices(dto.variants);
+    this.ensureStockMatchesVariants(dto.stock ?? 0, dto.variants);
 
     const slug = await this.ensureUniqueSlug(dto.slug);
     await this.ensureUniqueSku(dto.sku);
@@ -487,6 +488,13 @@ export class ProductService {
       'محصول',
     );
     this.ensureValidVariantSalePrices(dto.variants);
+    await this.ensureStockMatchesVariantsOnUpdate(
+      id,
+      typeof dto.stock === 'number'
+        ? dto.stock
+        : Number(existingProduct.stock ?? 0),
+      dto.variants,
+    );
 
     await this.ensureUniqueVariantSkus(dto.variants, id);
 
@@ -981,5 +989,46 @@ export class ProductService {
         `واریانت "${variant.name}"`,
       );
     }
+  }
+
+  private ensureStockMatchesVariants(
+    productStock: number,
+    variants?: Array<{ name?: string; stock?: number }>,
+  ): void {
+    if (!variants?.length) {
+      return;
+    }
+
+    const variantStockSum = variants.reduce(
+      (sum, variant) => sum + (Number(variant.stock) || 0),
+      0,
+    );
+    const totalStock = Number(productStock) || 0;
+
+    if (variantStockSum === totalStock) {
+      return;
+    }
+
+    throw new BadRequestException(
+      `موجودی محصول با مجموع موجودی واریانت‌ها هم‌خوانی ندارد. موجودی محصول ${totalStock.toLocaleString('fa-IR')} است اما جمع موجودی واریانت‌ها ${variantStockSum.toLocaleString('fa-IR')} شده است. لطفاً موجودی هر واریانت را طوری وارد کنید که جمع آن‌ها دقیقاً برابر موجودی کل محصول باشد.`,
+    );
+  }
+
+  private async ensureStockMatchesVariantsOnUpdate(
+    productId: string,
+    productStock: number,
+    variants?: CreateProductDto['variants'],
+  ): Promise<void> {
+    if (typeof variants !== 'undefined') {
+      this.ensureStockMatchesVariants(productStock, variants);
+      return;
+    }
+
+    const existingVariants = await this.productVariantRepository.find({
+      where: { productId },
+      select: ['id', 'stock', 'name'],
+    });
+
+    this.ensureStockMatchesVariants(productStock, existingVariants);
   }
 }

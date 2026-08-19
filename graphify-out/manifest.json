@@ -230,8 +230,8 @@
     "semantic_hash": ""
   },
   "client/app/config/navigation.ts": {
-    "mtime": 1786968651.7196012,
-    "ast_hash": "a3b666498f0779765121d42f169b122e",
+    "mtime": 1787129551.5797992,
+    "ast_hash": "52d442e41a7aaf951563e6ad93ec9828",
     "semantic_hash": ""
   },
   "client/app/config/public-navigation.ts": {
@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "client/app/dataStore/index.ts": {
-    "mtime": 1787124819.558026,
-    "ast_hash": "5909c1ad0602e9497c485010b819a7d0",
+    "mtime": 1787129556.3120565,
+    "ast_hash": "d6c6663a3b39c2e111de95651dd2b536",
     "semantic_hash": ""
   },
   "client/app/error.vue": {
@@ -635,8 +635,8 @@
     "semantic_hash": ""
   },
   "client/app/features/products/components/ProductFormModal.vue": {
-    "mtime": 1786772742.833992,
-    "ast_hash": "df893c5609c5da341bc3bc375105bf34",
+    "mtime": 1787130577.3380399,
+    "ast_hash": "60ae39ccbc88ab662499d59f395220a4",
     "semantic_hash": ""
   },
   "client/app/features/products/components/ProductsTable.vue": {
@@ -890,13 +890,13 @@
     "semantic_hash": ""
   },
   "client/app/pages/profile/notifications.vue": {
-    "mtime": 1786974575.9676404,
-    "ast_hash": "172b810380acff54efac8588ed5a7ef4",
+    "mtime": 1787130574.6186209,
+    "ast_hash": "abc17010c064edae3c1c609211cd7fa0",
     "semantic_hash": ""
   },
   "client/app/pages/profile/orders.vue": {
-    "mtime": 1786785079.5975554,
-    "ast_hash": "7bd6336e4c8af96dea5e86fe67ed5c01",
+    "mtime": 1787129529.1488001,
+    "ast_hash": "ea5f2cc4e8a7f10c5e13bf3acbd2405b",
     "semantic_hash": ""
   },
   "client/app/pages/profile/payments.vue": {
@@ -1040,8 +1040,8 @@
     "semantic_hash": ""
   },
   "server/src/app.module.ts": {
-    "mtime": 1787124627.8061547,
-    "ast_hash": "8975e159af6a06f883f03dc3302d0cbf",
+    "mtime": 1787129398.4675658,
+    "ast_hash": "30148edc49e8ba34bce0791c9af5275b",
     "semantic_hash": ""
   },
   "server/src/app.service.ts": {
@@ -1635,8 +1635,8 @@
     "semantic_hash": ""
   },
   "server/src/product/product.service.ts": {
-    "mtime": 1786772742.836992,
-    "ast_hash": "935629676baa7c3b737e0936d23e9dfb",
+    "mtime": 1787130519.2609541,
+    "ast_hash": "2af0c29e389a8a1ee7833c61b48c91b9",
     "semantic_hash": ""
   },
   "server/src/story/dto/create-story.dto.ts": {
@@ -2120,8 +2120,8 @@
     "semantic_hash": ""
   },
   "client/app/features/notifications/types/index.type.ts": {
-    "mtime": 1786967930.5674224,
-    "ast_hash": "0db11c8f30dd6f91a670227f1877c8ce",
+    "mtime": 1787130572.726622,
+    "ast_hash": "ffb4e6275cecc856373272958fe557cc",
     "semantic_hash": ""
   },
   "server/src/notifications/dto/create-notification.dto.ts": {
@@ -2140,8 +2140,8 @@
     "semantic_hash": ""
   },
   "server/src/notifications/enums/notification-type.enum.ts": {
-    "mtime": 1786967899.1335604,
-    "ast_hash": "32764fce5e19b56b93dbd5a8030f9c64",
+    "mtime": 1787130520.3967428,
+    "ast_hash": "25e439e55f962bff634590f67ac46e78",
     "semantic_hash": ""
   },
   "server/src/notifications/notifications.controller.ts": {
@@ -2160,8 +2160,8 @@
     "semantic_hash": ""
   },
   "client/app/features/cart/components/CartPanel.vue": {
-    "mtime": 1787127647.1127284,
-    "ast_hash": "e40981cb7d8db181bdb91ec55d4531d5",
+    "mtime": 1787129513.5086524,
+    "ast_hash": "7e4817350abcf8793842ff029e96397b",
     "semantic_hash": ""
   },
   "client/app/features/cart/controllers/index.controller.ts": {
@@ -2305,8 +2305,8 @@
     "semantic_hash": ""
   },
   "server/src/addresses/addresses.service.ts": {
-    "mtime": 1787124623.6254044,
-    "ast_hash": "fca14c09137384ee86230e2a5b141d56",
+    "mtime": 1787129342.7973373,
+    "ast_hash": "089ef45f93520634f606751691a62b45",
     "semantic_hash": ""
   },
   "server/src/addresses/dto/create-address.dto.ts": {
@@ -2322,6 +2322,101 @@
   "server/src/addresses/entities/address.entity.ts": {
     "mtime": 1787124610.93299,
     "ast_hash": "b6ce94e29ef5060b37c56caa044f93d7",
+    "semantic_hash": ""
+  },
+  "client/app/features/orders/components/CheckoutAddressModal.vue": {
+    "mtime": 1787129488.711347,
+    "ast_hash": "746ab7fa783afe06bf2b7a34d009c966",
+    "semantic_hash": ""
+  },
+  "client/app/features/orders/controllers/index.controller.ts": {
+    "mtime": 1787130655.4223986,
+    "ast_hash": "55d8e2f97fa053f9b4b3013d916b17aa",
+    "semantic_hash": ""
+  },
+  "client/app/features/orders/data/index.store.ts": {
+    "mtime": 1787129451.4120657,
+    "ast_hash": "f7c3276a4b6027b2329de5820eb949ee",
+    "semantic_hash": ""
+  },
+  "client/app/features/orders/models/index.model.ts": {
+    "mtime": 1787129435.8493419,
+    "ast_hash": "8c91065f4dd8a0a5633c59942e85ccf9",
+    "semantic_hash": ""
+  },
+  "client/app/features/orders/services/index.service.ts": {
+    "mtime": 1787129458.7825806,
+    "ast_hash": "b8535a17f0d6f0761c3ec97f751d8bcf",
+    "semantic_hash": ""
+  },
+  "client/app/features/orders/types/index.type.ts": {
+    "mtime": 1787130577.3380399,
+    "ast_hash": "7737e8eeabf51e592e95681daa7023d2",
+    "semantic_hash": ""
+  },
+  "client/app/pages/admin/orders/index.vue": {
+    "mtime": 1787130659.5155563,
+    "ast_hash": "6ea896c85352205e4f3dca95165045b8",
+    "semantic_hash": ""
+  },
+  "client/app/pages/profile/orders/[id].vue": {
+    "mtime": 1787130640.9320886,
+    "ast_hash": "98f8df4810d55f08f82821fe4e61f399",
+    "semantic_hash": ""
+  },
+  "server/src/orders/dto/create-order.dto.ts": {
+    "mtime": 1787129353.234701,
+    "ast_hash": "70e34f22b5bd04d40add92cded6ce6cc",
+    "semantic_hash": ""
+  },
+  "server/src/orders/dto/query-orders.dto.ts": {
+    "mtime": 1787129355.670441,
+    "ast_hash": "eb64338fb808b254c387b60251a0c6a9",
+    "semantic_hash": ""
+  },
+  "server/src/orders/dto/update-order-status.dto.ts": {
+    "mtime": 1787129355.567354,
+    "ast_hash": "1832f60b5afa88d1198ce8809e8c4c9b",
+    "semantic_hash": ""
+  },
+  "server/src/orders/entities/order-item.entity.ts": {
+    "mtime": 1787129385.6074443,
+    "ast_hash": "f1ca6f584ee04d049b07bccd2b9f6586",
+    "semantic_hash": ""
+  },
+  "server/src/orders/entities/order.entity.ts": {
+    "mtime": 1787129351.1121185,
+    "ast_hash": "bb4949c72fb00dea1308b894e191dd55",
+    "semantic_hash": ""
+  },
+  "server/src/orders/enums/order-status.enum.ts": {
+    "mtime": 1787129342.799937,
+    "ast_hash": "6bc67a6c18d3a823fac085811aba3732",
+    "semantic_hash": ""
+  },
+  "server/src/orders/orders.controller.ts": {
+    "mtime": 1787129395.8565383,
+    "ast_hash": "2000396a1bafba1c771bfc4a5d3d466b",
+    "semantic_hash": ""
+  },
+  "server/src/orders/orders.module.ts": {
+    "mtime": 1787130521.764495,
+    "ast_hash": "b7cbf9e9c27038c16d898571dc98149e",
+    "semantic_hash": ""
+  },
+  "server/src/orders/orders.service.ts": {
+    "mtime": 1787130566.8925674,
+    "ast_hash": "60a9d90f663c67936c2c9e3400bc873d",
+    "semantic_hash": ""
+  },
+  "server/src/orders/types/order-snapshot.ts": {
+    "mtime": 1787129345.2650633,
+    "ast_hash": "cabeb5152439c5f88bf059b921e68f68",
+    "semantic_hash": ""
+  },
+  "client/app/features/orders/components/OrderDetailView.vue": {
+    "mtime": 1787130622.954655,
+    "ast_hash": "a7fb785590e0d708f8995e9a12f8a3df",
     "semantic_hash": ""
   }
 }

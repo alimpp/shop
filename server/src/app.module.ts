@@ -20,6 +20,7 @@ import { ChatModule } from './chat/chat.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { CartModule } from './cart/cart.module';
 import { AddressesModule } from './addresses/addresses.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AddressesModule } from './addresses/addresses.module';
     NotificationsModule,
     CartModule,
     AddressesModule,
+    OrdersModule,
     TypeOrmModule.forRoot(pgConfig),
   ],
   controllers: [AppController],

@@ -203,6 +203,22 @@ const productSchema = z.object({
       path: ["thumbnailUrl"]
     });
   }
+  if (data.variants.length > 0) {
+    const variantStockSum = data.variants.reduce(
+      (sum, variant) => sum + (Number(variant.stock) || 0),
+      0
+    );
+    const productStock = Number(data.stock) || 0;
+
+    if (variantStockSum !== productStock) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `موجودی محصول (${productStock.toLocaleString("fa-IR")}) با مجموع موجودی واریانت‌ها (${variantStockSum.toLocaleString("fa-IR")}) برابر نیست. مجموع موجودی واریانت‌ها باید دقیقاً برابر موجودی کل محصول باشد.`,
+        path: ["stock"]
+      });
+    }
+  }
+
   const variantSkus = new Set<string>();
   data.variants.forEach((variant, index) => {
     if (variantSkus.has(variant.sku.trim())) {

@@ -2,9 +2,11 @@ export type TNotificationType =
   | "message"
   | "transaction"
   | "order_registered"
+  | "order_confirmed"
   | "order_preparing"
   | "order_shipping"
-  | "order_cancelled";
+  | "order_cancelled"
+  | "order_returned";
 
 export interface TNotification {
   id: string;
@@ -46,8 +48,10 @@ export interface TCreateNotificationPayload {
 export const NOTIFICATION_TYPE_LABELS: Record<TNotificationType, string> = {
   message: "پیام",
   transaction: "تراکنش",
-  order_registered: "سفارش ثبت شده",
+  order_registered: "ثبت سفارش",
+  order_confirmed: "تایید سفارش",
   order_preparing: "سفارش در حال آماده‌سازی",
-  order_shipping: "سفارش در حال ارسال",
-  order_cancelled: "سفارش لغو شده",
+  order_shipping: "ارسال سفارش",
+  order_cancelled: "لغو سفارش",
+  order_returned: "مرجوع سفارش",
 };
