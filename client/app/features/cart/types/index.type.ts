@@ -1,3 +1,12 @@
+export interface TCartSelectedOption {
+  attributeId?: string
+  attributeName: string
+  optionValueId?: string
+  attributeValueId?: string
+  valueId?: string
+  value: string
+}
+
 export interface TCartVariantOption {
   attributeId?: string
   attributeName: string
@@ -34,6 +43,7 @@ export interface TCartItem {
   updated_at: string
   product: TCartProductSummary
   variant: TCartVariantSummary | null
+  selectedOptions: TCartSelectedOption[]
 }
 
 export interface TCartResponse {
@@ -46,6 +56,7 @@ export interface TCartResponse {
 export interface TAddCartItemPayload {
   productId: string
   variantId?: string
+  selectedOptions?: Array<{ optionValueId: string }>
   quantity: number
 }
 

@@ -12,6 +12,14 @@ import { UserEntity } from '../../entities/user.entity';
 import { Product } from '../../product/entities/product.entity';
 import { ProductVariant } from '../../product/entities/product-variant.entity';
 
+export interface CartSelectedOptionSnapshot {
+  attributeId: string;
+  attributeName: string;
+  optionValueId: string;
+  attributeValueId: string;
+  value: string;
+}
+
 @Entity('cart_items')
 @Index(['userId', 'lineKey'], { unique: true })
 @Index(['userId'])
@@ -43,9 +51,12 @@ export class CartItem {
   @JoinColumn({ name: 'variantId' })
   variant?: ProductVariant | null;
 
-  /** variantId or `p:{productId}` — keeps uniqueness when variant is null */
+  /** product/variant + selected option values */
   @Column({ default: '' })
   lineKey!: string;
+
+  @Column({ type: 'jsonb', default: [] })
+  selectedOptions!: CartSelectedOptionSnapshot[];
 
   @Column({ type: 'int', default: 1 })
   quantity!: number;

@@ -30,7 +30,7 @@ function formatPrice(value: number): string {
 }
 
 function variantLabel(item: CartItemModel): string {
-  return item.variantLabel
+  return item.optionsLabel
 }
 
 async function ensureAuth(): Promise<boolean> {
@@ -239,8 +239,20 @@ onMounted(() => {
                   >
                     {{ item.product.name }}
                   </NuxtLink>
+                  <div
+                    v-if="item.selectedOptions.length"
+                    class="flex flex-wrap gap-1.5 pt-1"
+                  >
+                    <span
+                      v-for="option in item.selectedOptions"
+                      :key="option.optionValueId || option.value"
+                      class="rounded-lg bg-elevated px-2 py-1 text-[11px] font-medium text-toned ring-1 ring-default"
+                    >
+                      {{ option.label }}
+                    </span>
+                  </div>
                   <p
-                    v-if="variantLabel(item)"
+                    v-else-if="variantLabel(item)"
                     class="text-xs leading-6 text-toned"
                   >
                     {{ variantLabel(item) }}

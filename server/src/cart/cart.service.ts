@@ -10,7 +10,10 @@ import { Product } from '../product/entities/product.entity';
 import { ProductVariant } from '../product/entities/product-variant.entity';
 import { AddCartItemDto } from './dto/add-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
-import { CartItem } from './entities/cart-item.entity';
+import {
+  CartItem,
+  CartSelectedOptionSnapshot,
+} from './entities/cart-item.entity';
 
 @Injectable()
 export class CartService {
@@ -37,7 +40,15 @@ export class CartService {
   async addItem(userId: string, dto: AddCartItemDto) {
     const product = await this.findActiveProduct(dto.productId);
     const variant = await this.resolveVariantForAdd(product, dto.variantId);
-    const lineKey = this.buildLineKey(product.id, variant?.id ?? null);
+    const selectedOptions = this.resolveSelectedOptions(
+      product,
+      dto.selectedOptions,
+    );
+    const lineKey = this.buildLineKey(
+      product.id,
+      variant?.id ?? null,
+      selectedOptions,
+    );
     const nextQuantity = dto.quantity;
 
     const existing = await this.cartItemRepository.findOne({
@@ -56,6 +67,7 @@ export class CartService {
 
     if (existing) {
       existing.quantity = targetQuantity;
+      existing.selectedOptions = selectedOptions;
       await this.cartItemRepository.save(existing);
     } else {
       await this.cartItemRepository.save(
@@ -64,6 +76,7 @@ export class CartService {
           productId: product.id,
           variantId: variant?.id ?? null,
           lineKey,
+          selectedOptions,
           quantity: nextQuantity,
         }),
       );
@@ -105,8 +118,63 @@ export class CartService {
     };
   }
 
-  private buildLineKey(productId: string, variantId: string | null): string {
-    return variantId ?? `p:${productId}`;
+  private buildLineKey(
+    productId: string,
+    variantId: string | null,
+    selectedOptions: CartSelectedOptionSnapshot[],
+  ): string {
+    const base = variantId ?? `p:${productId}`;
+    if (!selectedOptions.length) {
+      return base;
+    }
+
+    const optionPart = selectedOptions
+      .map((option) => option.attributeValueId)
+      .sort()
+      .join(',');
+
+    return `${base}|${optionPart}`;
+  }
+
+  private resolveSelectedOptions(
+    product: Product,
+    incoming?: Array<{ optionValueId: string }>,
+  ): CartSelectedOptionSnapshot[] {
+    const productOptions = (product.options ?? []).filter(
+      (option) => Array.isArray(option.values) && option.values.length > 0,
+    );
+
+    if (!productOptions.length) {
+      return [];
+    }
+
+    const incomingIds = (incoming ?? [])
+      .map((item) => item.optionValueId)
+      .filter(Boolean);
+
+    const snapshots: CartSelectedOptionSnapshot[] = [];
+
+    for (const option of productOptions) {
+      const matched =
+        option.values.find((value) => incomingIds.includes(value.id)) ??
+        option.values[0];
+
+      if (!matched) {
+        throw new BadRequestException(
+          `مقدار معتبری برای ویژگی ${option.attribute?.name ?? ''} انتخاب نشده است`,
+        );
+      }
+
+      snapshots.push({
+        attributeId: option.attributeId,
+        attributeName: option.attribute?.name ?? '',
+        optionValueId: matched.id,
+        attributeValueId: matched.attributeValueId,
+        value: matched.attributeValue?.value ?? '',
+      });
+    }
+
+    return snapshots.sort((a, b) => a.attributeId.localeCompare(b.attributeId));
   }
 
   private async getOwnedItem(userId: string, itemId: string) {
@@ -131,6 +199,14 @@ export class CartService {
       relations: {
         variants: true,
         medias: true,
+        options: {
+          attribute: true,
+          values: {
+            attributeValue: {
+              attribute: true,
+            },
+          },
+        },
       },
     });
 
@@ -301,6 +377,7 @@ export class CartService {
           id: item.id,
           productId: item.productId,
           variantId: item.variantId,
+          selectedOptions: item.selectedOptions ?? [],
           quantity: item.quantity,
           unitPrice,
           lineTotal,

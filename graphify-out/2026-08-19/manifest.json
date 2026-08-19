@@ -65,8 +65,8 @@
     "semantic_hash": ""
   },
   "client/app/components/profile/ProfileMenu.vue": {
-    "mtime": 1786889769.6373827,
-    "ast_hash": "624dbf985f51a1ae8173811e675c3a1e",
+    "mtime": 1787124819.706338,
+    "ast_hash": "e746c72e02d928b4f76b644e0e37650c",
     "semantic_hash": ""
   },
   "client/app/components/profile/ProfileShell.vue": {
@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "client/app/dataStore/index.ts": {
-    "mtime": 1786974620.9014673,
-    "ast_hash": "8dbace9d09eb2e96d6f34c4e1e5d251c",
+    "mtime": 1787124819.558026,
+    "ast_hash": "5909c1ad0602e9497c485010b819a7d0",
     "semantic_hash": ""
   },
   "client/app/error.vue": {
@@ -870,8 +870,8 @@
     "semantic_hash": ""
   },
   "client/app/pages/profile/addresses.vue": {
-    "mtime": 1786785079.5936127,
-    "ast_hash": "4bae0290a73eee033ff376c821ed914d",
+    "mtime": 1787124815.54364,
+    "ast_hash": "cab8ee832d584de5f9b218221e68c16f",
     "semantic_hash": ""
   },
   "client/app/pages/profile/cart.vue": {
@@ -1040,8 +1040,8 @@
     "semantic_hash": ""
   },
   "server/src/app.module.ts": {
-    "mtime": 1786973255.7204864,
-    "ast_hash": "95e30b06164df5bf8aa2447e1d10d450",
+    "mtime": 1787124627.8061547,
+    "ast_hash": "8975e159af6a06f883f03dc3302d0cbf",
     "semantic_hash": ""
   },
   "server/src/app.service.ts": {
@@ -2252,6 +2252,81 @@
   "client/app/features/notifications/models/index.model.ts": {
     "mtime": 1786974514.1436145,
     "ast_hash": "2fa5d64264dae9ee82def971c73cf89d",
+    "semantic_hash": ""
+  },
+  "client/app/features/addresses/components/AddressDeleteConfirmModal.vue": {
+    "mtime": 1787124815.3169847,
+    "ast_hash": "958b97225649b727d2ead8cfce81e9fa",
+    "semantic_hash": ""
+  },
+  "client/app/features/addresses/components/AddressFormModal.vue": {
+    "mtime": 1787124848.964864,
+    "ast_hash": "8c60dc7785739402453b56b68fcbe349",
+    "semantic_hash": ""
+  },
+  "client/app/features/addresses/controllers/index.controller.ts": {
+    "mtime": 1787124733.9154928,
+    "ast_hash": "f7b3379173471c484a0e58fe469915be",
+    "semantic_hash": ""
+  },
+  "client/app/features/addresses/data/index.store.ts": {
+    "mtime": 1787124727.0651236,
+    "ast_hash": "f4b935d3fe5c438eb63c5f511d95bf5a",
+    "semantic_hash": ""
+  },
+  "client/app/features/addresses/data/iran-locations.ts": {
+    "mtime": 1787124708.5939434,
+    "ast_hash": "63dfa873421ec7f80fcdcffbb0a5f615",
+    "semantic_hash": ""
+  },
+  "client/app/features/addresses/models/index.model.ts": {
+    "mtime": 1787124719.840053,
+    "ast_hash": "50921966a06770b9918f5a658781a2dd",
+    "semantic_hash": ""
+  },
+  "client/app/features/addresses/services/index.service.ts": {
+    "mtime": 1787124733.5307486,
+    "ast_hash": "35c941ccd479616b3ea73c3eb9775452",
+    "semantic_hash": ""
+  },
+  "client/app/features/addresses/types/index.type.ts": {
+    "mtime": 1787124712.3299844,
+    "ast_hash": "232045959686c429f77096df3127200a",
+    "semantic_hash": ""
+  },
+  "client/app/pages/profile/address.vue": {
+    "mtime": 1787124818.115624,
+    "ast_hash": "b5e87df963f36cc93c62d223aff7989e",
+    "semantic_hash": ""
+  },
+  "server/src/addresses/addresses.controller.ts": {
+    "mtime": 1787124625.0994632,
+    "ast_hash": "1521fefab0939d6d6e35ba4443c64d70",
+    "semantic_hash": ""
+  },
+  "server/src/addresses/addresses.module.ts": {
+    "mtime": 1787124627.8094976,
+    "ast_hash": "bb0ac2ed66e31d7e36c2da496f059b67",
+    "semantic_hash": ""
+  },
+  "server/src/addresses/addresses.service.ts": {
+    "mtime": 1787124623.6254044,
+    "ast_hash": "fca14c09137384ee86230e2a5b141d56",
+    "semantic_hash": ""
+  },
+  "server/src/addresses/dto/create-address.dto.ts": {
+    "mtime": 1787124610.93399,
+    "ast_hash": "c90d2730b76f5dff78fbb9d63ffbb078",
+    "semantic_hash": ""
+  },
+  "server/src/addresses/dto/update-address.dto.ts": {
+    "mtime": 1787124618.912723,
+    "ast_hash": "3572a031eea40ea004ec9be32c5563a1",
+    "semantic_hash": ""
+  },
+  "server/src/addresses/entities/address.entity.ts": {
+    "mtime": 1787124610.93299,
+    "ast_hash": "b6ce94e29ef5060b37c56caa044f93d7",
     "semantic_hash": ""
   }
 }

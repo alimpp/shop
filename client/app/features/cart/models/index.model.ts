@@ -1,9 +1,35 @@
 import type {
   TCartItem,
   TCartProductSummary,
+  TCartSelectedOption,
   TCartVariantOption,
   TCartVariantSummary
 } from '../types/index.type'
+
+class CartSelectedOptionModel implements TCartSelectedOption {
+  attributeId?: string
+  attributeName: string
+  optionValueId?: string
+  attributeValueId?: string
+  valueId?: string
+  value: string
+
+  constructor(data?: Partial<TCartSelectedOption>) {
+    this.attributeId = data?.attributeId
+    this.attributeName = data?.attributeName ?? ''
+    this.optionValueId = data?.optionValueId
+    this.attributeValueId = data?.attributeValueId
+    this.valueId = data?.valueId ?? data?.attributeValueId
+    this.value = data?.value ?? ''
+  }
+
+  get label(): string {
+    if (this.attributeName && this.value) {
+      return `${this.attributeName}: ${this.value}`
+    }
+    return this.value
+  }
+}
 
 class CartVariantOptionModel implements TCartVariantOption {
   attributeId?: string
@@ -80,6 +106,7 @@ export class CartItemModel implements TCartItem {
   updated_at: string
   product: CartProductSummaryModel
   variant: CartVariantSummaryModel | null
+  selectedOptions: CartSelectedOptionModel[]
 
   constructor(data?: Partial<TCartItem>) {
     this.id = data?.id ?? ''
@@ -94,14 +121,29 @@ export class CartItemModel implements TCartItem {
     this.variant = data?.variant
       ? new CartVariantSummaryModel(data.variant)
       : null
+    this.selectedOptions =
+      data?.selectedOptions?.map(option => new CartSelectedOptionModel(option))
+      ?? []
   }
 
   get thumbnail(): string {
     return this.variant?.image || this.product.image || ''
   }
 
-  get variantLabel(): string {
+  get optionsLabel(): string {
+    const fromSelected = this.selectedOptions
+      .map(option => option.label)
+      .filter(Boolean)
+
+    if (fromSelected.length) {
+      return fromSelected.join(' · ')
+    }
+
     return this.variant?.label || ''
+  }
+
+  get variantLabel(): string {
+    return this.optionsLabel
   }
 
   get hasVariant(): boolean {

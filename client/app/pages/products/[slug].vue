@@ -188,6 +188,16 @@ function ensureCartSelections(): void {
   }
 }
 
+function collectSelectedOptions(p: TProduct): Array<{ optionValueId: string }> {
+  return (p.options ?? [])
+    .map((option) => {
+      const optionKey = option.attribute?.slug ?? option.attributeId
+      const optionValueId = selectedOptions[optionKey]
+      return optionValueId ? { optionValueId } : null
+    })
+    .filter((item): item is { optionValueId: string } => Boolean(item))
+}
+
 function requireLogin(): boolean {
   if (!isLoggedIn.value) {
     toast.add({
@@ -380,9 +390,15 @@ async function addToCart(): Promise<void> {
 
   ensureCartSelections()
 
-  const payload: { productId: string; quantity: number; variantId?: string } = {
+  const payload: {
+    productId: string
+    quantity: number
+    variantId?: string
+    selectedOptions?: Array<{ optionValueId: string }>
+  } = {
     productId: product.value.id,
-    quantity: quantity.value
+    quantity: quantity.value,
+    selectedOptions: collectSelectedOptions(product.value)
   }
 
   if (hasVariants.value) {
