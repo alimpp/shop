@@ -68,7 +68,7 @@ class ChatController extends BaseController<ChatService> {
     }
 
     const response: ServerResponse<TChatMessagesData> =
-      await this.service.getMessages(chatId, query);
+      await this.service.getMessages(chatId, query, options);
 
     if (response.success) {
       this.chatDS.setMessages(response.data.items);

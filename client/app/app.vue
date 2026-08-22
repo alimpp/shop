@@ -91,6 +91,7 @@ useHead({
 <template>
   <UApp>
     <NuxtLoadingIndicator />
+    <AppGlobalLoader />
 
     <NuxtLayout>
       <NuxtPage />

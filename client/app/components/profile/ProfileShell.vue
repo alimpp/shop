@@ -12,8 +12,6 @@ const toast = useToast()
 
 const profileDS = useUserProfileDS()
 
-const profileLoading = ref(false)
-
 const isLoggedIn = computed(() => Boolean(token.value))
 
 const backTarget = computed(() => props.backTo ?? '/profile')
@@ -21,19 +19,16 @@ const backTarget = computed(() => props.backTo ?? '/profile')
 async function loadProfile(): Promise<void> {
   if (!token.value || profileDS.getIsAuth) return
 
-  profileLoading.value = true
   const response = await profileUserController.getProfile()
 
   if (response.success && response.data) {
     profileDS.setUser(response.data)
-  } else {
+  } else if (response.message) {
     toast.add({
       title: response.message,
       color: 'error'
     })
   }
-
-  profileLoading.value = false
 }
 
 onMounted(() => {
@@ -97,17 +92,7 @@ onMounted(() => {
         </nav>
       </div>
 
-      <div
-        v-if="profileLoading"
-        class="flex items-center justify-center py-20"
-      >
-        <UIcon
-          name="i-lucide-loader-circle"
-          class="size-8 animate-spin text-primary"
-        />
-      </div>
-
-      <slot v-else />
+      <slot />
     </template>
   </section>
 </template>

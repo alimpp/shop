@@ -4,6 +4,12 @@ import { useCustomFetch } from "../composables/useCustomFetch";
 
 type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
 
+interface AppRequestOptions {
+  query?: Record<string, any>;
+  headers?: Record<string, string>;
+  silent?: boolean;
+}
+
 interface RequestErrorShape {
   response?: {
     _data?: {
@@ -44,20 +50,20 @@ export abstract class BaseApp<T extends { id: string | number }> {
     url: string,
     method: HttpMethod,
     body?: any,
-    query?: Record<string, any>,
-    headers?: Record<string, string>,
+    options: AppRequestOptions = {},
   ): Promise<T> {
     const api = useCustomFetch();
     const isFormData = body instanceof FormData;
     try {
       const response = await api(url, {
         method,
-        query,
+        query: options.query,
         body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
         headers: {
           ...(isFormData ? {} : { "Content-Type": "application/json" }),
-          ...headers,
+          ...options.headers,
         },
+        silent: options.silent,
       });
       return response as T;
     } catch (err: unknown) {
@@ -65,32 +71,56 @@ export abstract class BaseApp<T extends { id: string | number }> {
     }
   }
 
-  public async Get<T>(url: string, query?: Record<string, any>): Promise<T> {
-    return this.request<T>(url, "GET", undefined, query);
+  public async Get<T>(
+    url: string,
+    query?: Record<string, any>,
+    options?: Pick<AppRequestOptions, "silent" | "headers">,
+  ): Promise<T> {
+    return this.request<T>(url, "GET", undefined, { query, ...options });
   }
 
-  public async Post<T>(url: string, body: any): Promise<T> {
-    return this.request<T>(url, "POST", body);
+  public async Post<T>(
+    url: string,
+    body: any,
+    options?: Pick<AppRequestOptions, "silent" | "headers">,
+  ): Promise<T> {
+    return this.request<T>(url, "POST", body, options);
   }
 
-  public async Patch<T>(url: string, body: any): Promise<T> {
-    return this.request<T>(url, "PATCH", body);
+  public async Patch<T>(
+    url: string,
+    body: any,
+    options?: Pick<AppRequestOptions, "silent" | "headers">,
+  ): Promise<T> {
+    return this.request<T>(url, "PATCH", body, options);
   }
 
-  public async Put<T>(url: string, body: any): Promise<T> {
-    return this.request<T>(url, "PUT", body);
+  public async Put<T>(
+    url: string,
+    body: any,
+    options?: Pick<AppRequestOptions, "silent" | "headers">,
+  ): Promise<T> {
+    return this.request<T>(url, "PUT", body, options);
   }
 
-  public async Delete<T>(url: string): Promise<T> {
-    return this.request<T>(url, "DELETE");
+  public async Delete<T>(
+    url: string,
+    options?: Pick<AppRequestOptions, "silent" | "headers">,
+  ): Promise<T> {
+    return this.request<T>(url, "DELETE", undefined, options);
   }
 
-  public async Upload<T>(url: string, body: FormData): Promise<T> {
+  public async Upload<T>(
+    url: string,
+    body: FormData,
+    options?: Pick<AppRequestOptions, "silent" | "headers">,
+  ): Promise<T> {
     const api = useCustomFetch();
     try {
       const response = await api(url, {
         method: "POST",
         body,
+        silent: options?.silent,
       });
       return response as T;
     } catch (err) {

@@ -1,22 +1,8 @@
 <script setup lang="ts">
-import { productsController } from '~/features/products/controllers/index.controller';
 import { ProductsDS } from '~/features/products/data/index.store';
 
 const productsDS = ProductsDS.getInstance();
-
 const products = computed(() => productsDS.getProducts);
-
-async function fetchProducts(): Promise<void> {
-  await productsController.getProducts({
-    status: 'published',
-    isActive: true,
-    limit: 100,
-  });
-}
-
-onMounted(() => {
-  fetchProducts();
-});
 </script>
 
 <template>

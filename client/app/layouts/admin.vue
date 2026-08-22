@@ -9,14 +9,22 @@ const footerLinks = computed(() => links.value[1] ?? []);
 
 useDashboard();
 
-onMounted(async () => {
+onMounted(() => {
   const token = useCookie<string>("token");
-  if (token.value) {
-    const { profileAdminController } = await import(
+  if (!token.value) return;
+
+  const schedule =
+    typeof window.requestIdleCallback === "function"
+      ? window.requestIdleCallback
+      : (cb: () => void) => window.setTimeout(cb, 1);
+
+  schedule(() => {
+    void import(
       "~/features/profile/admin/controllers/index.controller"
+    ).then(({ profileAdminController }) =>
+      profileAdminController.getAdminProfile({ silent: true }),
     );
-    await profileAdminController.getAdminProfile();
-  }
+  });
 });
 </script>
 

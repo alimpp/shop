@@ -33,11 +33,15 @@ const avatarSrc = computed(() => props.message.sender?.avatarUrl || undefined);
 
 <template>
   <div
-    class="group flex gap-2.5 px-4 py-1"
-    :class="isOwnMessage ? 'flex-row-reverse' : 'flex-row'"
-    @mouseenter="showActions = true"
-    @mouseleave="showActions = false"
+    class="flex w-full px-4 py-1"
+    :class="isOwnMessage ? 'justify-start' : 'justify-end'"
   >
+    <div
+      class="group flex max-w-[min(78%,28rem)] gap-2.5"
+      :class="isOwnMessage ? 'flex-row' : 'flex-row-reverse'"
+      @mouseenter="showActions = true"
+      @mouseleave="showActions = false"
+    >
     <div
       class="mt-auto mb-5 shrink-0"
       :class="showSender ? 'visible' : 'invisible'"
@@ -56,7 +60,7 @@ const avatarSrc = computed(() => props.message.sender?.avatarUrl || undefined);
     </div>
 
     <div
-      class="flex max-w-[min(78%,28rem)] flex-col gap-1"
+      class="flex min-w-0 flex-1 flex-col gap-1"
       :class="isOwnMessage ? 'items-end' : 'items-start'"
     >
       <p
@@ -77,8 +81,8 @@ const avatarSrc = computed(() => props.message.sender?.avatarUrl || undefined);
           message.isDeleted
             ? 'rounded-2xl bg-elevated/60 px-3.5 py-2.5 italic text-muted'
             : isOwnMessage
-              ? 'rounded-2xl rounded-bl-md bg-primary text-white'
-              : 'rounded-2xl rounded-br-md border border-default bg-elevated text-highlighted',
+              ? 'rounded-2xl rounded-br-md bg-primary text-white'
+              : 'rounded-2xl rounded-bl-md border border-default bg-elevated text-highlighted',
         ]"
       >
         <div
@@ -187,6 +191,7 @@ const avatarSrc = computed(() => props.message.sender?.avatarUrl || undefined);
           </button>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </template>

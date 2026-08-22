@@ -2,12 +2,16 @@
 import { bannersController } from "~/features/banners/controllers/index.controller";
 import { storiesController } from "~/features/stories/controllers/index.controller";
 import { categoriesController } from "~/features/categories/controllers/index.controller";
+import { productsController } from "~/features/products/controllers/index.controller";
 import { BannersDS } from "~/features/banners/data/index.store";
 import { StoriesDS } from "~/features/stories/data/index.store";
 import { CategoriesDS } from "~/features/categories/data/index.store";
-import type { TBanner } from "~/features/banners/types/index.type";
 import type { TStory } from "~/features/stories/types/index.type";
 import { SITE_NAME, toAbsoluteUrl } from "~/utils/seo";
+
+const PublicStoryViewer = defineAsyncComponent(
+  () => import("~/components/public/PublicStoryViewer.vue")
+);
 
 const bannersDS = BannersDS.getInstance();
 const storiesDS = StoriesDS.getInstance();
@@ -18,6 +22,33 @@ const requestURL = useRequestURL();
 const banners = computed(() => bannersDS.getBanners);
 const stories = computed(() => storiesDS.getStories);
 const categories = computed(() => categoriesDS.getCategories);
+
+const { pending: homePending } = await useAsyncData(
+  "home-page-data",
+  async () => {
+    const responses = await Promise.all([
+      bannersController.getBanners(),
+      storiesController.getStories(),
+      categoriesController.getCategories(),
+      productsController.getProducts({
+        status: "published",
+        isActive: true,
+        limit: 100,
+      }),
+    ]);
+
+    const failed = responses.find((response) => !response.success);
+    if (failed && import.meta.client) {
+      toast.add({
+        title: failed.message || "دریافت اطلاعات صفحه اصلی ناموفق بود",
+        color: "error",
+      });
+    }
+
+    return failed ? null : true;
+  },
+  { server: true }
+);
 
 useSeoMeta({
   title: "خرید لپ‌تاپ، موبایل و لوازم دیجیتال",
@@ -31,7 +62,7 @@ useSeoMeta({
   ogUrl: () => requestURL.href,
   twitterTitle: `${SITE_NAME} - خرید لپ‌تاپ، موبایل و لوازم دیجیتال`,
   twitterDescription:
-    "خرید آنلاین لپ‌تاپ، موبایل، مانیتور و لوازم دیجیتال با ضمانت اصالت کالا و ارسال سریع به سراسر ایران."
+    "خرید آنلاین لپ‌تاپ، موبایل، مانیتور و لوازم دیجیتال با ضمانت اصالت کالا و ارسال سریع به سراسر ایران.",
 });
 
 useHead({
@@ -39,9 +70,9 @@ useHead({
     {
       key: "canonical",
       rel: "canonical",
-      href: () => requestURL.href
-    }
-  ]
+      href: () => requestURL.href,
+    },
+  ],
 });
 
 useSchemaOrg([
@@ -62,90 +93,58 @@ useSchemaOrg([
 const isStoryViewerOpen = ref(false);
 const selectedStoryIndex = ref(0);
 
-async function fetchBanners(): Promise<void> {
-  const response = await bannersController.getBanners();
-
-  if (!response.success) {
-    toast.add({
-      title: response.message || "دریافت بنرهای صفحه اصلی ناموفق بود",
-      color: "error",
-    });
-  }
-}
-
-async function fetchStories(): Promise<void> {
-  const response = await storiesController.getStories();
-
-  if (!response.success) {
-    toast.add({
-      title: response.message || "دریافت استوری‌ها ناموفق بود",
-      color: "error",
-    });
-  }
-}
-
-async function fetchCategories(): Promise<void> {
-  const response = await categoriesController.getCategories();
-
-  if (!response.success) {
-    toast.add({
-      title: response.message || "دریافت دسته‌بندی‌ها ناموفق بود",
-      color: "error",
-    });
-  }
-}
-
-function handleStoryView(story: TStory, index: number): void {
-  console.log("handleStoryView called:", { index, storyId: story.id });
+function handleStoryView(_story: TStory, index: number): void {
   selectedStoryIndex.value = index;
   isStoryViewerOpen.value = true;
-  console.log("State updated:", {
-    selectedStoryIndex: selectedStoryIndex.value,
-    isStoryViewerOpen: isStoryViewerOpen.value,
-  });
 }
-
-onMounted(async () => {
-  await Promise.all([fetchBanners(), fetchStories(), fetchCategories()]);
-});
 </script>
 
 <template>
   <div class="space-y-10 pb-10">
-    <div v-if="stories.length > 0">
-      <PublicStoryCarousel :stories="stories" @view="handleStoryView" />
+    <div v-if="homePending && !stories.length && !banners.length" class="px-4 py-16">
+      <div class="mx-auto flex max-w-7xl items-center justify-center gap-3 text-sm text-toned">
+        <UIcon name="i-lucide-loader-2" class="size-5 animate-spin text-primary" />
+        <span>در حال بارگذاری...</span>
+      </div>
     </div>
 
-    <PublicBannerCarousel :banners="banners" />
+    <template v-else>
+      <div v-if="stories.length > 0">
+        <PublicStoryCarousel :stories="stories" @view="handleStoryView" />
+      </div>
 
-    <BaseDivider
-      class="mt-20"
-      title="دسته بندی ها"
-      subtitle="تمام دسته بندی ها در فروشگاه پرایم"
-    />
+      <PublicBannerCarousel :banners="banners" />
 
-    <UContainer>
-      <PublicCategoryGrid
-        v-if="categories.length > 0"
-        :categories="categories"
+      <BaseDivider
+        class="mt-20"
+        title="دسته بندی ها"
+        subtitle="تمام دسته بندی ها در فروشگاه پرایم"
       />
-    </UContainer>
 
-    <div class="flex flex-col py-10 bg-[#151515]">
       <UContainer>
-        <BaseDivider
-          title="محصولات پرفروش"
-          subtitle="پرفروش ترین محصولات در فروشگاه پرایم"
+        <PublicCategoryGrid
+          v-if="categories.length > 0"
+          :categories="categories"
         />
-        <PublicBestSellers class="mt-10" />
       </UContainer>
-    </div>
 
-    <PublicStoryViewer
-      :is-open="isStoryViewerOpen"
-      :stories="stories"
-      :initial-index="selectedStoryIndex"
-      @update:is-open="(value) => (isStoryViewerOpen = value)"
-    />
+      <div class="flex flex-col bg-[#151515] py-10">
+        <UContainer>
+          <BaseDivider
+            title="محصولات پرفروش"
+            subtitle="پرفروش ترین محصولات در فروشگاه پرایم"
+          />
+          <PublicBestSellers class="mt-10" />
+        </UContainer>
+      </div>
+
+      <PublicStoryViewer
+        v-if="isStoryViewerOpen"
+        :is-open="isStoryViewerOpen"
+        :stories="stories"
+        :initial-index="selectedStoryIndex"
+        @update:is-open="(value) => (isStoryViewerOpen = value)"
+      />
+    </template>
   </div>
 </template>

@@ -72,12 +72,14 @@ export class ChatService extends BaseApp<TChat> {
 
   public async getMessages(
     chatId: string,
-    query?: TChatMessagesQuery
+    query?: TChatMessagesQuery,
+    options?: { silent?: boolean },
   ): Promise<ServerResponse<TChatMessagesData>> {
     return this.executeRequest<TChatMessagesData>(async () => {
       const response = await this.Get<ServerResponse<any>>(
         `/chats/${chatId}/messages`,
-        query
+        query,
+        { silent: options?.silent },
       );
 
       return {

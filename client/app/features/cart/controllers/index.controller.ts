@@ -17,17 +17,23 @@ class CartController extends BaseController<CartService> {
 
   private readonly cartDS = CartDS.getInstance()
 
-  public async getCart(): Promise<ControllerResponse<TCartResponse>> {
-    this.cartDS.setLoading(true)
+  public async getCart(
+    options?: { silent?: boolean },
+  ): Promise<ControllerResponse<TCartResponse>> {
+    if (!options?.silent) {
+      this.cartDS.setLoading(true)
+    }
 
     const response: ServerResponse<TCartResponse> =
-      await this.service.getCart()
+      await this.service.getCart(options)
 
     if (response.success && response.data) {
       this.cartDS.setCart(response.data)
     }
 
-    this.cartDS.setLoading(false)
+    if (!options?.silent) {
+      this.cartDS.setLoading(false)
+    }
     return this.handleResponse(response)
   }
 

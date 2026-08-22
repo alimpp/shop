@@ -9,9 +9,13 @@ export class ProfileAdminService extends BaseApp<TAdmin> {
     super("profileAdmin");
   }
 
-  public async getAdminProfile(): Promise<ServerResponse<TAdmin>> {
+  public async getAdminProfile(
+    options?: { silent?: boolean },
+  ): Promise<ServerResponse<TAdmin>> {
     return this.executeRequest<TAdmin>(async () => {
-      return await this.Get<TAdmin>("/admin/info");
+      return await this.Get<TAdmin>("/admin/info", undefined, {
+        silent: options?.silent,
+      });
     }, true);
   }
 }

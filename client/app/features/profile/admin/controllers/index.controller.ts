@@ -13,9 +13,11 @@ class ProfileAdminController extends BaseController<ProfileAdminService> {
 
   private readonly adminDS = useAdminDS();
 
-  public async getAdminProfile(): Promise<ControllerResponse<TAdmin>> {
+  public async getAdminProfile(
+    options?: { silent?: boolean },
+  ): Promise<ControllerResponse<TAdmin>> {
     const response: ServerResponse<TAdmin> =
-      await this.service.getAdminProfile();
+      await this.service.getAdminProfile(options);
 
     if (response.success && response.data) {
       this.adminDS.setAdmin({

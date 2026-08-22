@@ -38,8 +38,6 @@ export const initializeStores = () => {
   getCartDS()
 }
 
-initializeStores()
-
 export const useAdminDS = () => AdminDS.getInstance()
 export const useUserProfileDS = () => getProfileDS()
 export const useCartDS = () => getCartDS()

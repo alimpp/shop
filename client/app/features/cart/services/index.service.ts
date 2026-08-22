@@ -14,9 +14,13 @@ export class CartService extends BaseApp<TCartItem> {
     super('cart')
   }
 
-  public async getCart(): Promise<ServerResponse<TCartResponse>> {
+  public async getCart(
+    options?: { silent?: boolean },
+  ): Promise<ServerResponse<TCartResponse>> {
     return this.executeRequest<TCartResponse>(async () => {
-      return await this.Get<ServerResponse<TCartResponse>>('/cart')
+      return await this.Get<ServerResponse<TCartResponse>>('/cart', undefined, {
+        silent: options?.silent,
+      })
     })
   }
 

@@ -30,7 +30,7 @@ let forceScrollOnNextUpdate = false;
 let scrollSettleTimers: ReturnType<typeof setTimeout>[] = [];
 
 function isOwnMessage(message: ChatMessageModel): boolean {
-  if (!message.sender) return false;
+  if (!message.sender?.id || !props.currentUserId) return false;
   return message.sender.id === props.currentUserId;
 }
 

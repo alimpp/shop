@@ -33,9 +33,17 @@ function goTo(path: string): void {
   navigateTo(path)
 }
 
-onMounted(async () => {
+onMounted(() => {
   if (!token.value || cartDS.getHydrated) return
-  await cartController.getCart()
+
+  const schedule =
+    typeof window.requestIdleCallback === 'function'
+      ? window.requestIdleCallback
+      : (cb: () => void) => window.setTimeout(cb, 1)
+
+  schedule(() => {
+    cartController.getCart({ silent: true })
+  })
 })
 </script>
 

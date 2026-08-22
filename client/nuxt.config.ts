@@ -1,6 +1,5 @@
 export default defineNuxtConfig({
   modules: [
-    "@nuxt/eslint",
     "@nuxt/ui",
     "@nuxt/image",
     "@vueuse/nuxt",
@@ -48,7 +47,13 @@ export default defineNuxtConfig({
   },
 
   devtools: {
-    enabled: true,
+    enabled: process.env.NUXT_DEVTOOLS === "true",
+  },
+
+  vite: {
+    optimizeDeps: {
+      include: ["vue", "vue-router", "@vueuse/core"],
+    },
   },
 
   css: [
