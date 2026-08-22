@@ -11,26 +11,47 @@ const toast = useToast()
 const ordersDS = useOrdersDS()
 
 const orderId = String(route.params.id ?? '')
-const loading = computed(() => ordersDS.getLoading)
+const pageLoading = ref(true)
+
 const order = computed(() => ordersDS.getSelectedOrder)
+const fetching = computed(() => ordersDS.getLoading)
 
 async function loadOrder(): Promise<void> {
+  pageLoading.value = true
+
+  const cached = ordersDS.getById(orderId)
+  if (cached) {
+    ordersDS.setSelectedOrder(cached)
+  } else {
+    ordersDS.setSelectedOrder(null)
+  }
+
   const response = await ordersController.getMyOrder(orderId)
+
   if (!response.success) {
     toast.add({
       title: response.message || 'دریافت سفارش ناموفق بود',
       color: 'error'
     })
   }
+
+  pageLoading.value = false
 }
 
 onMounted(() => {
   loadOrder()
 })
+
+onUnmounted(() => {
+  ordersDS.setSelectedOrder(null)
+})
 </script>
 
 <template>
-  <ProfileShell title="جزئیات سفارش">
+  <ProfileShell
+    title="جزئیات سفارش"
+    back-to="/profile/orders"
+  >
     <div class="mb-4">
       <UButton
         to="/profile/orders"
@@ -43,7 +64,7 @@ onMounted(() => {
     </div>
 
     <div
-      v-if="loading && !order"
+      v-if="(pageLoading || fetching) && !order"
       class="flex justify-center py-16"
     >
       <UIcon

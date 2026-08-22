@@ -102,7 +102,7 @@ onMounted(() => {
         class="block rounded-2xl border border-default bg-elevated/40 p-5 transition-colors hover:border-primary/40"
       >
         <div class="flex flex-wrap items-start justify-between gap-3">
-          <div>
+          <div class="min-w-0 flex-1">
             <p class="text-sm font-black text-highlighted">
               {{ order.orderNumber }}
             </p>
@@ -111,10 +111,10 @@ onMounted(() => {
             </p>
             <p class="mt-2 text-xs text-toned">
               {{ order.itemCount.toLocaleString('fa-IR') }} قلم ·
-              {{ order.address.city }}
+              {{ order.address?.city || '—' }}
             </p>
           </div>
-          <div class="text-left space-y-2">
+          <div class="space-y-2 text-left">
             <UBadge
               :color="statusColor(order.status)"
               variant="subtle"
@@ -128,6 +128,10 @@ onMounted(() => {
               {{ formatPrice(order.paidAmount) }}
             </p>
           </div>
+          <UIcon
+            name="i-lucide-chevron-left"
+            class="size-4 shrink-0 self-center text-muted"
+          />
         </div>
       </NuxtLink>
     </div>

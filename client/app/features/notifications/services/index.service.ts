@@ -45,6 +45,16 @@ export class NotificationService extends BaseApp<TNotification> {
     });
   }
 
+  public async getNotification(
+    id: string
+  ): Promise<ServerResponse<TNotification>> {
+    return this.executeRequest<TNotification>(async () => {
+      return await this.Get<ServerResponse<TNotification>>(
+        `/notifications/${id}`
+      );
+    });
+  }
+
   public async markAsSeen(
     id: string
   ): Promise<ServerResponse<TNotification>> {

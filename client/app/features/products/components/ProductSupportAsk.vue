@@ -11,6 +11,7 @@ const props = defineProps<{
 const toast = useToast()
 const chatDS = useChatDS()
 const token = useCookie<string | null>('token')
+const requestURL = useRequestURL()
 
 const open = ref(false)
 const sending = computed(() => chatDS.getSending)
@@ -23,7 +24,7 @@ const productUrl = computed(() => {
   if (import.meta.client) {
     return window.location.href
   }
-  return `${useRequestURL().origin}/products/${props.product.slug}`
+  return `${requestURL.origin}/products/${props.product.slug}`
 })
 
 const preparedMessage = computed(() =>

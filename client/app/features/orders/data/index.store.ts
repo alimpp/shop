@@ -47,6 +47,10 @@ export class OrdersDS extends BaseStore<IOrdersState> {
     return this._state.selectedOrder
   }
 
+  public getById(id: string): OrderModel | undefined {
+    return this._state.orders.find(order => order.id === id)
+  }
+
   public get getMeta(): TOrderListMeta {
     return this._state.meta
   }

@@ -70,11 +70,10 @@ async function openDetail(order: OrderModel): Promise<void> {
   }
 }
 
-function closeDetail(open: boolean): void {
-  detailOpen.value = open
-  if (!open) {
-    ordersDS.setSelectedOrder(null)
-  }
+function resetDetailState(): void {
+  detailOpen.value = false
+  detailLoading.value = false
+  ordersDS.setSelectedOrder(null)
 }
 
 async function handleStatusChange(
@@ -96,13 +95,22 @@ onMounted(() => {
   fetchOrders()
 })
 
+onBeforeRouteLeave(() => {
+  resetDetailState()
+})
+
+onUnmounted(() => {
+  resetDetailState()
+})
+
 watch(statusFilter, () => {
   fetchOrders()
 })
 </script>
 
 <template>
-  <UDashboardPanel id="admin-orders">
+  <div class="contents">
+    <UDashboardPanel id="admin-orders">
     <template #header>
       <UDashboardNavbar title="سفارش‌ها">
         <template #leading>
@@ -199,32 +207,34 @@ watch(statusFilter, () => {
             </div>
           </article>
         </div>
-
-        <UModal
-          :open="detailOpen"
-          title="جزئیات سفارش"
-          :description="selectedOrder?.orderNumber"
-          :ui="{ content: 'sm:max-w-4xl' }"
-          @update:open="closeDetail"
-        >
-          <template #body>
-            <div
-              v-if="detailLoading && !selectedOrder"
-              class="flex justify-center py-12"
-            >
-              <UIcon
-                name="i-lucide-loader-2"
-                class="size-7 animate-spin text-primary"
-              />
-            </div>
-            <OrderDetailView
-              v-else-if="selectedOrder"
-              :order="selectedOrder"
-              show-customer
-            />
-          </template>
-        </UModal>
       </BaseDashboardPanelBody>
     </template>
   </UDashboardPanel>
+
+  <UModal
+    v-if="detailOpen"
+    v-model:open="detailOpen"
+    title="جزئیات سفارش"
+    :description="selectedOrder?.orderNumber"
+    :ui="{ content: 'sm:max-w-4xl' }"
+    @after-leave="resetDetailState"
+  >
+    <template #body>
+      <div
+        v-if="detailLoading && !selectedOrder"
+        class="flex justify-center py-12"
+      >
+        <UIcon
+          name="i-lucide-loader-2"
+          class="size-7 animate-spin text-primary"
+        />
+      </div>
+      <OrderDetailView
+        v-else-if="selectedOrder"
+        :order="selectedOrder"
+        show-customer
+      />
+    </template>
+  </UModal>
+  </div>
 </template>

@@ -26,7 +26,8 @@ const mainImageUrl = computed(() => {
         :src="mainImageUrl"
         :alt="name"
         class="h-full w-full object-cover"
-        loading="lazy"
+        loading="eager"
+        fetchpriority="high"
       />
       <div
         v-else

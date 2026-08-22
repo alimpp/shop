@@ -8,8 +8,20 @@ import { useFavoritesDS } from '~/features/favorites/data/index.store'
 import { TInteractionTargetType } from '~/features/interactions/types/index.type'
 import type { TProduct, TProductVariant } from '~/features/products/types/index.type'
 import ProductSupportAsk from '~/features/products/components/ProductSupportAsk.vue'
+import {
+  DEFAULT_ROBOTS,
+  NOINDEX_ROBOTS,
+  SITE_NAME,
+  resolveProductCanonical,
+  resolveProductDescription,
+  resolveProductImages,
+  resolveProductOgImage,
+  resolveProductTitle,
+  resolveSocialTitle
+} from '~/utils/seo'
 
 const route = useRoute()
+const requestURL = useRequestURL()
 const toast = useToast()
 const addingToCart = ref(false)
 const interactionsDS = useInteractionsDS()
@@ -443,105 +455,99 @@ function selectOption(slug: string, valueId: string): void {
   }
 }
 
+const isProductMissing = computed(
+  () => notFound.value || (!loading.value && !product.value)
+)
+
+const seoTitle = computed(() =>
+  isProductMissing.value ? 'محصول یافت نشد' : resolveProductTitle(product.value)
+)
+const seoSocialTitle = computed(() =>
+  isProductMissing.value ? `محصول یافت نشد | ${SITE_NAME}` : resolveSocialTitle(product.value)
+)
+const seoDescription = computed(() =>
+  isProductMissing.value
+    ? 'محصول مورد نظر شما یافت نشد یا از فروشگاه حذف شده است.'
+    : resolveProductDescription(product.value)
+)
+const seoImage = computed(() => resolveProductOgImage(product.value, requestURL.origin))
+const seoCanonical = computed(() =>
+  resolveProductCanonical(product.value, requestURL.origin, requestURL.href)
+)
+const seoRobots = computed(() =>
+  isProductMissing.value ? NOINDEX_ROBOTS : DEFAULT_ROBOTS
+)
+
 useSeoMeta({
-  title: () => {
-    const p = product.value
-    return p?.metaTitle || (p ? `${p.name} | فروشگاه اینترنتی پرایم` : 'فروشگاه اینترنتی پرایم')
-  },
-  description: () => (product.value?.metaDescription || product.value?.shortDescription || product.value?.description || '').slice(0, 160),
-  keywords: () => {
-    const p = product.value
-    return p?.keywords || (p ? `${p.name}, خرید ${p.name}, ${p?.category?.name ?? ''}` : '')
-  },
-  robots: 'index, follow, max-image-preview:large',
-  ogTitle: () => {
-    const p = product.value
-    return p?.metaTitle || (p ? `${p.name} | فروشگاه اینترنتی پرایم` : 'فروشگاه اینترنتی پرایم')
-  },
-  ogDescription: () => (product.value?.metaDescription || product.value?.shortDescription || product.value?.description || '').slice(0, 160),
-  ogImage: () => (product.value?.medias[0]?.url ?? product.value?.ogImage) || '',
-  ogUrl: useRequestURL().href,
-  ogSiteName: 'فروشگاه اینترنتی پرایم',
+  title: () => seoTitle.value,
+  description: () => seoDescription.value,
+  robots: () => seoRobots.value,
+  ogTitle: () => seoSocialTitle.value,
+  ogDescription: () => seoDescription.value,
+  ogImage: () => seoImage.value,
+  ogUrl: () => seoCanonical.value,
+  ogSiteName: SITE_NAME,
   ogLocale: 'fa_IR',
+  ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: () => {
-    const p = product.value
-    return p?.metaTitle || (p ? `${p.name} | فروشگاه اینترنتی پرایم` : 'فروشگاه اینترنتی پرایم')
-  },
-  twitterDescription: () => (product.value?.metaDescription || product.value?.shortDescription || product.value?.description || '').slice(0, 160),
-  twitterImage: () => (product.value?.medias[0]?.url ?? product.value?.ogImage) || ''
+  twitterTitle: () => seoSocialTitle.value,
+  twitterDescription: () => seoDescription.value,
+  twitterImage: () => seoImage.value
 })
 
 useHead({
-  meta: [
-    {
-      key: 'og:type',
-      property: 'og:type',
-      content: 'product'
-    }
-  ],
   link: [
     {
+      key: 'canonical',
       rel: 'canonical',
-      href: () => product.value?.canonical || useRequestURL().href
+      href: () => seoCanonical.value
     }
   ]
 })
 
 useSchemaOrg(() => {
   const p = product.value
-  if (!p) {
+  if (!p || notFound.value) {
     return []
   }
 
-  const origin = useRequestURL().origin
+  const origin = requestURL.origin
+  const productUrl = `${origin}/products/${p.slug}`
+  const categoryUrl = p.category
+    ? `${origin}/products?categoryId=${p.category.id}`
+    : `${origin}/products`
 
   return [
     defineProduct({
       name: p.name,
-      description: p.metaDescription || p.shortDescription || p.description,
+      description: resolveProductDescription(p, 5000) || p.name,
       sku: p.sku,
-      image: p.medias.map(m => m.url),
+      image: resolveProductImages(p, origin),
       brand: p.brand?.name || false,
       category: p.category?.name,
-      url: origin + p.slug,
+      url: productUrl,
       offers: [
         defineOffer({
           price: String(displayPrice.value),
           priceCurrency: 'IRR',
           availability: isOutOfStock.value ? 'OutOfStock' : 'InStock',
           itemCondition: 'NewCondition',
-          url: origin + p.slug
+          url: productUrl
         })
-      ],
-      aggregateRating: likeCount.value > 0
-        ? defineAggregateRating({
-            ratingValue: 5,
-            reviewCount: likeCount.value
-          })
-        : undefined,
-      review: comments.value.slice(0, 10).map(comment =>
-        defineReview({
-          name: `نظر کاربر درباره ${p.name}`,
-          reviewRating: {
-            '@type': 'Rating',
-            ratingValue: 5,
-            bestRating: 5,
-          },
-          author: definePerson({
-            name: [comment.user?.fristname, comment.user?.lastname].filter(Boolean).join(' ') || 'کاربر فروشگاه'
-          }),
-          datePublished: comment.createdAt
-        })
-      )
+      ]
     }),
     defineBreadcrumb({
       itemListElement: [
         defineListItem({ name: 'خانه', url: origin, position: 1 }),
+        defineListItem({ name: 'محصولات', url: `${origin}/products`, position: 2 }),
         ...(p.category
-          ? [defineListItem({ name: p.category.name, url: origin + '/products', position: 2 })]
+          ? [defineListItem({ name: p.category.name, url: categoryUrl, position: 3 })]
           : []),
-        defineListItem({ name: p.name, url: origin + p.slug, position: p.category ? 3 : 2 })
+        defineListItem({
+          name: p.name,
+          url: productUrl,
+          position: p.category ? 4 : 3
+        })
       ]
     })
   ]

@@ -7,39 +7,54 @@ import { StoriesDS } from "~/features/stories/data/index.store";
 import { CategoriesDS } from "~/features/categories/data/index.store";
 import type { TBanner } from "~/features/banners/types/index.type";
 import type { TStory } from "~/features/stories/types/index.type";
+import { SITE_NAME, toAbsoluteUrl } from "~/utils/seo";
 
 const bannersDS = BannersDS.getInstance();
 const storiesDS = StoriesDS.getInstance();
 const categoriesDS = CategoriesDS.getInstance();
 const toast = useToast();
+const requestURL = useRequestURL();
 
 const banners = computed(() => bannersDS.getBanners);
 const stories = computed(() => storiesDS.getStories);
 const categories = computed(() => categoriesDS.getCategories);
 
 useSeoMeta({
-  title: "فروشگاه اینترنتی پرایم - خرید لپ‌تاپ، موبایل و لوازم دیجیتال",
+  title: "خرید لپ‌تاپ، موبایل و لوازم دیجیتال",
   description:
-    "فروشگاه اینترنتی پرایم؛ مرجع خرید آنلاین لپ‌تاپ، گوشی موبایل، مانیتور و لوازم جانبی دیجیتال با ضمانت اصالت کالا، قیمت رقابتی و ارسال سریع به سراسر ایران.",
-  ogTitle: "فروشگاه اینترنتی پرایم - خرید لپ‌تاپ، موبایل و لوازم دیجیتال",
+    `${SITE_NAME}؛ مرجع خرید آنلاین لپ‌تاپ، گوشی موبایل، مانیتور و لوازم جانبی دیجیتال با ضمانت اصالت کالا، قیمت رقابتی و ارسال سریع به سراسر ایران.`,
+  ogTitle: `${SITE_NAME} - خرید لپ‌تاپ، موبایل و لوازم دیجیتال`,
   ogDescription:
     "خرید آنلاین لپ‌تاپ، موبایل، مانیتور و لوازم دیجیتال با ضمانت اصالت کالا و ارسال سریع به سراسر ایران.",
-  twitterTitle: "فروشگاه اینترنتی پرایم - خرید لپ‌تاپ، موبایل و لوازم دیجیتال",
+  ogSiteName: SITE_NAME,
+  ogType: "website",
+  ogUrl: () => requestURL.href,
+  twitterTitle: `${SITE_NAME} - خرید لپ‌تاپ، موبایل و لوازم دیجیتال`,
   twitterDescription:
     "خرید آنلاین لپ‌تاپ، موبایل، مانیتور و لوازم دیجیتال با ضمانت اصالت کالا و ارسال سریع به سراسر ایران."
 });
 
+useHead({
+  link: [
+    {
+      key: "canonical",
+      rel: "canonical",
+      href: () => requestURL.href
+    }
+  ]
+});
+
 useSchemaOrg([
   defineOrganization({
-    name: "فروشگاه اینترنتی پرایم",
+    name: SITE_NAME,
     description:
       "فروشگاه آنلاین لپ‌تاپ، موبایل، مانیتور و لوازم جانبی دیجیتال",
-    url: useRequestURL().origin,
-    logo: "/favicon.ico",
+    url: requestURL.origin,
+    logo: toAbsoluteUrl("/favicon.ico", requestURL.origin),
   }),
   defineWebSite({
-    name: "فروشگاه اینترنتی پرایم",
-    url: useRequestURL().origin,
+    name: SITE_NAME,
+    url: requestURL.origin,
     description: "خرید آنلاین لپ‌تاپ، موبایل، مانیتور و لوازم دیجیتال",
   }),
 ]);

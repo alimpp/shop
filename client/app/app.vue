@@ -2,6 +2,7 @@
 const colorMode = useColorMode()
 
 const route = useRoute()
+const requestURL = useRequestURL()
 
 const isNoindexPage = computed(() =>
   ['/admin', '/auth', '/profile', '/cart'].some((prefix) =>
@@ -79,8 +80,9 @@ useHead({
     },
 
     {
+      key: 'canonical',
       rel: 'canonical',
-      href: useRequestURL().origin + useRoute().path
+      href: () => `${requestURL.origin}${route.path}`
     }
   ]
 })

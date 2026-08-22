@@ -9,8 +9,10 @@ import type {
   TProductListMeta,
   TProductListQuery
 } from '~/features/products/types/index.type'
+import { SITE_NAME } from '~/utils/seo'
 
 const toast = useToast()
+const requestURL = useRequestURL()
 
 const isFiltersOpen = ref(false)
 const currentPage = ref(1)
@@ -65,23 +67,23 @@ const seoTitle = computed(() => {
   }
 
   return parts.length
-    ? [...parts, 'فروشگاه اینترنتی پرایم'].join(' | ')
-    : 'خرید لپ‌تاپ، موبایل و لوازم دیجیتال | فروشگاه اینترنتی پرایم'
+    ? parts.join(' | ')
+    : 'خرید لپ‌تاپ، موبایل و لوازم دیجیتال'
 })
 
 const seoDescription = computed(() => {
   const parts: string[] = []
 
   if (activeCategory.value) {
-    parts.push(`خرید آنلاین ${activeCategory.value.name} با بهترین قیمت در فروشگاه اینترنتی پرایم.`)
+    parts.push(`خرید آنلاین ${activeCategory.value.name} با بهترین قیمت در ${SITE_NAME}.`)
   }
 
   if (activeBrand.value) {
-    parts.push(`محصولات اصل ${activeBrand.value.name} با ضمانت اصالت کالا در فروشگاه اینترنتی پرایم.`)
+    parts.push(`محصولات اصل ${activeBrand.value.name} با ضمانت اصالت کالا در ${SITE_NAME}.`)
   }
 
   if (debouncedSearch.value.trim()) {
-    parts.push(`نتایج جستجوی «${debouncedSearch.value.trim()}» در فروشگاه اینترنتی پرایم.`)
+    parts.push(`نتایج جستجوی «${debouncedSearch.value.trim()}» در ${SITE_NAME}.`)
   }
 
   return parts.length
@@ -92,10 +94,23 @@ const seoDescription = computed(() => {
 useSeoMeta({
   title: seoTitle,
   description: seoDescription,
-  ogTitle: seoTitle,
+  ogTitle: () => `${seoTitle.value} | ${SITE_NAME}`,
   ogDescription: seoDescription,
-  twitterTitle: seoTitle,
+  ogSiteName: SITE_NAME,
+  ogType: 'website',
+  ogUrl: () => requestURL.href,
+  twitterTitle: () => `${seoTitle.value} | ${SITE_NAME}`,
   twitterDescription: seoDescription
+})
+
+useHead({
+  link: [
+    {
+      key: 'canonical',
+      rel: 'canonical',
+      href: () => requestURL.href
+    }
+  ]
 })
 
 useSchemaOrg(() => [
@@ -104,7 +119,7 @@ useSchemaOrg(() => [
     itemListElement: products.value.map((product, index) =>
       defineListItem({
         name: product.name,
-        url: new URL(`/products/${product.slug}`, useRequestURL().origin).href,
+        url: `${requestURL.origin}/products/${product.slug}`,
         position: (currentPage.value - 1) * itemsPerPage + index + 1
       })
     )

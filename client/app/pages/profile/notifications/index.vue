@@ -2,9 +2,8 @@
 import ProfileShell from '~/components/profile/ProfileShell.vue'
 import { notificationController } from '~/features/notifications/controllers/index.controller'
 import { useNotificationsDS } from '~/features/notifications/data/index.store'
-import type { TNotificationType } from '~/features/notifications/types/index.type'
+import { NOTIFICATION_TYPE_META } from '~/features/notifications/constants/index'
 import { NOTIFICATION_TYPE_LABELS } from '~/features/notifications/types/index.type'
-import type { NotificationModel } from '~/features/notifications/models/index.model'
 
 definePageMeta({ title: 'اعلانات', robots: 'noindex, nofollow' })
 
@@ -16,35 +15,12 @@ const unreadCount = computed(() => notificationsDS.getUnreadCount)
 const loading = computed(() => notificationsDS.getLoading)
 const submitting = computed(() => notificationsDS.getSubmitting)
 
-const typeMeta: Record<TNotificationType, { icon: string; color: string }> = {
-  message: { icon: 'i-lucide-message-circle', color: 'primary' },
-  transaction: { icon: 'i-lucide-wallet', color: 'success' },
-  order_registered: { icon: 'i-lucide-package-plus', color: 'info' },
-  order_confirmed: { icon: 'i-lucide-badge-check', color: 'success' },
-  order_preparing: { icon: 'i-lucide-package', color: 'warning' },
-  order_shipping: { icon: 'i-lucide-truck', color: 'primary' },
-  order_cancelled: { icon: 'i-lucide-package-x', color: 'error' },
-  order_returned: { icon: 'i-lucide-undo-2', color: 'neutral' }
-}
-
 async function fetchNotifications(): Promise<void> {
   const response = await notificationController.getNotifications({ limit: 50 })
 
   if (!response.success) {
     toast.add({
       title: response.message || 'دریافت اعلان‌ها ناموفق بود',
-      color: 'error'
-    })
-  }
-}
-
-async function handleMarkAsSeen(item: NotificationModel): Promise<void> {
-  if (item.seen) return
-
-  const response = await notificationController.markAsSeen(item.id)
-  if (!response.success) {
-    toast.add({
-      title: response.message || 'بروزرسانی اعلان ناموفق بود',
       color: 'error'
     })
   }
@@ -120,17 +96,16 @@ onMounted(() => {
       v-else
       class="space-y-3"
     >
-      <button
+      <NuxtLink
         v-for="item in notifications"
         :key="item.id"
-        type="button"
-        class="w-full rounded-2xl border p-4 text-right transition-colors"
+        :to="`/profile/notifications/${item.id}`"
+        class="block w-full rounded-2xl border p-4 text-right transition-colors"
         :class="
           item.seen
             ? 'border-default bg-elevated/50 hover:bg-elevated'
             : 'border-primary/30 bg-primary/5 hover:bg-primary/10'
         "
-        @click="handleMarkAsSeen(item)"
       >
         <div class="flex items-start gap-3">
           <div
@@ -142,7 +117,7 @@ onMounted(() => {
             "
           >
             <UIcon
-              :name="typeMeta[item.type]?.icon || 'i-lucide-bell'"
+              :name="NOTIFICATION_TYPE_META[item.type]?.icon || 'i-lucide-bell'"
               class="size-5"
             />
           </div>
@@ -161,7 +136,7 @@ onMounted(() => {
               />
             </div>
 
-            <p class="mt-1 text-xs leading-6 text-toned">
+            <p class="mt-1 line-clamp-2 text-xs leading-6 text-toned">
               {{ item.description }}
             </p>
 
@@ -176,8 +151,13 @@ onMounted(() => {
               <span>{{ item.formattedDate }}</span>
             </div>
           </div>
+
+          <UIcon
+            name="i-lucide-chevron-left"
+            class="mt-1 size-4 shrink-0 text-muted"
+          />
         </div>
-      </button>
+      </NuxtLink>
     </div>
   </ProfileShell>
 </template>

@@ -139,6 +139,22 @@ export class NotificationsService {
     });
   }
 
+  async findOneForUser(id: string, userId: string) {
+    const notification = await this.notificationRepository.findOne({
+      where: { id },
+    });
+
+    if (!notification) {
+      throw new NotFoundException('اعلان یافت نشد');
+    }
+
+    if (notification.userId !== userId) {
+      throw new ForbiddenException('دسترسی به این اعلان مجاز نیست');
+    }
+
+    return this.toResponse(notification);
+  }
+
   async markAsSeen(id: string, userId: string) {
     const notification = await this.notificationRepository.findOne({
       where: { id },

@@ -59,6 +59,9 @@ class OrdersController extends BaseController<OrdersService> {
 
     if (response.success && response.data) {
       this.ordersDS.setSelectedOrder(response.data)
+      this.ordersDS.upsertOrder(response.data)
+    } else {
+      this.ordersDS.setSelectedOrder(null)
     }
 
     this.ordersDS.setLoading(false)

@@ -13,6 +13,7 @@ import type {
 
 interface INotificationsState {
   items: NotificationModel[]
+  selected: NotificationModel | null
   users: NotificationUserModel[]
   meta: TNotificationListMeta
   unreadCount: number
@@ -42,6 +43,7 @@ export class NotificationsDS extends BaseStore<INotificationsState> {
   private constructor() {
     super('notifications', {
       items: [],
+      selected: null,
       users: [],
       meta: emptyMeta(),
       unreadCount: 0,
@@ -54,6 +56,14 @@ export class NotificationsDS extends BaseStore<INotificationsState> {
 
   public get getItems(): NotificationModel[] {
     return this._state.items
+  }
+
+  public get getSelected(): NotificationModel | null {
+    return this._state.selected
+  }
+
+  public getById(id: string): NotificationModel | undefined {
+    return this._state.items.find(notification => notification.id === id)
   }
 
   public get getUsers(): NotificationUserModel[] {
@@ -100,6 +110,12 @@ export class NotificationsDS extends BaseStore<INotificationsState> {
     this._state.unreadCount = data.meta?.unreadCount ?? 0
   }
 
+  public setSelected(notification: TNotification | null): void {
+    this._state.selected = notification
+      ? new NotificationModel(notification)
+      : null
+  }
+
   public setUnreadCount(count: number): void {
     this._state.unreadCount = count
     this._state.meta.unreadCount = count
@@ -139,14 +155,18 @@ export class NotificationsDS extends BaseStore<INotificationsState> {
 
     if (index === -1) {
       this._state.items = [model, ...this._state.items]
-      return
+    } else {
+      this._state.items.splice(index, 1, model)
     }
 
-    this._state.items.splice(index, 1, model)
+    if (this._state.selected?.id === model.id) {
+      this._state.selected = model
+    }
   }
 
   public reset(): void {
     this._state.items = []
+    this._state.selected = null
     this._state.users = []
     this._state.meta = emptyMeta()
     this._state.unreadCount = 0

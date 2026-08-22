@@ -4,10 +4,12 @@ import { authController } from '../../features/auth/controllers/index.controller
 import { z } from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
+import { SITE_NAME } from '~/utils/seo'
+
 definePageMeta({
   layout: 'auth',
   robots: 'noindex, nofollow',
-  title: 'ورود | فروشگاه اینترنتی پرایم'
+  title: `ورود | ${SITE_NAME}`
 })
 
 const toast = useToast()

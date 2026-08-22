@@ -2,9 +2,12 @@
 import { computed } from "vue";
 
 import { navigation } from "../config/navigation";
-// import { userController } from "../controllers/user/index.controller";
 
+const route = useRoute();
 const links = computed(() => navigation);
+const footerLinks = computed(() => links.value[1] ?? []);
+
+useDashboard();
 
 onMounted(async () => {
   const token = useCookie<string>("token");
@@ -18,7 +21,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <UDashboardGroup unit="rem" class="rtl-dashboard h-dvh">
+  <UDashboardGroup unit="rem" class="rtl-dashboard h-dvh" :persistent="false">
     <UDashboardSidebar
       id="default"
       collapsible
@@ -45,8 +48,9 @@ onMounted(async () => {
         />
 
         <UNavigationMenu
+          v-if="footerLinks.length"
           :collapsed="collapsed"
-          :items="links[1]"
+          :items="footerLinks"
           orientation="vertical"
           tooltip
           class="mt-auto"
@@ -54,7 +58,12 @@ onMounted(async () => {
       </template>
     </UDashboardSidebar>
 
-    <slot />
+    <div
+      :key="route.fullPath"
+      class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+    >
+      <slot />
+    </div>
 
     <NotificationsSlideover />
   </UDashboardGroup>

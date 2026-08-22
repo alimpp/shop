@@ -46,6 +46,24 @@ class NotificationController extends BaseController<NotificationService> {
     return this.handleResponse(response)
   }
 
+  public async getNotification(
+    id: string
+  ): Promise<ControllerResponse<TNotification>> {
+    this.notificationsDS.setLoading(true)
+
+    const response = await this.service.getNotification(id)
+
+    if (response.success && response.data) {
+      this.notificationsDS.setSelected(response.data)
+      this.notificationsDS.upsertNotification(response.data)
+    } else {
+      this.notificationsDS.setSelected(null)
+    }
+
+    this.notificationsDS.setLoading(false)
+    return this.handleResponse(response)
+  }
+
   public async markAsSeen(
     id: string
   ): Promise<ControllerResponse<TNotification>> {

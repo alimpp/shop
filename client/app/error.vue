@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app'
+import { NOINDEX_ROBOTS } from '~/utils/seo'
 
 defineProps<{
   error: NuxtError
 }>()
 
 useSeoMeta({
-  title: 'Page not found',
-  description: 'We are sorry but this page could not be found.'
+  title: 'صفحه یافت نشد',
+  description: 'متأسفانه صفحه مورد نظر شما پیدا نشد.',
+  robots: NOINDEX_ROBOTS
 })
 
 useHead({
   htmlAttrs: {
-    lang: 'en'
+    lang: 'fa',
+    dir: 'rtl'
   }
 })
 </script>

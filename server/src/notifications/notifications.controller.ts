@@ -53,6 +53,15 @@ export class NotificationsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return await this.notificationsService.findOneForUser(id, req.user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Patch('seen-all')
   @HttpCode(HttpStatus.OK)
   async markAllAsSeen(@Req() req: AuthenticatedRequest) {
