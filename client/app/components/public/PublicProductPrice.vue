@@ -33,11 +33,11 @@ const { formatCurrency } = useCurrencyFormatter();
         class="text-[18px] font-black text-red-900 flex items-center"
       >
         قیمت با تخفیف
-        <span
+        <!-- <span
           class="rounded-full mx-1 bg-red-900 px-3 py-1.5 text-xs font-bold text-white shadow-lg flex items-center justify-center"
         >
           ٪{{ discountPercent }} تخفیف
-        </span>
+        </span> -->
       </span>
       <span
         class="text-[20px] font-black text-red-900"

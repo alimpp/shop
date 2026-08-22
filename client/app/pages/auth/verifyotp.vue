@@ -97,9 +97,10 @@ onUnmounted(() => {
       size="xl"
       class="mt-10"
       :ui="{
-        base: 'size-14 rounded-xl border-0 text-center text-lg placeholder:text-dimmed focus:outline-none disabled:cursor-not-allowed disabled:opacity-75 sm:size-16'
+        base: 'size-12 rounded-xl border-0 text-center text-lg placeholder:text-dimmed focus:outline-none disabled:cursor-not-allowed disabled:opacity-75 sm:size-16'
       }"
       @complete="verifyOtp"
+      type="number"
     />
 
     <div class="flex justify-center w-full mt-6">
