@@ -43,6 +43,10 @@ function stopAutoplay(): void {
 }
 
 function startAutoplay(): void {
+  if (!import.meta.client) {
+    return;
+  }
+
   stopAutoplay();
 
   if (!hasMultipleSlides.value) {

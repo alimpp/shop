@@ -51,6 +51,9 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    server: {
+      host: true,
+    },
     optimizeDeps: {
       include: ["vue", "vue-router", "@vueuse/core"],
     },
@@ -61,6 +64,16 @@ export default defineNuxtConfig({
     "@/assets/css/fonts.css",
     "vue3-toastify/dist/index.css",
   ],
+
+  fonts: {
+    providers: {
+      fontshare: false,
+      google: false,
+      bunny: false,
+      fontsource: false,
+      adobe: false,
+    },
+  },
 
   routeRules: {
     "/api/**": {

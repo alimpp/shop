@@ -1,5 +1,8 @@
 import { useCookie } from "nuxt/app";
 
+import { getAppLoader } from "./useAppLoader";
+import { resolveApiBase } from "~/utils/resolveApiBase";
+
 export type CustomFetchOptions = {
   silent?: boolean;
 };
@@ -8,42 +11,48 @@ function shouldTrackLoader(options: CustomFetchOptions): boolean {
   return import.meta.client && options.silent !== true;
 }
 
+let sharedFetch: ReturnType<typeof $fetch.create> | null = null;
+
 export const useCustomFetch = () => {
+  if (sharedFetch) {
+    return sharedFetch;
+  }
+
   const config = useRuntimeConfig();
-  const token = useCookie("token").value;
-  const { start, stop } = useAppLoader();
 
-  const customFetch = $fetch.create({
-    baseURL: config.public.apiBase,
-
+  sharedFetch = $fetch.create({
     onRequest({ options }) {
+      options.baseURL = resolveApiBase(config.public.apiBase as string | undefined);
+
+      const token = useCookie("token").value;
+
       options.headers = {
         ...options.headers,
         Authorization: `Bearer ${token}`,
       };
 
       if (shouldTrackLoader(options as CustomFetchOptions)) {
-        start();
+        getAppLoader()?.start();
       }
     },
     onResponse({ options }) {
       if (shouldTrackLoader(options as CustomFetchOptions)) {
-        stop();
+        getAppLoader()?.stop();
       }
     },
     onResponseError({ options }) {
       if (shouldTrackLoader(options as CustomFetchOptions)) {
-        stop();
+        getAppLoader()?.stop();
       }
     },
     onRequestError({ options, error }) {
       if (shouldTrackLoader(options as CustomFetchOptions)) {
-        stop();
+        getAppLoader()?.stop();
       }
 
       console.error("Request error:", error);
     },
   });
 
-  return customFetch;
+  return sharedFetch;
 };

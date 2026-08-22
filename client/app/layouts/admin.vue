@@ -3,7 +3,6 @@ import { computed } from "vue";
 
 import { navigation } from "../config/navigation";
 
-const route = useRoute();
 const links = computed(() => navigation);
 const footerLinks = computed(() => links.value[1] ?? []);
 
@@ -66,10 +65,7 @@ onMounted(() => {
       </template>
     </UDashboardSidebar>
 
-    <div
-      :key="route.fullPath"
-      class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
-    >
+    <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       <slot />
     </div>
 

@@ -15,6 +15,8 @@ const _useDashboard = () => {
 
   watch(() => route.fullPath, () => {
     isNotificationsSlideoverOpen.value = false
+    clearOverlayLocks()
+    getAppLoader()?.reset()
   })
 
   return {

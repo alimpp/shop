@@ -6,7 +6,11 @@ import { productsController } from "~/features/products/controllers/index.contro
 import { BannersDS } from "~/features/banners/data/index.store";
 import { StoriesDS } from "~/features/stories/data/index.store";
 import { CategoriesDS } from "~/features/categories/data/index.store";
+import { ProductsDS } from "~/features/products/data/index.store";
 import type { TStory } from "~/features/stories/types/index.type";
+import type { TBanner } from "~/features/banners/types/index.type";
+import type { TCategory } from "~/features/categories/types/index.type";
+import type { TProduct } from "~/features/products/types/index.type";
 import { SITE_NAME, toAbsoluteUrl } from "~/utils/seo";
 
 const PublicStoryViewer = defineAsyncComponent(
@@ -16,17 +20,36 @@ const PublicStoryViewer = defineAsyncComponent(
 const bannersDS = BannersDS.getInstance();
 const storiesDS = StoriesDS.getInstance();
 const categoriesDS = CategoriesDS.getInstance();
+const productsDS = ProductsDS.getInstance();
 const toast = useToast();
 const requestURL = useRequestURL();
+
+type HomePagePayload = {
+  ok: boolean;
+  message?: string;
+  banners: TBanner[];
+  stories: TStory[];
+  categories: TCategory[];
+  products: TProduct[];
+};
+
+function hydrateHomeStores(payload: HomePagePayload): void {
+  if (!payload.ok) return;
+
+  bannersDS.setBanners(payload.banners);
+  storiesDS.setStories(payload.stories);
+  categoriesDS.setCategories(payload.categories);
+  productsDS.setProducts(payload.products);
+}
 
 const banners = computed(() => bannersDS.getBanners);
 const stories = computed(() => storiesDS.getStories);
 const categories = computed(() => categoriesDS.getCategories);
 
-const { pending: homePending } = await useAsyncData(
+const { pending: homePending, data: homeData } = await useAsyncData<HomePagePayload>(
   "home-page-data",
   async () => {
-    const responses = await Promise.all([
+    const [bannersRes, storiesRes, categoriesRes, productsRes] = await Promise.all([
       bannersController.getBanners(),
       storiesController.getStories(),
       categoriesController.getCategories(),
@@ -37,18 +60,44 @@ const { pending: homePending } = await useAsyncData(
       }),
     ]);
 
-    const failed = responses.find((response) => !response.success);
-    if (failed && import.meta.client) {
-      toast.add({
-        title: failed.message || "دریافت اطلاعات صفحه اصلی ناموفق بود",
-        color: "error",
-      });
+    const failed = [bannersRes, storiesRes, categoriesRes, productsRes].find(
+      (response) => !response.success,
+    );
+
+    if (failed) {
+      if (import.meta.client) {
+        toast.add({
+          title: failed.message || "دریافت اطلاعات صفحه اصلی ناموفق بود",
+          color: "error",
+        });
+      }
+
+      return {
+        ok: false,
+        message: failed.message,
+        banners: [],
+        stories: [],
+        categories: [],
+        products: [],
+      };
     }
 
-    return failed ? null : true;
+    const payload: HomePagePayload = {
+      ok: true,
+      banners: bannersRes.data ?? [],
+      stories: storiesRes.data ?? [],
+      categories: categoriesRes.data?.items ?? [],
+      products: productsRes.data?.items ?? [],
+    };
+
+    hydrateHomeStores(payload);
+
+    return payload;
   },
-  { server: true }
+  { server: true },
 );
+
+hydrateStoreFromPayload(homeData, hydrateHomeStores);
 
 useSeoMeta({
   title: "خرید لپ‌تاپ، موبایل و لوازم دیجیتال",

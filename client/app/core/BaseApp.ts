@@ -150,19 +150,35 @@ export abstract class BaseApp<T extends { id: string | number }> {
   }
 
   protected getData(): T[] {
+    if (!import.meta.client) {
+      return [];
+    }
+
     const data = localStorage.getItem(this.storageKey);
     return data ? (JSON.parse(data) as T[]) : [];
   }
 
   protected hasData(): boolean {
+    if (!import.meta.client) {
+      return false;
+    }
+
     return Boolean(localStorage.getItem(this.storageKey));
   }
 
   protected saveData(items: T[] | any): void {
+    if (!import.meta.client) {
+      return;
+    }
+
     localStorage.setItem(this.storageKey, JSON.stringify(items));
   }
 
   protected removeData() {
+    if (!import.meta.client) {
+      return;
+    }
+
     localStorage.removeItem(this.storageKey);
   }
 }

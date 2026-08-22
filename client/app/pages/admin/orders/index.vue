@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import OrderDetailView from '~/features/orders/components/OrderDetailView.vue'
+import OrderDetailModal from '~/features/orders/components/OrderDetailModal.vue'
 import { ordersController } from '~/features/orders/controllers/index.controller'
 import { useOrdersDS } from '~/features/orders/data/index.store'
 import type { OrderModel } from '~/features/orders/models/index.model'
@@ -24,14 +24,16 @@ const selectedOrder = computed(() => ordersDS.getSelectedOrder)
 const detailOpen = ref(false)
 const detailLoading = ref(false)
 
-const statusFilter = ref('')
+const ALL_STATUSES_VALUE = 'all'
+
+const statusFilter = ref(ALL_STATUSES_VALUE)
 
 const statusItems = (
   Object.entries(ORDER_STATUS_LABELS) as Array<[TOrderStatus, string]>
 ).map(([value, label]) => ({ value, label }))
 
 const filterItems = [
-  { value: '', label: 'همه وضعیت‌ها' },
+  { value: ALL_STATUSES_VALUE, label: 'همه وضعیت‌ها' },
   ...statusItems
 ]
 
@@ -39,11 +41,17 @@ function formatPrice(value: number): string {
   return `${new Intl.NumberFormat('fa-IR').format(value)} تومان`
 }
 
+function resetDetailState(): void {
+  detailOpen.value = false
+  detailLoading.value = false
+  ordersDS.setSelectedOrder(null)
+}
+
 async function fetchOrders(): Promise<void> {
   const response = await ordersController.getAdminOrders({
     page: 1,
     limit: 50,
-    status: statusFilter.value
+    status: statusFilter.value !== ALL_STATUSES_VALUE
       ? (statusFilter.value as TOrderStatus)
       : undefined
   })
@@ -59,21 +67,18 @@ async function fetchOrders(): Promise<void> {
 async function openDetail(order: OrderModel): Promise<void> {
   detailOpen.value = true
   detailLoading.value = true
+
   const response = await ordersController.getAdminOrder(order.id)
+
   detailLoading.value = false
+
   if (!response.success) {
     toast.add({
       title: response.message || 'دریافت جزئیات سفارش ناموفق بود',
       color: 'error'
     })
-    detailOpen.value = false
+    resetDetailState()
   }
-}
-
-function resetDetailState(): void {
-  detailOpen.value = false
-  detailLoading.value = false
-  ordersDS.setSelectedOrder(null)
 }
 
 async function handleStatusChange(
@@ -109,8 +114,7 @@ watch(statusFilter, () => {
 </script>
 
 <template>
-  <div class="contents">
-    <UDashboardPanel id="admin-orders">
+  <UDashboardPanel id="admin-orders">
     <template #header>
       <UDashboardNavbar title="سفارش‌ها">
         <template #leading>
@@ -207,34 +211,15 @@ watch(statusFilter, () => {
             </div>
           </article>
         </div>
+
+        <OrderDetailModal
+          v-if="detailOpen || selectedOrder"
+          v-model:open="detailOpen"
+          :loading="detailLoading"
+          :order="selectedOrder"
+          @after-leave="resetDetailState"
+        />
       </BaseDashboardPanelBody>
     </template>
   </UDashboardPanel>
-
-  <UModal
-    v-if="detailOpen"
-    v-model:open="detailOpen"
-    title="جزئیات سفارش"
-    :description="selectedOrder?.orderNumber"
-    :ui="{ content: 'sm:max-w-4xl' }"
-    @after-leave="resetDetailState"
-  >
-    <template #body>
-      <div
-        v-if="detailLoading && !selectedOrder"
-        class="flex justify-center py-12"
-      >
-        <UIcon
-          name="i-lucide-loader-2"
-          class="size-7 animate-spin text-primary"
-        />
-      </div>
-      <OrderDetailView
-        v-else-if="selectedOrder"
-        :order="selectedOrder"
-        show-customer
-      />
-    </template>
-  </UModal>
-  </div>
 </template>
