@@ -635,8 +635,8 @@
     "semantic_hash": ""
   },
   "client/app/features/products/components/ProductFormModal.vue": {
-    "mtime": 1787130577.3380399,
-    "ast_hash": "60ae39ccbc88ab662499d59f395220a4",
+    "mtime": 1787469799.171902,
+    "ast_hash": "2b93e057bc7299aca8aec008ac1449be",
     "semantic_hash": ""
   },
   "client/app/features/products/components/ProductsTable.vue": {
@@ -815,8 +815,8 @@
     "semantic_hash": ""
   },
   "client/app/pages/admin/dashboard/index.vue": {
-    "mtime": 1785678010.4495494,
-    "ast_hash": "1b4c7850e2ff5d168d80db2701c8dda7",
+    "mtime": 1787470854.4467714,
+    "ast_hash": "03962c76ddc4eef0152b433daf1c2d7f",
     "semantic_hash": ""
   },
   "client/app/pages/admin/files/index.vue": {
@@ -1030,8 +1030,8 @@
     "semantic_hash": ""
   },
   "server/src/app.module.ts": {
-    "mtime": 1787129398.4675658,
-    "ast_hash": "30148edc49e8ba34bce0791c9af5275b",
+    "mtime": 1787470691.6245239,
+    "ast_hash": "b9281d2b69f747610d17f3ab3276f7df",
     "semantic_hash": ""
   },
   "server/src/app.service.ts": {
@@ -2522,6 +2522,81 @@
   "client/app/utils/resolveApiBase.ts": {
     "mtime": 1787409319.505357,
     "ast_hash": "dde4aa5e6dd0ba39afabed95f793334c",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardLowStockList.vue": {
+    "mtime": 1787470796.2768044,
+    "ast_hash": "3b0dc185bf613b9d8666a47dd592633c",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardOrderStatusPanel.vue": {
+    "mtime": 1787470772.8056102,
+    "ast_hash": "ff1731a2225a883cf1710d781b8d2f70",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardQuickActions.vue": {
+    "mtime": 1787470812.9239426,
+    "ast_hash": "f9f1a906194ec314a0d1e808ba66c401",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardRecentOrders.vue": {
+    "mtime": 1787470781.681831,
+    "ast_hash": "3e9b29a5c8d5254f7c03fe814cb3ef17",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardRecentUsers.vue": {
+    "mtime": 1787470802.7886965,
+    "ast_hash": "939e001dad5050b92ca1203a9c755b42",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardRevenueChart.vue": {
+    "mtime": 1787470764.8525195,
+    "ast_hash": "bce9e4067ce72068666820b0ebd10eb7",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardStatCard.vue": {
+    "mtime": 1787470755.4864721,
+    "ast_hash": "482b8ded5af898d6fbb4ee4ef91e62d9",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardTopProducts.vue": {
+    "mtime": 1787470788.9062586,
+    "ast_hash": "6ea1ebec516a2e1585cdae279d2f789e",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/controllers/index.controller.ts": {
+    "mtime": 1787470725.9119732,
+    "ast_hash": "af0d6ea6778fbc20b7659d03773a0a66",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/data/index.store.ts": {
+    "mtime": 1787470723.5158699,
+    "ast_hash": "76816194e02039f15c12989465f79116",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/services/index.service.ts": {
+    "mtime": 1787470719.8245382,
+    "ast_hash": "98ab467b4f2613222a5439cde15457e0",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/types/index.type.ts": {
+    "mtime": 1787470703.491036,
+    "ast_hash": "3e9a1760af55efd4e8196ab2930e6cb2",
+    "semantic_hash": ""
+  },
+  "server/src/dashboard/dashboard.controller.ts": {
+    "mtime": 1787470685.2709346,
+    "ast_hash": "1e18a088feee8ba6f914aa28cc90e588",
+    "semantic_hash": ""
+  },
+  "server/src/dashboard/dashboard.module.ts": {
+    "mtime": 1787470688.6353164,
+    "ast_hash": "4c728497e17be4c74d1bcd209c349c1c",
+    "semantic_hash": ""
+  },
+  "server/src/dashboard/dashboard.service.ts": {
+    "mtime": 1787470732.571682,
+    "ast_hash": "d6705fe5f05b78d2ea52964732987bcc",
     "semantic_hash": ""
   }
 }

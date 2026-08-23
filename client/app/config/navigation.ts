@@ -26,6 +26,12 @@ export const navigation: AppNavigationItem[][] = [
       permission: true,
     },
     {
+      label: "قیمت‌گذاری",
+      icon: "i-lucide-tags",
+      to: "/admin/pricing",
+      permission: true,
+    },
+    {
       label: "بنرها",
       icon: "i-lucide-images",
       to: "/admin/banners",

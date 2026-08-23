@@ -230,8 +230,8 @@
     "semantic_hash": ""
   },
   "client/app/config/navigation.ts": {
-    "mtime": 1787140999.819059,
-    "ast_hash": "d8d7678c573e918290127283dbd1eba5",
+    "mtime": 1787472018.5383785,
+    "ast_hash": "305f6cbd26d66198260c18240179ddf9",
     "semantic_hash": ""
   },
   "client/app/config/public-navigation.ts": {
@@ -815,8 +815,8 @@
     "semantic_hash": ""
   },
   "client/app/pages/admin/dashboard/index.vue": {
-    "mtime": 1785678010.4495494,
-    "ast_hash": "1b4c7850e2ff5d168d80db2701c8dda7",
+    "mtime": 1787470854.4467714,
+    "ast_hash": "03962c76ddc4eef0152b433daf1c2d7f",
     "semantic_hash": ""
   },
   "client/app/pages/admin/files/index.vue": {
@@ -1030,8 +1030,8 @@
     "semantic_hash": ""
   },
   "server/src/app.module.ts": {
-    "mtime": 1787129398.4675658,
-    "ast_hash": "30148edc49e8ba34bce0791c9af5275b",
+    "mtime": 1787470691.6245239,
+    "ast_hash": "b9281d2b69f747610d17f3ab3276f7df",
     "semantic_hash": ""
   },
   "server/src/app.service.ts": {
@@ -1615,8 +1615,8 @@
     "semantic_hash": ""
   },
   "server/src/product/product.module.ts": {
-    "mtime": 1786276550.7067742,
-    "ast_hash": "c2c797e781b6a20d80c1230574b9eff8",
+    "mtime": 1787471861.065455,
+    "ast_hash": "f534ce68590dc31789696becab7d85ae",
     "semantic_hash": ""
   },
   "server/src/product/product.service.spec.ts": {
@@ -1625,8 +1625,8 @@
     "semantic_hash": ""
   },
   "server/src/product/product.service.ts": {
-    "mtime": 1787130519.2609541,
-    "ast_hash": "2af0c29e389a8a1ee7833c61b48c91b9",
+    "mtime": 1787471850.9899607,
+    "ast_hash": "5c5296d3ed36d7b5792282598b0430e6",
     "semantic_hash": ""
   },
   "server/src/story/dto/create-story.dto.ts": {
@@ -2522,6 +2522,136 @@
   "client/app/utils/resolveApiBase.ts": {
     "mtime": 1787409319.505357,
     "ast_hash": "dde4aa5e6dd0ba39afabed95f793334c",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardLowStockList.vue": {
+    "mtime": 1787470796.2768044,
+    "ast_hash": "3b0dc185bf613b9d8666a47dd592633c",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardOrderStatusPanel.vue": {
+    "mtime": 1787470772.8056102,
+    "ast_hash": "ff1731a2225a883cf1710d781b8d2f70",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardQuickActions.vue": {
+    "mtime": 1787470812.9239426,
+    "ast_hash": "f9f1a906194ec314a0d1e808ba66c401",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardRecentOrders.vue": {
+    "mtime": 1787470781.681831,
+    "ast_hash": "3e9b29a5c8d5254f7c03fe814cb3ef17",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardRecentUsers.vue": {
+    "mtime": 1787470802.7886965,
+    "ast_hash": "939e001dad5050b92ca1203a9c755b42",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardRevenueChart.vue": {
+    "mtime": 1787470764.8525195,
+    "ast_hash": "bce9e4067ce72068666820b0ebd10eb7",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardStatCard.vue": {
+    "mtime": 1787470755.4864721,
+    "ast_hash": "482b8ded5af898d6fbb4ee4ef91e62d9",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/components/DashboardTopProducts.vue": {
+    "mtime": 1787470788.9062586,
+    "ast_hash": "6ea1ebec516a2e1585cdae279d2f789e",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/controllers/index.controller.ts": {
+    "mtime": 1787470725.9119732,
+    "ast_hash": "af0d6ea6778fbc20b7659d03773a0a66",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/data/index.store.ts": {
+    "mtime": 1787470723.5158699,
+    "ast_hash": "76816194e02039f15c12989465f79116",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/services/index.service.ts": {
+    "mtime": 1787470719.8245382,
+    "ast_hash": "98ab467b4f2613222a5439cde15457e0",
+    "semantic_hash": ""
+  },
+  "client/app/features/dashboard/types/index.type.ts": {
+    "mtime": 1787470703.491036,
+    "ast_hash": "3e9a1760af55efd4e8196ab2930e6cb2",
+    "semantic_hash": ""
+  },
+  "server/src/dashboard/dashboard.controller.ts": {
+    "mtime": 1787470685.2709346,
+    "ast_hash": "1e18a088feee8ba6f914aa28cc90e588",
+    "semantic_hash": ""
+  },
+  "server/src/dashboard/dashboard.module.ts": {
+    "mtime": 1787470688.6353164,
+    "ast_hash": "4c728497e17be4c74d1bcd209c349c1c",
+    "semantic_hash": ""
+  },
+  "server/src/dashboard/dashboard.service.ts": {
+    "mtime": 1787470732.571682,
+    "ast_hash": "d6705fe5f05b78d2ea52964732987bcc",
+    "semantic_hash": ""
+  },
+  "client/app/features/pricing/components/PricingInlineField.vue": {
+    "mtime": 1787471960.8540182,
+    "ast_hash": "871fabee03ed2245527b6135d85dbeb2",
+    "semantic_hash": ""
+  },
+  "client/app/features/pricing/components/PricingProductRow.vue": {
+    "mtime": 1787471988.928943,
+    "ast_hash": "e4c842d2d7022b7446b96b910e6ad59f",
+    "semantic_hash": ""
+  },
+  "client/app/features/pricing/controllers/index.controller.ts": {
+    "mtime": 1787471934.3279977,
+    "ast_hash": "95e9694327491ba6e0517c7ddb57e11f",
+    "semantic_hash": ""
+  },
+  "client/app/features/pricing/data/index.store.ts": {
+    "mtime": 1787471927.6173334,
+    "ast_hash": "87be693c4207f4a080a55c2c62ba9ff5",
+    "semantic_hash": ""
+  },
+  "client/app/features/pricing/services/index.service.ts": {
+    "mtime": 1787471915.9118547,
+    "ast_hash": "09775ac0e60ee35c07ad1efda0ff2237",
+    "semantic_hash": ""
+  },
+  "client/app/features/pricing/types/index.type.ts": {
+    "mtime": 1787471903.3529313,
+    "ast_hash": "8c34b245095b07a17ccde2ff8cd07670",
+    "semantic_hash": ""
+  },
+  "client/app/features/pricing/utils/pricingDraft.ts": {
+    "mtime": 1787471955.5358498,
+    "ast_hash": "7ccdf43c8f016b259d3b71262547d5e0",
+    "semantic_hash": ""
+  },
+  "client/app/pages/admin/pricing/index.vue": {
+    "mtime": 1787472018.2948384,
+    "ast_hash": "56541efe0b7d422e99cd6e412bca96a5",
+    "semantic_hash": ""
+  },
+  "server/src/product/dto/query-pricing-products.dto.ts": {
+    "mtime": 1787471784.0128314,
+    "ast_hash": "ef32173602bafb8215bfd6720b43694c",
+    "semantic_hash": ""
+  },
+  "server/src/product/dto/update-product-pricing.dto.ts": {
+    "mtime": 1787471788.2885003,
+    "ast_hash": "feda7e38fec24f882852eaac7a4abacc",
+    "semantic_hash": ""
+  },
+  "server/src/product/product-pricing.controller.ts": {
+    "mtime": 1787471857.0008535,
+    "ast_hash": "34faf26522cfa6826700ac3d94ff9dd3",
     "semantic_hash": ""
   }
 }

@@ -5,6 +5,7 @@ import { Category } from '../categories/entities/categories.entity';
 import { AttributeValue } from './entities/attribute-value.entity';
 import { Attribute } from './entities/attribute.entity';
 import { ProductController } from './product.controller';
+import { ProductPricingController } from './product-pricing.controller';
 import { ProductService } from './product.service';
 import { BrandController } from './brand.controller';
 import { AttributeController } from './attribute.controller';
@@ -38,7 +39,7 @@ import { Brand } from './entities/brand.entity';
     ]),
   ],
 
-  controllers: [ProductController, BrandController, AttributeController],
+  controllers: [ProductController, ProductPricingController, BrandController, AttributeController],
 
   providers: [ProductService],
 

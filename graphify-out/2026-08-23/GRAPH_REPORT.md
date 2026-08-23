@@ -1,16 +1,16 @@
 # Graph Report - shop  (2026-08-23)
 
 ## Corpus Check
-- 430 files · ~2,575,090 words
+- 445 files · ~2,579,815 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3906 nodes · 6389 edges · 301 communities (202 shown, 99 thin omitted)
+- 4022 nodes · 6605 edges · 306 communities (206 shown, 100 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.56)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e7089f57`
+- Built from commit: `53ea0a07`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -20,9 +20,9 @@
 - TStory
 - TBrand
 - orders/types/index.type.ts
-- product.entity.ts
+- product.module.ts
 - FilesDS
-- chat.service.ts
+- dashboard.service.ts
 - [slug].vue
 - auth/controllers/index.controller.ts
 - ProductFormModal.vue
@@ -31,14 +31,14 @@
 - Roles
 - pages/products/index.vue
 - attribute.controller.ts
-- ProductsDS
+- TProduct
 - chat/types/index.type.ts
 - ProductsService
-- ProductDeleteConfirmModal.vue
+- DashboardService
 - StoryService
-- Category
+- Product
 - app.module.ts
-- InteractionsController
+- product.service.ts
 - attributes/index.vue
 - AdminService
 - InteractionsDS
@@ -46,7 +46,7 @@
 - ProductService
 - dependencies
 - ProductDetailsModal.vue
-- AddressesController
+- dashboard/types/index.type.ts
 - Blog
 - dataStore/index.ts
 - ChatRoom.vue
@@ -56,12 +56,12 @@
 - BaseApp
 - BlogFormModal.vue
 - ChatDS
-- OtpService
+- ProductController
 - AttributesDS
 - CategoriesDS
 - chat/models/index.model.ts
 - BlogController
-- QueryMessagesDto
+- Category
 - ProductTag
 - compilerOptions
 - BaseFilePicker.vue
@@ -77,7 +77,7 @@
 - blogs/index.vue
 - brands/index.vue
 - stories/index.vue
-- BannersController
+- TDashboardData
 - QueryBlogDto
 - main.ts
 - PublicStoryCarousel.vue
@@ -86,7 +86,7 @@
 - FavoritesDS
 - scripts
 - OrdersService
-- Favorite
+- favorites.controller.ts
 - 1786500000000-AddRandomSpecsToProducts.ts
 - CreateBlogDto
 - PublicBannerCarousel.vue
@@ -101,10 +101,10 @@
 - ProductSupportAsk.vue
 - jest
 - NotificationsDS
-- AddCartItemDto
+- QueryProductDto
 - CategoriesService
 - PublicStoryViewer.vue
-- BaseStore
+- user/data/index.store.ts
 - TBlog
 - CategoriesTable.vue
 - ProductsTable.vue
@@ -130,7 +130,7 @@
 - customers/index.ts
 - devDependencies
 - devDependencies
-- dbConfig.ts
+- Story
 - BasePaginationFooter.vue
 - PublicNavLinks.vue
 - StoreManager
@@ -144,7 +144,7 @@
 - exclude
 - class-validator
 - AdminUsersService
-- CartController
+- CategoriesController
 - PublicActiveFilterChips.vue
 - PublicProductCard.vue
 - @swc/core
@@ -162,14 +162,14 @@
 - AttributeValueDeleteConfirmModal.vue
 - BlogDeleteConfirmModal.vue
 - CategoryDeleteConfirmModal.vue
-- products/controllers/index.controller.ts
+- categories/types/index.type.ts
 - notifications/[id].vue
 - PublicBestSellers.vue
 - PublicHeaderActions.vue
 - PublicProductComments.vue
 - PublicProductGallery.vue
 - BaseController
-- orders.service.ts
+- Order
 - user.ts
 - CreateDto
 - LocalAuthGuard
@@ -191,7 +191,7 @@
 - PublicProductPrice.vue
 - useToast.client.ts
 - notifications/index.vue
-- Product
+- CartService
 - nuxt-schema-org
 - @nuxt/ui
 - @nuxtjs/robots
@@ -210,7 +210,7 @@
 - @vueuse/nuxt
 - sitemap-products.ts
 - AuthService
-- TProductBrandRef
+- auth.service.ts
 - TAddress
 - @eslint/js
 - eslint-plugin-prettier
@@ -247,28 +247,29 @@
 - typescript
 - typescript-eslint
 - auth-jwtPayload.d.ts
+- dashboard/index.vue
 - addresses.vue
-- OrdersController
-- CategoriesController
+- DashboardRevenueChart.vue
+- AppService
 - support.vue
 - admin/orders/index.vue
-- chat.controller.ts
+- JwtAuthGuard
 - AddressesDS
-- @eslint/eslintrc
+- AuthController
 - ts-loader
 - users/data/index.store.ts
 - profile/orders/index.vue
 - AddressModel
 - orders/[id].vue
-- QueryChatsDto
+- chat.service.ts
 - iran-locations.ts
 - @internationalized/date
-- auth.service.ts
+- OtpService
 - users/index.vue
 - AddressDeleteConfirmModal.vue
-- ChatMessage
+- @iconify-json/simple-icons
 - otplib
-- SendMessageDto
+- dashboard/services/index.service.ts
 - users/types/index.type.ts
 - UsersService
 - OrderDetailModal.vue
@@ -276,22 +277,26 @@
 - @nestjs/jwt
 - resolveApiBase.ts
 - AdminUserModel
-- Comment
-- @tiptap/starter-kit
+- .getAdmin
+- CreateProductVariantDto
 - addToCart
+- DashboardOrderStatusPanel.vue
 - jest
-- passport-jwt
+- CreateProductOptionDto
+- bcrypt
 - seo.ts
+- DashboardQuickActions.vue
 - requireLogin
 - AppGlobalLoader.vue
 - @nestjs/schematics
+- eslint-config-prettier
 - @nuxt/image
 - eslint
 
 ## God Nodes (most connected - your core abstractions)
-1. `Product` - 53 edges
-2. `Roles()` - 38 edges
-3. `UserEntity` - 37 edges
+1. `Product` - 56 edges
+2. `Roles()` - 40 edges
+3. `UserEntity` - 40 edges
 4. `UsersDS` - 35 edges
 5. `ProductService` - 34 edges
 6. `CreateProductDto` - 31 edges
@@ -301,6 +306,8 @@
 10. `TProduct` - 25 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `IUserProfileState` --references--> `TUserProfile`  [EXTRACTED]
+  client/app/features/profile/user/data/index.store.ts → client/app/features/profile/user/types/index.type.ts
 - `AdminDS` --inherits--> `BaseStore`  [EXTRACTED]
   client/app/features/profile/admin/data/index.store.ts → client/app/core/BaseStore.ts
 - `UserProfileDS` --inherits--> `BaseStore`  [EXTRACTED]
@@ -309,24 +316,22 @@
   client/app/features/addresses/data/index.store.ts → client/app/features/addresses/models/index.model.ts
 - `AddressModel` --implements--> `TAddress`  [EXTRACTED]
   client/app/features/addresses/models/index.model.ts → client/app/features/addresses/types/index.type.ts
-- `AttributeValueModel` --implements--> `TAttributeValue`  [EXTRACTED]
-  client/app/features/attributes/models/index.model.ts → client/app/features/attributes/types/index.type.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (301 total, 99 thin omitted)
+## Communities (306 total, 100 thin omitted)
 
 ### Community 0 - "InteractionsService"
-Cohesion: 0.09
-Nodes (24): CreateCommentDto, IsEnum, IsString, IsUUID, MaxLength, MinLength, LikeStatusQueryDto, IsEnum (+16 more)
+Cohesion: 0.07
+Nodes (35): CreateCommentDto, IsEnum, IsString, IsUUID, MaxLength, MinLength, LikeStatusQueryDto, IsEnum (+27 more)
 
 ### Community 1 - "TBanner"
 Cohesion: 0.05
 Nodes (27): emit, modalOpen, props, bannerSchema, emit, handleSubmit(), isEditing, modalOpen (+19 more)
 
 ### Community 2 - "TStory"
-Cohesion: 0.06
+Cohesion: 0.05
 Nodes (29): currentPage, emit, paginatedStories, props, totalItems, emit, handleConfirm(), modalOpen (+21 more)
 
 ### Community 3 - "TBrand"
@@ -337,17 +342,17 @@ Nodes (27): emit, modalOpen, props, brandSchema, emit, handleSubmit(), isEditing
 Cohesion: 0.05
 Nodes (30): props, stepClass(), steps, stepState(), OrdersController, emptyMeta(), IOrdersState, OrdersDS (+22 more)
 
-### Community 5 - "product.entity.ts"
+### Community 5 - "product.module.ts"
 Cohesion: 0.05
-Nodes (56): InjectRepository, Attribute, Column, CreateDateColumn, DeleteDateColumn, Entity, Index, OneToMany (+48 more)
+Nodes (46): InjectRepository, Attribute, Column, CreateDateColumn, DeleteDateColumn, Entity, Index, OneToMany (+38 more)
 
 ### Community 6 - "FilesDS"
-Cohesion: 0.07
+Cohesion: 0.06
 Nodes (17): emit, modalOpen, props, config, currentPage, emit, paginatedFiles, props (+9 more)
 
-### Community 7 - "chat.service.ts"
-Cohesion: 0.11
-Nodes (21): ChatAdminRawRow, ChatUserRawRow, CreateChatDto, IsOptional, IsString, MaxLength, Chat, Column (+13 more)
+### Community 7 - "dashboard.service.ts"
+Cohesion: 0.10
+Nodes (26): InjectRepository, Chat, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn (+18 more)
 
 ### Community 8 - "[slug].vue"
 Cohesion: 0.04
@@ -359,15 +364,15 @@ Nodes (26): AuthController, AuthService, TLoginData, TLoginPayload, TUserData, T
 
 ### Community 10 - "ProductFormModal.vue"
 Cohesion: 0.05
-Nodes (33): addOption(), addVariant(), createEmptyOption(), createEmptyVariant(), emit, handleSubmit(), hasRelatedEntities, isEditing (+25 more)
+Nodes (43): addOption(), addVariant(), createEmptyOption(), emit, FormValidationErrorEvent, getVariantStockRemaining(), handleSubmit(), hasRelatedEntities (+35 more)
 
 ### Community 11 - "admin/products/index.vue"
 Cohesion: 0.06
 Nodes (36): attributes, attributeSelections, brands, buildAttributeValueIds(), buildFiltersQuery(), buildProductsQuery(), categories, categoriesDS (+28 more)
 
 ### Community 12 - "products/types/index.type.ts"
-Cohesion: 0.09
-Nodes (30): TProductFormState, ProductAttributeRefModel, ProductAttributeValueModel, ProductCategoryRefModel, ProductMediaModel, ProductOptionModel, ProductOptionValueModel, ProductTagModel (+22 more)
+Cohesion: 0.11
+Nodes (27): ProductAttributeRefModel, ProductAttributeValueModel, ProductCategoryRefModel, ProductMediaModel, ProductOptionModel, ProductOptionValueModel, ProductTagModel, ProductTagRefModel (+19 more)
 
 ### Community 13 - "Roles"
 Cohesion: 0.15
@@ -381,45 +386,41 @@ Nodes (31): activeBrand, activeCategory, attributeSelections, brands, buildAttri
 Cohesion: 0.09
 Nodes (24): AttributeController, Body, Controller, Delete, Get, Param, Patch, Post (+16 more)
 
-### Community 16 - "ProductsDS"
-Cohesion: 0.12
-Nodes (3): IProductsState, ProductsDS, ProductModel
+### Community 16 - "TProduct"
+Cohesion: 0.08
+Nodes (11): emit, modalOpen, props, ProductsController, IProductsState, ProductsDS, ProductModel, TProduct (+3 more)
 
 ### Community 17 - "chat/types/index.type.ts"
 Cohesion: 0.13
 Nodes (11): ChatService, TRawChat, TChat, TChatAdmin, TChatListData, TChatListQuery, TChatMessagesData, TChatMessagesQuery (+3 more)
 
-### Community 18 - "ProductsService"
-Cohesion: 0.19
-Nodes (3): ProductsService, TProduct, TProductListData
-
-### Community 19 - "ProductDeleteConfirmModal.vue"
-Cohesion: 0.50
-Nodes (3): emit, modalOpen, props
+### Community 19 - "DashboardService"
+Cohesion: 0.15
+Nodes (6): DashboardController, Controller, Get, UseGuards, DashboardService, Injectable
 
 ### Community 20 - "StoryService"
 Cohesion: 0.09
 Nodes (19): IsBoolean, IsInt, IsOptional, IsString, Length, Min, UpdateStoryDto, StoryController (+11 more)
 
-### Community 21 - "Category"
-Cohesion: 0.09
-Nodes (21): Category, Column, CreateDateColumn, Entity, Index, JoinColumn, PrimaryGeneratedColumn, UpdateDateColumn (+13 more)
+### Community 21 - "Product"
+Cohesion: 0.08
+Nodes (34): InjectRepository, CartItem, Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne (+26 more)
 
 ### Community 22 - "app.module.ts"
 Cohesion: 0.10
-Nodes (19): AppController, Controller, Get, AppModule, Module, AppService, Injectable, BlogModule (+11 more)
+Nodes (20): AddressesModule, Module, AppModule, Module, CartModule, Module, CategoriesModule, Module (+12 more)
 
-### Community 23 - "InteractionsController"
-Cohesion: 0.20
-Nodes (11): InteractionsController, Body, Controller, Delete, Get, HttpCode, Param, Post (+3 more)
+### Community 23 - "product.service.ts"
+Cohesion: 0.09
+Nodes (25): ChangeProductStatusDto, IsEnum, CreateProductSpecificationDto, IsString, Length, UpdateProductDto, Brand, Column (+17 more)
 
 ### Community 24 - "attributes/index.vue"
 Cohesion: 0.09
 Nodes (20): activeAttributeForValue, attributeOfValuePendingDelete, attributePendingDelete, attributes, attributesDS, editingAttribute, editingValue, fetchAttributes() (+12 more)
 
 ### Community 25 - "AdminService"
-Cohesion: 0.12
-Nodes (14): AdminController, Controller, Get, Req, UseGuards, AdminModule, Module, AdminService (+6 more)
+Cohesion: 0.16
+Nodes (11): AdminController, Controller, AdminModule, Module, AdminService, Injectable, InjectRepository, AdminEntity (+3 more)
 
 ### Community 26 - "InteractionsDS"
 Cohesion: 0.07
@@ -429,21 +430,17 @@ Nodes (17): InteractionsController, emptyMeta(), ICommentsMeta, IInteractionsSta
 Cohesion: 0.11
 Nodes (16): BrandController, Body, Controller, Delete, Get, InjectRepository, Param, Patch (+8 more)
 
-### Community 28 - "ProductService"
-Cohesion: 0.06
-Nodes (28): ChangeProductStatusDto, IsEnum, QueryProductDto, IsArray, IsBoolean, IsEnum, IsIn, IsNumber (+20 more)
-
 ### Community 29 - "dependencies"
 Cohesion: 0.09
-Nodes (23): bcrypt, cache-manager, class-transformer, @nestjs/cache-manager, @nestjs/common, @nestjs/config, @nestjs/mapped-types, passport-local (+15 more)
+Nodes (23): cache-manager, class-transformer, @nestjs/cache-manager, @nestjs/common, @nestjs/config, @nestjs/mapped-types, passport-jwt, passport-local (+15 more)
 
 ### Community 30 - "ProductDetailsModal.vue"
 Cohesion: 0.09
 Nodes (11): activeMedia, activeMediaIndex, emit, imagePreviewLabel, imagePreviewOpen, imagePreviewUrl, mediaItems, modalOpen (+3 more)
 
-### Community 31 - "AddressesController"
-Cohesion: 0.17
-Nodes (11): AddressesController, Body, Controller, Delete, Get, HttpCode, Param, Patch (+3 more)
+### Community 31 - "dashboard/types/index.type.ts"
+Cohesion: 0.11
+Nodes (12): numberFormatter, numberFormatter, numberFormatter, TDashboardEngagement, TDashboardLowStockProduct, TDashboardOrders, TDashboardProducts, TDashboardRecentOrder (+4 more)
 
 ### Community 32 - "Blog"
 Cohesion: 0.11
@@ -477,12 +474,12 @@ Nodes (16): blogSchema, emit, handleSubmit(), isEditing, modalOpen, normalizePay
 Cohesion: 0.12
 Nodes (3): ChatDS, IChatState, TChatListMeta
 
-### Community 41 - "OtpService"
-Cohesion: 0.14
-Nodes (9): OtpController, Body, Controller, Post, OtpModule, Module, OtpService, Inject (+1 more)
+### Community 41 - "ProductController"
+Cohesion: 0.16
+Nodes (8): ProductController, Body, Controller, Delete, HttpCode, Param, Patch, Post
 
 ### Community 43 - "CategoriesDS"
-Cohesion: 0.13
+Cohesion: 0.12
 Nodes (3): CategoriesDS, ICategoriesState, CategoryModel
 
 ### Community 44 - "chat/models/index.model.ts"
@@ -493,9 +490,9 @@ Nodes (14): emit, getSenderInitial(), getSenderName(), props, ChatLastMessageMod
 Cohesion: 0.19
 Nodes (9): BlogController, Body, Controller, Delete, HttpCode, Param, Patch, Post (+1 more)
 
-### Community 46 - "QueryMessagesDto"
-Cohesion: 0.29
-Nodes (6): QueryMessagesDto, IsInt, IsOptional, Max, Min, Type
+### Community 46 - "Category"
+Cohesion: 0.12
+Nodes (16): dbPort, migrationPaths, pgConfig, pgConnectionConfig, pgMigrationConfig, Category, Column, CreateDateColumn (+8 more)
 
 ### Community 47 - "ProductTag"
 Cohesion: 0.12
@@ -510,8 +507,8 @@ Cohesion: 0.14
 Nodes (13): buildFileUrl(), clearSelection(), config, emit, filesDS, imageFiles, isLoading, isModalOpen (+5 more)
 
 ### Community 50 - "ProductFiltersDrawer.vue"
-Cohesion: 0.13
-Nodes (13): clearFilters(), closeDrawer(), emit, openModel, props, searchInputModel, selectedBrandForSelect, selectedBrandIdModel (+5 more)
+Cohesion: 0.11
+Nodes (15): clearFilters(), closeDrawer(), emit, openModel, props, searchInputModel, selectedBrandForSelect, selectedBrandIdModel (+7 more)
 
 ### Community 51 - "CartDS"
 Cohesion: 0.06
@@ -522,8 +519,8 @@ Cohesion: 0.21
 Nodes (6): ProfileAdminController, IAdminState, initialAdmin, AdminModel, ProfileAdminService, TAdmin
 
 ### Community 53 - "TUserProfile"
-Cohesion: 0.20
-Nodes (7): ProfileUserController, initialState, IUserProfileState, UserModel, ProfileUserService, TUpdateUserPayload, TUserProfile
+Cohesion: 0.23
+Nodes (5): ProfileUserController, UserModel, ProfileUserService, TUpdateUserPayload, TUserProfile
 
 ### Community 54 - "categories/index.vue"
 Cohesion: 0.13
@@ -531,15 +528,11 @@ Nodes (13): categories, categoriesDS, categoryPendingDelete, editingCategory, fe
 
 ### Community 55 - "dependencies"
 Cohesion: 0.12
-Nodes (17): dependencies, date-fns, @iconify-json/lucide, @iconify-json/simple-icons, nuxt, @nuxtjs/sitemap, @tailwindcss/typography, @tiptap/extension-underline (+9 more)
+Nodes (17): dependencies, date-fns, @iconify-json/lucide, nuxt, @nuxtjs/sitemap, @tailwindcss/typography, @tiptap/extension-underline, @tiptap/starter-kit (+9 more)
 
 ### Community 56 - "FileService"
 Cohesion: 0.09
 Nodes (18): Res, File, Column, Entity, PrimaryGeneratedColumn, FileController, Controller, Delete (+10 more)
-
-### Community 57 - "CategoriesService"
-Cohesion: 0.24
-Nodes (5): CategoriesService, TCategoryApiPayload, TRawCategory, TCategoryListData, TCategoryListQuery
 
 ### Community 58 - "banners/index.vue"
 Cohesion: 0.14
@@ -557,9 +550,9 @@ Nodes (12): brandPendingDelete, brands, brandsDS, editingBrand, fetchBrands(), h
 Cohesion: 0.14
 Nodes (12): editingStory, fetchStories(), handleDeleteConfirm(), handleFormSubmit(), isDeleteConfirmOpen, isFormModalOpen, loading, stories (+4 more)
 
-### Community 62 - "BannersController"
+### Community 62 - "TDashboardData"
 Cohesion: 0.17
-Nodes (10): BannersController, Body, Controller, Delete, Get, Param, Patch, Post (+2 more)
+Nodes (5): DashboardController, DashboardDS, emptyState(), IDashboardState, TDashboardData
 
 ### Community 63 - "QueryBlogDto"
 Cohesion: 0.12
@@ -590,12 +583,12 @@ Cohesion: 0.13
 Nodes (15): scripts, build, format, lint, migration:revert, migration:run, start, start:debug (+7 more)
 
 ### Community 70 - "OrdersService"
-Cohesion: 0.14
-Nodes (9): QueryOrdersDto, IsEnum, IsInt, IsOptional, Max, Min, Type, OrdersService (+1 more)
+Cohesion: 0.07
+Nodes (28): InjectDataSource, dataSource, InjectRepository, CreateOrderDto, IsUUID, QueryOrdersDto, IsEnum, IsInt (+20 more)
 
-### Community 71 - "Favorite"
-Cohesion: 0.08
-Nodes (24): FavoriteToggleDto, IsUUID, Favorite, Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn (+16 more)
+### Community 71 - "favorites.controller.ts"
+Cohesion: 0.13
+Nodes (13): FavoriteToggleDto, IsUUID, AuthenticatedRequest, FavoritesController, Body, Controller, Get, HttpCode (+5 more)
 
 ### Community 72 - "1786500000000-AddRandomSpecsToProducts.ts"
 Cohesion: 0.15
@@ -653,9 +646,9 @@ Nodes (13): js, json, **/*.(t|j)s, ts, jest, collectCoverageFrom, coverageDirect
 Cohesion: 0.06
 Nodes (15): NOTIFICATION_TYPE_META, NotificationController, emptyMeta(), INotificationsState, NotificationsDS, NotificationModel, NotificationUserModel, NotificationService (+7 more)
 
-### Community 86 - "AddCartItemDto"
-Cohesion: 0.17
-Nodes (12): AddCartItemDto, CartSelectedOptionDto, ArrayMaxSize, IsArray, IsInt, IsOptional, IsUUID, Max (+4 more)
+### Community 86 - "QueryProductDto"
+Cohesion: 0.11
+Nodes (15): QueryProductDto, IsArray, IsBoolean, IsEnum, IsIn, IsNumber, IsOptional, IsString (+7 more)
 
 ### Community 87 - "CategoriesService"
 Cohesion: 0.13
@@ -665,9 +658,13 @@ Nodes (13): CategoriesService, CategoryNode, Injectable, CreateCategoryDto, IsBo
 Cohesion: 0.21
 Nodes (9): closeViewer(), currentIndex, currentStory, elapsed, emit, goToNextStory(), progress, Props (+1 more)
 
-### Community 89 - "BaseStore"
-Cohesion: 0.25
-Nodes (3): BaseStore, StoreInstance, stores
+### Community 89 - "user/data/index.store.ts"
+Cohesion: 0.21
+Nodes (5): BaseStore, StoreInstance, stores, initialState, IUserProfileState
+
+### Community 90 - "TBlog"
+Cohesion: 0.24
+Nodes (3): BlogsController, TBlog, TBlogPayload
 
 ### Community 91 - "CategoriesTable.vue"
 Cohesion: 0.17
@@ -686,12 +683,12 @@ Cohesion: 0.10
 Nodes (13): cartDS, checkoutOpen, ensureAuth(), itemCount, items, loadCart(), loading, submitting (+5 more)
 
 ### Community 96 - "UserEntity"
-Cohesion: 0.08
-Nodes (32): AddressesModule, Module, Address, Column, CreateDateColumn, Entity, Index, JoinColumn (+24 more)
+Cohesion: 0.06
+Nodes (45): Address, Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn (+37 more)
 
 ### Community 97 - "CreateProductDto"
-Cohesion: 0.07
-Nodes (30): CreateProductDto, ArrayMaxSize, IsArray, IsBoolean, IsEnum, IsNumber, IsOptional, IsString (+22 more)
+Cohesion: 0.12
+Nodes (16): CreateProductDto, ArrayMaxSize, IsArray, IsBoolean, IsEnum, IsNumber, IsOptional, IsString (+8 more)
 
 ### Community 98 - "1786000000000-AddSpecificationsToProducts.ts"
 Cohesion: 0.22
@@ -706,7 +703,7 @@ Cohesion: 0.27
 Nodes (9): autoResize(), emit, isFocused, isHovered, length, onInput(), onKeydown(), props (+1 more)
 
 ### Community 102 - "TCategory"
-Cohesion: 0.33
+Cohesion: 0.29
 Nodes (3): CategoriesController, TCategory, TCategoryPayload
 
 ### Community 103 - "CheckoutAddressModal.vue"
@@ -726,8 +723,8 @@ Cohesion: 0.22
 Nodes (5): currentPage, emit, paginatedBlogs, props, totalItems
 
 ### Community 108 - "blogs/types/index.type.ts"
-Cohesion: 0.29
-Nodes (6): IBlogsState, BlogModel, TRawBlog, TBlogPayload, TBlogProductRef, TBlogSection
+Cohesion: 0.47
+Nodes (5): IBlogsState, BlogModel, TRawBlog, TBlogProductRef, TBlogSection
 
 ### Community 111 - "chat/index.vue"
 Cohesion: 0.20
@@ -743,11 +740,11 @@ Nodes (9): devDependencies, @nuxt/eslint, prettier, typescript, vue-tsc, prettie
 
 ### Community 114 - "devDependencies"
 Cohesion: 0.22
-Nodes (9): eslint-config-prettier, devDependencies, eslint-config-prettier, tsconfig-paths, @types/jest, @types/node, tsconfig-paths, @types/jest (+1 more)
+Nodes (9): @eslint/eslintrc, devDependencies, @eslint/eslintrc, tsconfig-paths, @types/jest, @types/node, tsconfig-paths, @types/jest (+1 more)
 
-### Community 115 - "dbConfig.ts"
-Cohesion: 0.20
-Nodes (8): InjectDataSource, dataSource, dbPort, migrationPaths, pgConfig, pgConnectionConfig, pgMigrationConfig, InjectRepository
+### Community 115 - "Story"
+Cohesion: 0.18
+Nodes (10): Story, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn (+2 more)
 
 ### Community 116 - "BasePaginationFooter.vue"
 Cohesion: 0.25
@@ -785,9 +782,9 @@ Nodes (7): extends, lockFileMaintenance, enabled, packageRules, postUpdateOption
 Cohesion: 0.25
 Nodes (7): dist, node_modules, **/*spec.ts, test, ./tsconfig.json, exclude, extends
 
-### Community 129 - "CartController"
-Cohesion: 0.19
-Nodes (11): CartController, Body, Controller, Delete, Get, HttpCode, Param, Patch (+3 more)
+### Community 129 - "CategoriesController"
+Cohesion: 0.17
+Nodes (9): CategoriesController, Body, Controller, Delete, Get, Param, Patch, Post (+1 more)
 
 ### Community 130 - "PublicActiveFilterChips.vue"
 Cohesion: 0.29
@@ -802,8 +799,8 @@ Cohesion: 0.29
 Nodes (6): author, description, license, name, private, version
 
 ### Community 134 - "AddressesService"
-Cohesion: 0.14
-Nodes (12): Matches, AuthenticatedRequest, AddressesService, Injectable, InjectRepository, CreateAddressDto, IsString, Length (+4 more)
+Cohesion: 0.09
+Nodes (22): Matches, AddressesController, AuthenticatedRequest, Body, Controller, Delete, Get, HttpCode (+14 more)
 
 ### Community 135 - "ChatMessageModel"
 Cohesion: 0.14
@@ -853,9 +850,9 @@ Nodes (4): emit, handleConfirm(), modalOpen, props
 Cohesion: 0.40
 Nodes (3): emit, modalOpen, props
 
-### Community 147 - "products/controllers/index.controller.ts"
-Cohesion: 0.21
-Nodes (4): ProductsController, TProductAttributeWithValues, TProductListQuery, TProductPayload
+### Community 147 - "categories/types/index.type.ts"
+Cohesion: 0.43
+Nodes (3): TCategoryApiPayload, TRawCategory, TCategoryListQuery
 
 ### Community 148 - "notifications/[id].vue"
 Cohesion: 0.17
@@ -869,9 +866,9 @@ Nodes (4): actions, cartCount, cartDS, token
 Cohesion: 0.50
 Nodes (3): emit, mainImageUrl, props
 
-### Community 154 - "orders.service.ts"
-Cohesion: 0.11
-Nodes (25): CreateOrderDto, IsUUID, IsEnum, UpdateOrderStatusDto, Order, Column, CreateDateColumn, Entity (+17 more)
+### Community 154 - "Order"
+Cohesion: 0.12
+Nodes (21): InjectRepository, Order, Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne (+13 more)
 
 ### Community 155 - "user.ts"
 Cohesion: 0.50
@@ -889,9 +886,9 @@ Nodes (14): CreateDto, IsEmail, IsString, Length, IsEmail, IsOptional, IsString,
 Cohesion: 0.17
 Nodes (9): canSubmit, form, loadingUsers, notificationsDS, submitting, toast, typeItems, userItems (+1 more)
 
-### Community 178 - "Product"
+### Community 178 - "CartService"
 Cohesion: 0.06
-Nodes (41): AuthenticatedRequest, CartService, Injectable, InjectRepository, IsInt, Max, Min, Type (+33 more)
+Nodes (33): AuthenticatedRequest, CartController, Body, Controller, Delete, Get, HttpCode, Param (+25 more)
 
 ### Community 187 - "profile/notifications/index.vue"
 Cohesion: 0.22
@@ -901,6 +898,10 @@ Nodes (6): loading, notifications, notificationsDS, submitting, toast, unreadCou
 Cohesion: 0.16
 Nodes (4): AuthService, Injectable, LocalStrategy, Injectable
 
+### Community 197 - "auth.service.ts"
+Cohesion: 0.24
+Nodes (7): LoginDto, IsString, MinLength, RequestOtpDto, IsString, IsString, VerifyOtpDto
+
 ### Community 198 - "TAddress"
 Cohesion: 0.22
 Nodes (5): AddressesController, AddressesService, TRawAddress, TAddress, TAddressPayload
@@ -909,25 +910,33 @@ Nodes (5): AddressesController, AddressesService, TRawAddress, TAddress, TAddres
 Cohesion: 0.48
 Nodes (3): IAttributesState, AttributeModel, AttributeValueModel
 
+### Community 213 - "blog.controller.ts"
+Cohesion: 0.40
+Nodes (4): BlogModule, Module, UpdateBlogDto, BlogStatus
+
 ### Community 222 - "banners.controller.ts"
-Cohesion: 0.10
-Nodes (20): BannersModule, Module, BannersService, Injectable, InjectRepository, CreateBannerDto, IsBoolean, IsOptional (+12 more)
+Cohesion: 0.07
+Nodes (30): BannersController, Body, Controller, Delete, Get, Param, Patch, Post (+22 more)
 
 ### Community 224 - "AddressFormModal.vue"
 Cohesion: 0.16
 Nodes (14): addressSchema, cityItems, emit, handleSubmit(), isEditing, modalOpen, normalizePayload(), props (+6 more)
 
+### Community 249 - "dashboard/index.vue"
+Cohesion: 0.18
+Nodes (6): dashboardDS, data, { isNotificationsSlideoverOpen }, loading, numberFormatter, toast
+
 ### Community 251 - "addresses.vue"
 Cohesion: 0.12
 Nodes (9): addresses, addressesDS, addressPendingDelete, editingAddress, isDeleteConfirmOpen, isFormModalOpen, loading, submitting (+1 more)
 
-### Community 254 - "OrdersController"
-Cohesion: 0.22
-Nodes (11): OrdersController, Body, Controller, Get, HttpCode, Param, Patch, Post (+3 more)
+### Community 254 - "DashboardRevenueChart.vue"
+Cohesion: 0.18
+Nodes (8): hoveredIndex, hoveredPoint, maxRevenue, numberFormatter, props, totalOrders, totalRevenue, TDashboardChartPoint
 
-### Community 255 - "CategoriesController"
-Cohesion: 0.17
-Nodes (9): CategoriesController, Body, Controller, Delete, Get, Param, Patch, Post (+1 more)
+### Community 255 - "AppService"
+Cohesion: 0.29
+Nodes (5): AppController, Controller, Get, AppService, Injectable
 
 ### Community 257 - "support.vue"
 Cohesion: 0.22
@@ -937,9 +946,13 @@ Nodes (8): chatDS, chatId, ensureUserProfile(), loading, profileDS, toast, userI
 Cohesion: 0.12
 Nodes (13): detailLoading, detailOpen, filterItems, loading, openDetail(), orders, ordersDS, resetDetailState() (+5 more)
 
-### Community 262 - "chat.controller.ts"
-Cohesion: 0.14
-Nodes (13): JwtAuthGuard, Injectable, AuthenticatedRequest, RolesGuard, Injectable, AuthenticatedRequest, CreateStoryDto, IsBoolean (+5 more)
+### Community 262 - "JwtAuthGuard"
+Cohesion: 0.15
+Nodes (12): JwtAuthGuard, Injectable, RolesGuard, Injectable, AuthenticatedRequest, CreateStoryDto, IsBoolean, IsInt (+4 more)
+
+### Community 264 - "AuthController"
+Cohesion: 0.40
+Nodes (5): AuthController, Body, Controller, HttpCode, Post
 
 ### Community 266 - "users/data/index.store.ts"
 Cohesion: 0.23
@@ -953,17 +966,17 @@ Nodes (4): loading, orders, ordersDS, toast
 Cohesion: 0.22
 Nodes (7): fetching, order, orderId, ordersDS, pageLoading, route, toast
 
-### Community 271 - "QueryChatsDto"
-Cohesion: 0.17
-Nodes (9): ChatReadFilter, ChatStatusFilter, QueryChatsDto, IsEnum, IsInt, IsOptional, Max, Min (+1 more)
+### Community 271 - "chat.service.ts"
+Cohesion: 0.08
+Nodes (28): AuthenticatedRequest, ChatAdminRawRow, ChatUserRawRow, CreateChatDto, IsOptional, IsString, MaxLength, ChatReadFilter (+20 more)
 
 ### Community 272 - "iran-locations.ts"
 Cohesion: 0.43
 Nodes (6): getCitiesByProvinceName(), getProvinceByCityName(), getProvinceByName(), IRAN_PROVINCES, TIranCity, TIranProvince
 
-### Community 274 - "auth.service.ts"
-Cohesion: 0.17
-Nodes (12): AuthController, Body, Controller, HttpCode, Post, LoginDto, IsString, MinLength (+4 more)
+### Community 274 - "OtpService"
+Cohesion: 0.14
+Nodes (9): OtpController, Body, Controller, Post, OtpModule, Module, OtpService, Inject (+1 more)
 
 ### Community 275 - "users/index.vue"
 Cohesion: 0.18
@@ -973,13 +986,9 @@ Nodes (10): fetchUsers(), loading, meta, onSearch(), page, router, searchInput, 
 Cohesion: 0.40
 Nodes (3): emit, modalOpen, props
 
-### Community 277 - "ChatMessage"
-Cohesion: 0.20
-Nodes (9): InjectRepository, ChatMessage, Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne (+1 more)
-
-### Community 279 - "SendMessageDto"
-Cohesion: 0.29
-Nodes (6): SendMessageDto, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength
+### Community 279 - "dashboard/services/index.service.ts"
+Cohesion: 0.38
+Nodes (3): DashboardService, toNumber(), TRaw
 
 ### Community 280 - "users/types/index.type.ts"
 Cohesion: 0.38
@@ -993,13 +1002,25 @@ Nodes (3): emit, modalOpen, props
 Cohesion: 0.24
 Nodes (5): AuthModule, Module, JwtStrategy, Inject, Injectable
 
-### Community 287 - "Comment"
-Cohesion: 0.11
-Nodes (18): Comment, Column, CreateDateColumn, DeleteDateColumn, Entity, Index, JoinColumn, ManyToOne (+10 more)
+### Community 287 - ".getAdmin"
+Cohesion: 0.33
+Nodes (3): Get, Req, UseGuards
+
+### Community 288 - "CreateProductVariantDto"
+Cohesion: 0.29
+Nodes (6): CreateProductVariantDto, IsBoolean, IsNumber, IsOptional, IsString, Min
 
 ### Community 290 - "addToCart"
 Cohesion: 0.36
 Nodes (9): addToCart(), applyProductDefaults(), collectSelectedOptions(), ensureCartSelections(), ensureOptionDefaults(), loadProduct(), pickDefaultVariant(), resolveVariantFromOptions() (+1 more)
+
+### Community 292 - "DashboardOrderStatusPanel.vue"
+Cohesion: 0.33
+Nodes (4): numberFormatter, props, sortedItems, TDashboardOrderStatusCount
+
+### Community 294 - "CreateProductOptionDto"
+Cohesion: 0.40
+Nodes (4): CreateProductOptionDto, ArrayMaxSize, IsArray, IsUUID
 
 ### Community 297 - "seo.ts"
 Cohesion: 0.43
@@ -1010,24 +1031,24 @@ Cohesion: 0.50
 Nodes (4): requireLogin(), submitComment(), toggleFavorite(), toggleLike()
 
 ## Knowledge Gaps
-- **917 isolated node(s):** `colorMode`, `route`, `requestURL`, `isNoindexPage`, `color` (+912 more)
+- **950 isolated node(s):** `colorMode`, `route`, `requestURL`, `isNoindexPage`, `color` (+945 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **99 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **100 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `StoreManager` connect `StoreManager` to `TBanner`, `FavoritesDS`, `orders/types/index.type.ts`, `UsersDS`, `AddressesDS`, `UserProfileDS`, `ProductsDS`, `CartDS`, `TAdmin`, `NotificationsDS`, `TUserProfile`, `BaseStore`, `InteractionsDS`, `BlogsDS`?**
-  _High betweenness centrality (0.401) - this node is a cross-community bridge._
-- **Why does `CartItemModel` connect `CartDS` to `Product`?**
-  _High betweenness centrality (0.263) - this node is a cross-community bridge._
-- **Why does `CartItem` connect `Product` to `UserEntity`, `orders.service.ts`, `Comment`?**
-  _High betweenness centrality (0.208) - this node is a cross-community bridge._
+- **Why does `StoreManager` connect `StoreManager` to `TBanner`, `TStory`, `FavoritesDS`, `orders/types/index.type.ts`, `FilesDS`, `UsersDS`, `CategoriesDS`, `UserProfileDS`, `CartDS`, `TAdmin`, `NotificationsDS`, `user/data/index.store.ts`, `InteractionsDS`, `TDashboardData`?**
+  _High betweenness centrality (0.385) - this node is a cross-community bridge._
+- **Why does `CartItemModel` connect `CartDS` to `CartService`?**
+  _High betweenness centrality (0.251) - this node is a cross-community bridge._
+- **Why does `CartItem` connect `Product` to `UserEntity`, `CartService`, `Order`, `dashboard.service.ts`?**
+  _High betweenness centrality (0.202) - this node is a cross-community bridge._
 - **What connects `colorMode`, `route`, `requestURL` to the rest of the system?**
-  _917 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _950 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `InteractionsService` be split into smaller, more focused modules?**
-  _Cohesion score 0.09191919191919191 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06557377049180328 - nodes in this community are weakly interconnected._
 - **Should `TBanner` be split into smaller, more focused modules?**
   _Cohesion score 0.05273937532002048 - nodes in this community are weakly interconnected._
 - **Should `TStory` be split into smaller, more focused modules?**
-  _Cohesion score 0.05552617662612375 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05427547363031234 - nodes in this community are weakly interconnected._

@@ -9,7 +9,9 @@ import { In, Repository, SelectQueryBuilder } from 'typeorm';
 import { Category } from '../categories/entities/categories.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { QueryProductDto } from './dto/query-product.dto';
+import { QueryPricingProductsDto } from './dto/query-pricing-products.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { UpdateProductPricingDto } from './dto/update-product-pricing.dto';
 import { AttributeValue } from './entities/attribute-value.entity';
 import { Attribute } from './entities/attribute.entity';
 import { Brand } from './entities/brand.entity';
@@ -534,6 +536,191 @@ export class ProductService {
     return this.findOne(id);
   }
 
+  async findAllForPricing(query: QueryPricingProductsDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 30;
+
+    const qb = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect(
+        'product.variants',
+        'variant',
+        'variant.deletedAt IS NULL',
+      )
+      .leftJoinAndSelect('product.medias', 'media')
+      .where('product.deletedAt IS NULL');
+
+    if (query.search) {
+      qb.andWhere(
+        `
+        product.name ILIKE :search
+        OR product.sku ILIKE :search
+        OR EXISTS (
+          SELECT 1
+          FROM product_variants pricing_variant
+          WHERE pricing_variant."productId" = product.id
+            AND pricing_variant."deletedAt" IS NULL
+            AND (
+              pricing_variant.name ILIKE :search
+              OR pricing_variant.sku ILIKE :search
+            )
+        )
+        `,
+        {
+          search: `%${query.search}%`,
+        },
+      );
+    }
+
+    if (query.categoryId) {
+      qb.andWhere('product.categoryId = :categoryId', {
+        categoryId: query.categoryId,
+      });
+    }
+
+    if (query.lowStockOnly) {
+      qb.andWhere('product.manageStock = true AND product.stock <= 5');
+    }
+
+    qb.orderBy('product.name', 'ASC');
+    qb.skip((page - 1) * limit);
+    qb.take(limit);
+
+    const [products, total] = await qb.getManyAndCount();
+
+    return {
+      items: products.map((product) => this.mapProductToPricingItem(product)),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 0,
+      },
+    };
+  }
+
+  async findPricingItem(id: string) {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['variants', 'medias'],
+    });
+
+    if (!product) {
+      throw new NotFoundException('محصول یافت نشد');
+    }
+
+    return this.mapProductToPricingItem(product);
+  }
+
+  async updatePricing(id: string, dto: UpdateProductPricingDto) {
+    const product = await this.productRepository.findOne({
+      where: { id },
+    });
+
+    if (!product) {
+      throw new NotFoundException('محصول یافت نشد');
+    }
+
+    const nextPrice = typeof dto.price === 'number' ? dto.price : Number(product.price);
+    const nextSalePrice =
+      typeof dto.salePrice === 'undefined' ? product.salePrice : dto.salePrice;
+
+    this.ensureValidSalePrice(
+      nextPrice,
+      nextSalePrice === null || typeof nextSalePrice === 'undefined'
+        ? undefined
+        : Number(nextSalePrice),
+      'محصول',
+    );
+
+    await this.productRepository.manager.transaction(async (manager) => {
+      const variantRepo = manager.getRepository(ProductVariant);
+
+      if (dto.variants?.length) {
+        const existingVariants = await variantRepo.find({
+          where: { productId: id },
+        });
+        const variantMap = new Map(
+          existingVariants.map((item) => [item.id, item]),
+        );
+        const toSave: ProductVariant[] = [];
+
+        for (const patch of dto.variants) {
+          const variant = variantMap.get(patch.id);
+
+          if (!variant) {
+            throw new BadRequestException('یکی از واریانت‌ها یافت نشد');
+          }
+
+          if (typeof patch.price === 'number') {
+            variant.price = patch.price;
+          }
+
+          if (typeof patch.salePrice !== 'undefined') {
+            variant.salePrice =
+              patch.salePrice === null ? undefined : patch.salePrice;
+          }
+
+          if (typeof patch.stock === 'number') {
+            variant.stock = patch.stock;
+          }
+
+          this.ensureValidSalePrice(
+            Number(variant.price),
+            variant.salePrice === null || typeof variant.salePrice === 'undefined'
+              ? undefined
+              : Number(variant.salePrice),
+            `واریانت "${variant.name}"`,
+          );
+
+          toSave.push(variant);
+        }
+
+        if (toSave.length) {
+          await variantRepo.save(toSave);
+        }
+      }
+
+      const refreshedVariants = await variantRepo.find({
+        where: { productId: id },
+      });
+      let nextStock =
+        typeof dto.stock === 'number' ? dto.stock : Number(product.stock ?? 0);
+
+      if (refreshedVariants.length > 0) {
+        if (dto.variants?.length) {
+          nextStock = refreshedVariants.reduce(
+            (sum, variant) => sum + Number(variant.stock ?? 0),
+            0,
+          );
+        } else if (typeof dto.stock === 'number') {
+          this.ensureStockMatchesVariants(nextStock, refreshedVariants);
+        }
+      }
+
+      const productUpdate: Partial<Product> = {};
+
+      if (typeof dto.price === 'number') {
+        productUpdate.price = dto.price;
+      }
+
+      if (typeof dto.salePrice !== 'undefined') {
+        productUpdate.salePrice =
+          dto.salePrice === null ? undefined : dto.salePrice;
+      }
+
+      if (typeof dto.stock === 'number' || dto.variants?.length) {
+        productUpdate.stock = nextStock;
+      }
+
+      if (Object.keys(productUpdate).length > 0) {
+        await manager.update(Product, id, productUpdate);
+      }
+    });
+
+    return this.findPricingItem(id);
+  }
+
   async remove(id: string) {
     const product = await this.findOne(id);
 
@@ -1030,5 +1217,41 @@ export class ProductService {
     });
 
     this.ensureStockMatchesVariants(productStock, existingVariants);
+  }
+
+  private mapProductToPricingItem(product: Product) {
+    const thumbnail =
+      product.medias?.find((media) => media.isThumbnail) ?? product.medias?.[0];
+    const variants = (product.variants ?? [])
+      .filter((variant) => !variant.deletedAt)
+      .sort((left, right) => left.name.localeCompare(right.name, 'fa'))
+      .map((variant) => ({
+        id: variant.id,
+        name: variant.name,
+        sku: variant.sku,
+        price: Number(variant.price),
+        salePrice:
+          variant.salePrice === null || typeof variant.salePrice === 'undefined'
+            ? null
+            : Number(variant.salePrice),
+        stock: Number(variant.stock ?? 0),
+        isActive: variant.isActive,
+      }));
+
+    return {
+      id: product.id,
+      name: product.name,
+      sku: product.sku,
+      price: Number(product.price),
+      salePrice:
+        product.salePrice === null || typeof product.salePrice === 'undefined'
+          ? null
+          : Number(product.salePrice),
+      stock: Number(product.stock ?? 0),
+      manageStock: product.manageStock,
+      image: thumbnail?.url ?? null,
+      variantCount: variants.length,
+      variants,
+    };
   }
 }
