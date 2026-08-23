@@ -213,8 +213,8 @@ const productSchema = z.object({
     if (variantStockSum !== productStock) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: `موجودی محصول (${productStock.toLocaleString("fa-IR")}) با مجموع موجودی واریانت‌ها (${variantStockSum.toLocaleString("fa-IR")}) برابر نیست. مجموع موجودی واریانت‌ها باید دقیقاً برابر موجودی کل محصول باشد.`,
-        path: ["stock"]
+        message: `مجموع موجودی واریانت‌ها (${variantStockSum.toLocaleString("fa-IR")}) باید برابر موجودی محصول (${productStock.toLocaleString("fa-IR")}) باشد.`,
+        path: ["variants"]
       });
     }
   }
@@ -400,17 +400,33 @@ const hasRelatedEntities = computed(() =>
   relatedVariantValues.value.length > 0
 );
 
-function createEmptyVariant(): TProductVariantFormState {
-  return {
-    name: "",
-    sku: "",
-    barcode: "",
-    price: 0,
-    salePrice: "",
-    stock: 0,
-    image: "",
-    isActive: true
-  };
+const toast = useToast();
+
+const variantStockSum = computed(() =>
+  state.variants.reduce((sum, variant) => sum + (Number(variant.stock) || 0), 0)
+);
+
+const productStockValue = computed(() => Number(state.stock) || 0);
+
+const variantStockMismatch = computed(() =>
+  state.variants.length > 0 && variantStockSum.value !== productStockValue.value
+);
+
+function getVariantStockRemaining(): number {
+  const usedStock = state.variants.reduce(
+    (sum, variant) => sum + (Number(variant.stock) || 0),
+    0
+  );
+
+  return Math.max(0, productStockValue.value - usedStock);
+}
+
+function syncProductStockFromVariants(): void {
+  if (!state.variants.length) {
+    return;
+  }
+
+  state.stock = variantStockSum.value;
 }
 
 function resetState(): void {
@@ -580,11 +596,29 @@ function normalizePayload(data: ProductSchema): TProductPayload {
 }
 
 function addVariant(): void {
-  state.variants.push(createEmptyVariant());
+  const index = state.variants.length + 1;
+  const baseSku = state.sku.trim() || "VAR";
+  const productPrice = typeof state.price === "number"
+    ? state.price
+    : Number(state.price) || 0;
+
+  state.variants.push({
+    name: "",
+    sku: `${baseSku}-V${index}`,
+    barcode: "",
+    price: productPrice,
+    salePrice: state.salePrice,
+    stock: getVariantStockRemaining(),
+    image: "",
+    isActive: true
+  });
+
+  syncProductStockFromVariants();
 }
 
 function removeVariant(index: number): void {
   state.variants.splice(index, 1);
+  syncProductStockFromVariants();
 }
 
 function addSpecification(): void {
@@ -602,6 +636,46 @@ function closeModal(): void {
 function handleSubmit(event: FormSubmitEvent<ProductSchema>): void {
   emit("submit", normalizePayload(event.data), props.product?.id ?? null);
 }
+
+interface FormValidationErrorEvent {
+  errors: Array<{ message?: string; name?: string }>;
+}
+
+function handleSubmitError(event: FormValidationErrorEvent): void {
+  const firstError = event.errors?.[0];
+
+  toast.add({
+    title: firstError?.message || "لطفاً خطاهای فرم را برطرف کنید",
+    color: "error"
+  });
+
+  if (!import.meta.client) {
+    return;
+  }
+
+  nextTick(() => {
+    const errorName = firstError?.name ?? "";
+
+    if (errorName.includes("variants") || errorName === "stock") {
+      document.getElementById("product-variants-section")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+      return;
+    }
+
+    const field = document.querySelector(`[name="${errorName}"]`);
+    field?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+}
+
+watch(
+  () => state.variants.map((variant) => Number(variant.stock) || 0),
+  () => {
+    syncProductStockFromVariants();
+  },
+  { deep: true }
+);
 
 watch(
   () => state.mediaUrls.slice(),
@@ -651,6 +725,7 @@ watch(
           :state="state"
           class="space-y-6"
           @submit="handleSubmit"
+          @error="handleSubmitError"
         >
           <section class="space-y-4 rounded-xl border border-default p-4">
             <div class="border-b border-default pb-3">
@@ -715,7 +790,16 @@ watch(
               </UFormField>
 
               <UFormField label="موجودی" name="stock">
-                <UInput v-model.number="state.stock" type="number" min="0" class="w-full" />
+                <UInput
+                  v-model.number="state.stock"
+                  type="number"
+                  min="0"
+                  class="w-full"
+                  :disabled="state.variants.length > 0"
+                />
+                <p v-if="state.variants.length > 0" class="mt-1 text-xs text-muted">
+                  با وجود واریانت، موجودی از مجموع موجودی واریانت‌ها محاسبه می‌شود.
+                </p>
               </UFormField>
             </div>
 
@@ -909,7 +993,7 @@ watch(
             </UFormField>
           </section>
 
-          <section class="space-y-4 rounded-xl border border-default p-4">
+          <section id="product-variants-section" class="space-y-4 rounded-xl border border-default p-4">
             <div class="flex items-center justify-between gap-3 border-b border-default pb-3">
               <h3 class="font-semibold text-highlighted">واریانت‌ها</h3>
               <UButton
@@ -922,6 +1006,18 @@ watch(
                 افزودن واریانت
               </UButton>
             </div>
+
+            <p
+              v-if="state.variants.length"
+              class="text-xs"
+              :class="variantStockMismatch ? 'text-error' : 'text-muted'"
+            >
+              مجموع موجودی واریانت‌ها:
+              {{ variantStockSum.toLocaleString("fa-IR") }}
+              —
+              موجودی محصول:
+              {{ productStockValue.toLocaleString("fa-IR") }}
+            </p>
 
             <div
               v-if="!state.variants.length"

@@ -124,7 +124,7 @@ watch(
         size="lg"
         :loading="sending"
         :disabled="!canSend"
-        class="size-10 shrink-0 rounded-2xlflex justify-center items-center "
+        class="size-10 shrink-0 rounded-2xl"
         @click="handleSend"
       />
     </div>

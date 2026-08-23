@@ -33,17 +33,17 @@ const avatarSrc = computed(() => props.message.sender?.avatarUrl || undefined);
 
 <template>
   <div
-    class="flex w-full px-4 py-1"
+    class="flex w-full min-w-0 px-3 py-1 sm:px-4"
     :class="isOwnMessage ? 'justify-start' : 'justify-end'"
   >
     <div
-      class="group flex max-w-[min(78%,28rem)] gap-2.5"
+      class="group flex min-w-0 max-w-[92%] flex-nowrap items-end gap-2 sm:max-w-[min(78%,28rem)] sm:gap-2.5"
       :class="isOwnMessage ? 'flex-row' : 'flex-row-reverse'"
       @mouseenter="showActions = true"
       @mouseleave="showActions = false"
     >
     <div
-      class="mt-auto mb-5 shrink-0"
+      class="shrink-0 self-end"
       :class="showSender ? 'visible' : 'invisible'"
     >
       <UAvatar
@@ -76,7 +76,7 @@ const avatarSrc = computed(() => props.message.sender?.avatarUrl || undefined);
       </p>
 
       <div
-        class="relative overflow-hidden text-sm leading-6 break-words shadow-sm transition-shadow duration-200 group-hover:shadow-md"
+        class="relative overflow-hidden text-sm leading-6 shadow-sm transition-shadow duration-200 group-hover:shadow-md [overflow-wrap:anywhere] [word-break:break-word]"
         :class="[
           message.isDeleted
             ? 'rounded-2xl bg-elevated/60 px-3.5 py-2.5 italic text-muted'

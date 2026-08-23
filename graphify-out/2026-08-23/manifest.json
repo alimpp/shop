@@ -635,8 +635,8 @@
     "semantic_hash": ""
   },
   "client/app/features/products/components/ProductFormModal.vue": {
-    "mtime": 1787469799.171902,
-    "ast_hash": "2b93e057bc7299aca8aec008ac1449be",
+    "mtime": 1787130577.3380399,
+    "ast_hash": "60ae39ccbc88ab662499d59f395220a4",
     "semantic_hash": ""
   },
   "client/app/features/products/components/ProductsTable.vue": {

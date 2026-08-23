@@ -387,7 +387,7 @@ onMounted(() => {
         </dl>
 
         <UButton
-          class="mt-5 w-full justify-center"
+          class="mt-5 w-full justify-center whitespace-nowrap"
           color="primary"
           size="lg"
           icon="i-lucide-credit-card"

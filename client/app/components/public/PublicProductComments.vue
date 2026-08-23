@@ -32,7 +32,7 @@ function displayName(comment: TComment): string {
 </script>
 
 <template>
-  <div class="rounded-2xl border border-default p-6 sm:p-8">
+  <div class="rounded-2xl border border-default p-4 sm:p-6 lg:p-8">
     <h2 class="mb-6 flex items-center gap-2 text-lg font-black text-highlighted">
       <UIcon
         name="i-lucide-message-square"
@@ -61,7 +61,7 @@ function displayName(comment: TComment): string {
 
     <div
       v-else
-      class="mb-8 flex items-center justify-between rounded-xl border border-dashed border-default p-4"
+      class="mb-8 flex flex-col gap-3 rounded-xl border border-dashed border-default p-4 sm:flex-row sm:items-center sm:justify-between"
     >
       <p class="text-sm text-toned">
         برای ثبت دیدگاه ابتدا وارد حساب شوید.
@@ -71,6 +71,7 @@ function displayName(comment: TComment): string {
         variant="soft"
         size="sm"
         icon="i-lucide-log-in"
+        class="w-full shrink-0 justify-center sm:w-auto"
         to="/auth/login-by-phone"
       >
         ورود

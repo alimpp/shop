@@ -206,7 +206,7 @@ watch(
           </span>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-3 sm:grid sm:grid-cols-2">
           <UButton
             color="neutral"
             variant="outline"
@@ -219,7 +219,7 @@ watch(
           <UButton
             color="primary"
             icon="i-lucide-credit-card"
-            class="w-full justify-center"
+            class="w-full justify-center whitespace-nowrap"
             :loading="submitting"
             :disabled="!selectedAddressId"
             @click="confirmCheckout"

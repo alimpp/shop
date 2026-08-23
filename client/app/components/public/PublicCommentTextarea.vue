@@ -71,7 +71,7 @@ watch(
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
   >
-    <div class="flex items-center justify-between gap-3 px-4 pt-3.5">
+    <div class="flex flex-col gap-2 px-4 pt-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
       <div class="flex items-center gap-2 text-toned">
         <span
           class="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors"
@@ -108,11 +108,11 @@ watch(
       @keydown="onKeydown"
     />
 
-    <div class="flex items-center justify-between gap-3 border-t border-default/70 px-4 py-2.5">
-      <span class="flex items-center gap-1.5 text-[11px] text-toned">
+    <div class="flex flex-col gap-3 border-t border-default/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:py-2.5">
+      <span class="hidden text-[11px] leading-5 text-toned sm:flex sm:items-center sm:gap-1.5">
         <UIcon
           name="i-lucide-corner-down-left"
-          class="size-3.5"
+          class="size-3.5 shrink-0"
         />
         برای ارسال Enter و برای خط جدید Shift + Enter بزنید
       </span>
@@ -121,6 +121,7 @@ watch(
         color="primary"
         size="sm"
         icon="i-lucide-send"
+        class="w-full shrink-0 justify-center sm:w-auto"
         :loading="loading"
         :disabled="disabled || !modelValue.trim()"
         @click="emit('submit')"
