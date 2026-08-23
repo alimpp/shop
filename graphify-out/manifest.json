@@ -235,8 +235,8 @@
     "semantic_hash": ""
   },
   "client/app/config/public-navigation.ts": {
-    "mtime": 1786184388.2875125,
-    "ast_hash": "594e38481c481ccaaa979ad02697e87f",
+    "mtime": 1787473063.187173,
+    "ast_hash": "f064642f788f7f30853e1464d93859e2",
     "semantic_hash": ""
   },
   "client/app/core/BaseApp.ts": {
@@ -1140,8 +1140,8 @@
     "semantic_hash": ""
   },
   "server/src/blog/blog.controller.ts": {
-    "mtime": 1786171911.1591012,
-    "ast_hash": "4fe0073fc8d4488a2b772d15fb86dc27",
+    "mtime": 1787472780.022867,
+    "ast_hash": "16d1287b7958b7c9c5f19da06f5f2e37",
     "semantic_hash": ""
   },
   "server/src/blog/blog.module.ts": {
@@ -1150,8 +1150,8 @@
     "semantic_hash": ""
   },
   "server/src/blog/blog.service.ts": {
-    "mtime": 1786172503.7219594,
-    "ast_hash": "51290faa0417aea725894ab3feb7a206",
+    "mtime": 1787472785.5300162,
+    "ast_hash": "ba478cd5c86f1ec65fdaa8716b925171",
     "semantic_hash": ""
   },
   "server/src/blog/dto/create-blog.dto.ts": {
@@ -1160,8 +1160,8 @@
     "semantic_hash": ""
   },
   "server/src/blog/dto/query-blog.dto.ts": {
-    "mtime": 1786171939.1698039,
-    "ast_hash": "aed65dc856e67a13130096494ec77621",
+    "mtime": 1787472786.9064507,
+    "ast_hash": "f021d8440d666015f2046953ea6d83d4",
     "semantic_hash": ""
   },
   "server/src/blog/dto/update-blog.dto.ts": {
@@ -2460,8 +2460,8 @@
     "semantic_hash": ""
   },
   "client/app/utils/seo.ts": {
-    "mtime": 1787378509.89209,
-    "ast_hash": "76d53c91df8f16ab543204802e1d397d",
+    "mtime": 1787472941.4029188,
+    "ast_hash": "480116c3186d24c4fb3539b934c1c7c7",
     "semantic_hash": ""
   },
   "client/app/composables/useTypewriter.ts": {
@@ -2652,6 +2652,61 @@
   "server/src/product/product-pricing.controller.ts": {
     "mtime": 1787471857.0008535,
     "ast_hash": "34faf26522cfa6826700ac3d94ff9dd3",
+    "semantic_hash": ""
+  },
+  "client/app/components/public/PublicBlogCard.vue": {
+    "mtime": 1787472966.7333589,
+    "ast_hash": "f2fd982fa409c87268ea75d2860e8488",
+    "semantic_hash": ""
+  },
+  "client/app/components/public/PublicBlogHero.vue": {
+    "mtime": 1787472987.3341882,
+    "ast_hash": "3406d2fb5940fce7ba5c4e9f490b1f1b",
+    "semantic_hash": ""
+  },
+  "client/app/components/public/PublicBlogProductCard.vue": {
+    "mtime": 1787472978.1835296,
+    "ast_hash": "25381b4f96b4f75145f47a6e6b148bff",
+    "semantic_hash": ""
+  },
+  "client/app/components/public/PublicBlogProductRail.vue": {
+    "mtime": 1787472995.222318,
+    "ast_hash": "dc5393238759914b1ffb6b8c196c4b50",
+    "semantic_hash": ""
+  },
+  "client/app/components/public/PublicBlogRelated.vue": {
+    "mtime": 1787472990.8769996,
+    "ast_hash": "fcc28c14e0fb5f9b9823d01d135bf968",
+    "semantic_hash": ""
+  },
+  "client/app/features/blogs/controllers/public.controller.ts": {
+    "mtime": 1787472930.6123672,
+    "ast_hash": "4320316d429f64628df5fb54a93d5b19",
+    "semantic_hash": ""
+  },
+  "client/app/features/blogs/services/public.service.ts": {
+    "mtime": 1787472926.3174233,
+    "ast_hash": "6fee0b90ed5108af15917a11f020f387",
+    "semantic_hash": ""
+  },
+  "client/app/features/blogs/types/public.type.ts": {
+    "mtime": 1787472908.9801657,
+    "ast_hash": "2f373ba28c9bf6530b71177fa48f4d4e",
+    "semantic_hash": ""
+  },
+  "client/app/pages/blog/[slug].vue": {
+    "mtime": 1787473061.8643382,
+    "ast_hash": "eba611e2590714add7dc07e8ebe90a28",
+    "semantic_hash": ""
+  },
+  "client/app/pages/blog/index.vue": {
+    "mtime": 1787473075.1910512,
+    "ast_hash": "6851bb57b9d517524f940ab58539a645",
+    "semantic_hash": ""
+  },
+  "server/seed-blogs.sql": {
+    "mtime": 1787472897.8160617,
+    "ast_hash": "eaf6147d53036fda2d92dff61d6cae18",
     "semantic_hash": ""
   }
 }

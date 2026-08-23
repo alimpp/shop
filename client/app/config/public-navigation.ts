@@ -18,7 +18,7 @@ export const publicNavigation: PublicNavigationItem[] = [
   {
     label: "بلاگ",
     icon: "i-lucide-newspaper",
-    to: "/#blog"
+    to: "/blog"
   },
   {
     label: "درباره ما",

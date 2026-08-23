@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import slugify from 'slugify';
 import { In, Repository } from 'typeorm';
 import { Product } from '../product/entities/product.entity';
+import { ProductStatus } from '../product/enums/product-status.enum';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { QueryBlogDto } from './dto/query-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
@@ -19,6 +20,7 @@ export class BlogService {
   private readonly sortableFields = new Set([
     'createdAt',
     'updatedAt',
+    'publishedAt',
     'title',
     'viewCount',
   ]);
@@ -153,6 +155,170 @@ export class BlogService {
         totalPages: Math.ceil(total / limit),
       },
     };
+  }
+
+  async findAllPublic(query: QueryBlogDto) {
+    return this.findAll({
+      ...query,
+      status: BlogStatus.PUBLISHED,
+      isActive: true,
+      sortBy: query.sortBy ?? 'publishedAt',
+      sortOrder: query.sortOrder ?? 'DESC',
+    });
+  }
+
+  async findBySlug(slug: string) {
+    const blog = await this.blogRepository.findOne({
+      where: {
+        slug,
+        status: BlogStatus.PUBLISHED,
+        isActive: true,
+      },
+      relations: {
+        sections: true,
+        products: {
+          medias: true,
+          brand: true,
+          category: true,
+        },
+      },
+    });
+
+    if (!blog) {
+      throw new NotFoundException('بلاگ یافت نشد');
+    }
+
+    blog.sections = (blog.sections ?? []).sort(
+      (left, right) => left.sortOrder - right.sortOrder,
+    );
+
+    blog.viewCount += 1;
+    await this.blogRepository.save(blog);
+
+    const products = await this.enrichBlogProducts(blog);
+    const relatedBlogs = await this.findRelatedBlogs(blog.id, 4);
+
+    return {
+      blog: this.mapPublicBlogDetail(blog, products),
+      relatedBlogs: relatedBlogs.map((item) => this.mapPublicBlogCard(item)),
+    };
+  }
+
+  private async findRelatedBlogs(excludeId: string, limit = 4) {
+    return this.blogRepository
+      .createQueryBuilder('blog')
+      .where('blog.deletedAt IS NULL')
+      .andWhere('blog.status = :status', { status: BlogStatus.PUBLISHED })
+      .andWhere('blog.isActive = true')
+      .andWhere('blog.id != :excludeId', { excludeId })
+      .orderBy('RANDOM()')
+      .take(limit)
+      .getMany();
+  }
+
+  private async enrichBlogProducts(blog: Blog): Promise<Product[]> {
+    const linked = (blog.products ?? []).filter((product) => !product.deletedAt);
+    const targetCount = 4;
+
+    if (linked.length >= targetCount) {
+      return linked.slice(0, targetCount);
+    }
+
+    const excludeIds = linked.map((product) => product.id);
+    const qb = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.medias', 'medias')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.category', 'category')
+      .where('product.deletedAt IS NULL')
+      .andWhere('product.status = :status', {
+        status: ProductStatus.PUBLISHED,
+      })
+      .andWhere('product.isActive = true');
+
+    if (excludeIds.length > 0) {
+      qb.andWhere('product.id NOT IN (:...excludeIds)', { excludeIds });
+    }
+
+    const extra = await qb.orderBy('RANDOM()').take(targetCount - linked.length).getMany();
+
+    return [...linked, ...extra];
+  }
+
+  private mapPublicBlogCard(blog: Blog) {
+    return {
+      id: blog.id,
+      title: blog.title,
+      slug: blog.slug,
+      summary: blog.summary,
+      coverImage: blog.coverImage,
+      isFeatured: blog.isFeatured,
+      viewCount: blog.viewCount,
+      publishedAt: blog.publishedAt,
+      readingMinutes: this.estimateReadingMinutes(blog),
+    };
+  }
+
+  private mapPublicBlogDetail(blog: Blog, products: Product[]) {
+    return {
+      ...this.mapPublicBlogCard(blog),
+      metaTitle: blog.metaTitle,
+      metaDescription: blog.metaDescription,
+      keywords: blog.keywords,
+      canonical: blog.canonical,
+      ogImage: blog.ogImage,
+      sections: (blog.sections ?? []).map((section) => ({
+        id: section.id,
+        title: section.title,
+        description: section.description,
+        imageUrl: section.imageUrl ?? null,
+        sortOrder: section.sortOrder,
+      })),
+      products: products.map((product) => this.mapPublicBlogProduct(product)),
+    };
+  }
+
+  private mapPublicBlogProduct(product: Product) {
+    const thumbnail =
+      product.medias?.find((media) => media.isThumbnail) ?? product.medias?.[0];
+
+    return {
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      price: Number(product.price),
+      salePrice:
+        product.salePrice === null || typeof product.salePrice === 'undefined'
+          ? null
+          : Number(product.salePrice),
+      image: thumbnail?.url ?? null,
+      brand: product.brand
+        ? {
+            id: product.brand.id,
+            name: product.brand.name,
+            slug: product.brand.slug,
+          }
+        : null,
+      category: product.category
+        ? {
+            id: product.category.id,
+            name: product.category.name,
+            slug: product.category.slug,
+          }
+        : null,
+    };
+  }
+
+  private estimateReadingMinutes(blog: Blog): number {
+    const sectionsText = (blog.sections ?? [])
+      .map((section) => `${section.title} ${section.description}`)
+      .join(' ');
+    const words = `${blog.title} ${blog.summary} ${sectionsText}`
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean).length;
+
+    return Math.max(3, Math.ceil(words / 180));
   }
 
   async findOne(id: string) {

@@ -70,7 +70,7 @@ export class QueryBlogDto {
 
   @IsOptional()
   @IsString()
-  @IsIn(['createdAt', 'updatedAt', 'title', 'viewCount'])
+  @IsIn(['createdAt', 'updatedAt', 'publishedAt', 'title', 'viewCount'])
   sortBy?: string;
 
   @IsOptional()

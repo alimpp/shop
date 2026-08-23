@@ -108,3 +108,79 @@ export function resolveProductCanonical(
 
   return fallbackHref
 }
+
+export function resolveBlogTitle(
+  blog: { metaTitle?: string; title?: string } | null | undefined
+): string {
+  if (!blog) return 'مجله فروشگاه'
+  return blog.metaTitle?.trim() || blog.title?.trim() || 'مجله فروشگاه'
+}
+
+export function resolveBlogSocialTitle(
+  blog: { metaTitle?: string; title?: string } | null | undefined
+): string {
+  const title = resolveBlogTitle(blog)
+  if (title === 'مجله فروشگاه') return SITE_NAME
+  return `${title} | ${SITE_NAME}`
+}
+
+export function resolveBlogDescription(
+  blog:
+    | {
+        metaDescription?: string
+        summary?: string
+      }
+    | null
+    | undefined,
+  maxLength = 160
+): string {
+  if (!blog) return ''
+
+  const text = blog.metaDescription?.trim() || blog.summary?.trim() || ''
+  return text.slice(0, maxLength)
+}
+
+export function resolveBlogOgImage(
+  blog:
+    | {
+        ogImage?: string
+        coverImage?: string
+      }
+    | null
+    | undefined,
+  origin: string
+): string {
+  if (!blog) return ''
+
+  const dedicated = blog.ogImage?.trim() || blog.coverImage?.trim()
+  return toAbsoluteUrl(dedicated, origin)
+}
+
+export function resolveBlogCanonical(
+  blog: { canonical?: string; slug?: string } | null | undefined,
+  origin: string,
+  fallbackHref: string
+): string {
+  const custom = blog?.canonical?.trim()
+  if (custom) {
+    return toAbsoluteUrl(custom, origin) || custom
+  }
+
+  if (blog?.slug) {
+    return `${origin}/blog/${blog.slug}`
+  }
+
+  return fallbackHref
+}
+
+export function formatBlogDate(value?: string | Date | null): string {
+  if (!value) return ''
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+
+  return new Intl.DateTimeFormat('fa-IR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date)
+}

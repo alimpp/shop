@@ -37,6 +37,16 @@ export class BlogController {
     return await this.blogService.findAll(query);
   }
 
+  @Get('public')
+  async findAllPublic(@Query() query: QueryBlogDto) {
+    return await this.blogService.findAllPublic(query);
+  }
+
+  @Get('slug/:slug')
+  async findBySlug(@Param('slug') slug: string) {
+    return await this.blogService.findBySlug(slug);
+  }
+
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     return await this.blogService.findOne(id);
