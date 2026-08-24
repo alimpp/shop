@@ -108,6 +108,23 @@ class OrdersController extends BaseController<OrdersService> {
     this.ordersDS.setSubmitting(false)
     return this.handleResponse(response)
   }
+
+  public async updateMyOrderStatus(
+    id: string,
+    payload: TUpdateOrderStatusPayload
+  ): Promise<ControllerResponse<TOrder>> {
+    this.ordersDS.setSubmitting(true)
+
+    const response = await this.service.updateMyOrderStatus(id, payload)
+
+    if (response.success && response.data) {
+      this.ordersDS.upsertOrder(response.data)
+      this.ordersDS.setSelectedOrder(response.data)
+    }
+
+    this.ordersDS.setSubmitting(false)
+    return this.handleResponse(response)
+  }
 }
 
 export const ordersController = new OrdersController()

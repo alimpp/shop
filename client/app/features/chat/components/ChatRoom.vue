@@ -25,7 +25,6 @@ const showScrollToBottom = ref(false);
 const stickToBottom = ref(true);
 
 const BOTTOM_THRESHOLD = 96;
-let pollTimer: ReturnType<typeof setInterval> | null = null;
 let forceScrollOnNextUpdate = false;
 let scrollSettleTimers: ReturnType<typeof setTimeout>[] = [];
 
@@ -146,6 +145,7 @@ async function handleSend(content: string): Promise<void> {
   }
 
   replyToMessage.value = null;
+  await fetchMessages(true);
   await scrollToBottomReliable(true);
 }
 
@@ -179,26 +179,6 @@ async function markAsRead(): Promise<void> {
   await chatController.markAsRead(props.chatId);
 }
 
-function stopPolling(): void {
-  if (pollTimer) {
-    clearInterval(pollTimer);
-    pollTimer = null;
-  }
-}
-
-function startPolling(): void {
-  stopPolling();
-  pollTimer = setInterval(async () => {
-    const wasNearBottom = isNearBottom();
-    await fetchMessages(true);
-    if (wasNearBottom || stickToBottom.value) {
-      await scrollToBottomReliable(true);
-    } else {
-      showScrollToBottom.value = true;
-    }
-  }, 10000);
-}
-
 async function bootstrapRoom(): Promise<void> {
   clearScrollSettleTimers();
   chatDS.setMessages([]);
@@ -210,7 +190,6 @@ async function bootstrapRoom(): Promise<void> {
   await fetchMessages(false);
   await markAsRead();
   await scrollToBottomReliable(true);
-  startPolling();
 }
 
 watch(
@@ -248,7 +227,6 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  stopPolling();
   clearScrollSettleTimers();
   chatDS.setMessages([]);
 });

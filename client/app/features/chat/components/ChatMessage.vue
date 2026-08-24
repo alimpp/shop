@@ -28,8 +28,7 @@ const replySenderName = computed(() => {
   return [sender.fristname, sender.lastname].filter(Boolean).join(" ") || "پیام";
 });
 
-const avatarSrc = computed(() => props.message.sender?.avatarUrl || undefined);
-</script>
+
 
 <template>
   <div
@@ -42,23 +41,6 @@ const avatarSrc = computed(() => props.message.sender?.avatarUrl || undefined);
       @mouseenter="showActions = true"
       @mouseleave="showActions = false"
     >
-    <div
-      class="shrink-0 self-end"
-      :class="showSender ? 'visible' : 'invisible'"
-    >
-      <UAvatar
-        :src="avatarSrc"
-        :alt="senderName"
-        :icon="avatarSrc ? undefined : 'i-lucide-user-round'"
-        size="sm"
-        :class="
-          isOwnMessage
-            ? 'ring-2 ring-primary/30'
-            : 'ring-1 ring-default'
-        "
-      />
-    </div>
-
     <div
       class="flex min-w-0 flex-1 flex-col gap-1"
       :class="isOwnMessage ? 'items-end' : 'items-start'"

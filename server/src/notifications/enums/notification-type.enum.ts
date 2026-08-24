@@ -5,6 +5,7 @@ export enum NotificationType {
   ORDER_CONFIRMED = 'order_confirmed',
   ORDER_PREPARING = 'order_preparing',
   ORDER_SHIPPING = 'order_shipping',
+  ORDER_COMPLETED = 'order_completed',
   ORDER_CANCELLED = 'order_cancelled',
   ORDER_RETURNED = 'order_returned',
 }

@@ -2,6 +2,7 @@ export type TOrderStatus =
   | 'pending_confirmation'
   | 'processing'
   | 'shipping'
+  | 'success'
   | 'cancelled'
   | 'returned'
 
@@ -9,6 +10,7 @@ export const ORDER_STATUS_LABELS: Record<TOrderStatus, string> = {
   pending_confirmation: 'در انتظار تایید',
   processing: 'در حال پردازش',
   shipping: 'در حال ارسال',
+  success: 'تکمیل شده',
   cancelled: 'لغو شده',
   returned: 'مرجوع شده'
 }
@@ -16,16 +18,18 @@ export const ORDER_STATUS_LABELS: Record<TOrderStatus, string> = {
 export const ORDER_STATUS_FLOW: TOrderStatus[] = [
   'pending_confirmation',
   'processing',
-  'shipping'
+  'shipping',
+  'success'
 ]
 
 export const ORDER_STATUS_COLORS: Record<
   TOrderStatus,
-  'warning' | 'info' | 'primary' | 'error' | 'neutral'
+  'warning' | 'info' | 'primary' | 'success' | 'error' | 'neutral'
 > = {
   pending_confirmation: 'warning',
   processing: 'info',
   shipping: 'primary',
+  success: 'success',
   cancelled: 'error',
   returned: 'neutral'
 }

@@ -372,6 +372,12 @@ export class OrdersService {
           description: `مشتری عزیز سفارش شما با شماره ${orderNumber} در حال ارسال است.`,
           type: NotificationType.ORDER_SHIPPING,
         };
+      case OrderStatus.SUCCESS:
+        return {
+          title: 'تکمیل سفارش',
+          description: `مشتری عزیز سفارش شما با شماره ${orderNumber} با موفقیت تکمیل شد.`,
+          type: NotificationType.ORDER_COMPLETED,
+        };
       case OrderStatus.CANCELLED:
         return {
           title: 'لغو سفارش',
@@ -393,6 +399,65 @@ export class OrdersService {
       default:
         return null;
     }
+  }
+
+  async updateStatusByUser(userId: string, id: string, dto: UpdateOrderStatusDto) {
+    const order = await this.loadOrder(id);
+
+    if (order.userId !== userId) {
+      throw new ForbiddenException('دسترسی به این سفارش مجاز نیست');
+    }
+
+    const allowedStatuses: OrderStatus[] = [OrderStatus.SUCCESS];
+    if (!allowedStatuses.includes(dto.status)) {
+      throw new BadRequestException('تغییر این وضعیت توسط کاربر مجاز نیست');
+    }
+
+    if (order.status === dto.status) {
+      return this.toResponse(order);
+    }
+
+    const previousStatus = order.status;
+
+    await this.dataSource.transaction(async (manager) => {
+      const locked = await manager.getRepository(Order).findOne({
+        where: { id },
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (!locked) {
+        throw new NotFoundException('سفارش یافت نشد');
+      }
+
+      const items = await manager.getRepository(OrderItem).find({
+        where: { orderId: id },
+      });
+
+      if (
+        this.isStockHoldingStatus(previousStatus) &&
+        this.isStockReleasedStatus(dto.status)
+      ) {
+        await this.applyStockChange(manager, items, 'increment');
+      } else if (
+        this.isStockReleasedStatus(previousStatus) &&
+        this.isStockHoldingStatus(dto.status)
+      ) {
+        await this.applyStockChange(manager, items, 'decrement');
+      }
+
+      locked.status = dto.status;
+      await manager.getRepository(Order).save(locked);
+    });
+
+    const notice = this.statusNotification(dto.status, order.orderNumber);
+    if (notice) {
+      await this.notificationsService.notify({
+        userId: order.userId,
+        ...notice,
+      });
+    }
+
+    return this.toResponse(await this.loadOrder(id));
   }
 
   private toNumber(value: unknown): number {

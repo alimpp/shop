@@ -73,6 +73,17 @@ export class OrdersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Patch(':id/status')
+  @HttpCode(HttpStatus.OK)
+  async updateStatusByUser(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateOrderStatusDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return await this.ordersService.updateStatusByUser(req.user.sub, id, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,

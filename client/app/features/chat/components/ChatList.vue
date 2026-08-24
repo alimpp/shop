@@ -42,20 +42,6 @@ function getSenderInitial(chat: ChatModel): string {
         :class="selectedChatId === chat.id ? 'bg-primary-50 dark:bg-primary-900/20' : ''"
         @click="emit('select', chat)"
       >
-        <div class="relative shrink-0">
-          <div
-            class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300"
-          >
-            {{ getSenderInitial(chat) }}
-          </div>
-          <div
-            v-if="chat.unseenCount > 0"
-            class="absolute -top-1 -left-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary-500 px-1 text-[10px] font-bold text-white"
-          >
-            {{ chat.unseenCount > 99 ? "99+" : chat.unseenCount }}
-          </div>
-        </div>
-
         <div class="flex-1 min-w-0">
           <div class="flex items-center justify-between gap-2">
             <span

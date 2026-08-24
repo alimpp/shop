@@ -3,6 +3,7 @@ import ProfileShell from '~/components/profile/ProfileShell.vue'
 import OrderDetailView from '~/features/orders/components/OrderDetailView.vue'
 import { ordersController } from '~/features/orders/controllers/index.controller'
 import { useOrdersDS } from '~/features/orders/data/index.store'
+import type { TOrderStatus } from '~/features/orders/types/index.type'
 
 definePageMeta({ title: 'جزئیات سفارش', robots: 'noindex, nofollow' })
 
@@ -12,6 +13,7 @@ const ordersDS = useOrdersDS()
 
 const orderId = String(route.params.id ?? '')
 const pageLoading = ref(true)
+const statusSubmitting = ref(false)
 
 const order = computed(() => ordersDS.getSelectedOrder)
 const fetching = computed(() => ordersDS.getLoading)
@@ -36,6 +38,20 @@ async function loadOrder(): Promise<void> {
   }
 
   pageLoading.value = false
+}
+
+async function markAsSuccess(): Promise<void> {
+  if (!order.value || statusSubmitting.value) return
+  statusSubmitting.value = true
+
+  const response = await ordersController.updateMyOrderStatus(order.value.id, { status: 'success' as TOrderStatus })
+
+  toast.add({
+    title: response.message || (response.success ? 'وضعیت سفارش بروزرسانی شد' : 'بروزرسانی وضعیت ناموفق بود'),
+    color: response.success ? 'success' : 'error'
+  })
+
+  statusSubmitting.value = false
 }
 
 onMounted(() => {
@@ -84,5 +100,18 @@ onUnmounted(() => {
       v-else
       :order="order"
     />
+
+    <div
+      v-if="order && order.status !== 'success' && order.status !== 'cancelled' && order.status !== 'returned'"
+      class="mt-4"
+    >
+      <UButton
+        color="success"
+        :loading="statusSubmitting"
+        @click="markAsSuccess"
+      >
+        تکمیل سفارش
+      </UButton>
+    </div>
   </ProfileShell>
 </template>

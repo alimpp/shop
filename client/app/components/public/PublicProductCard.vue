@@ -10,20 +10,42 @@ const mainImageUrl = computed(() => {
   return thumbnail?.url || props.product.medias[0]?.url || '';
 });
 
-const hasDiscount = computed(
-  () =>
+const firstVariant = computed(() => props.product.variants?.[0]);
+
+const hasDiscount = computed(() => {
+  const v = firstVariant.value;
+  if (v) {
+    return typeof v.salePrice === 'number' && v.salePrice > 0 && v.salePrice < v.price;
+  }
+  return (
     typeof props.product.salePrice === 'number' &&
     props.product.salePrice > 0 &&
-    props.product.salePrice < props.product.price,
-);
+    props.product.salePrice < props.product.price
+  );
+});
 
-const displayPrice = computed(() =>
-  hasDiscount.value ? props.product.salePrice! : props.product.price,
-);
+const displayPrice = computed(() => {
+  const v = firstVariant.value;
+  if (v) {
+    return hasDiscount.value ? v.salePrice! : v.price;
+  }
+  return hasDiscount.value ? props.product.salePrice! : props.product.price;
+});
+
+const originalPrice = computed(() => {
+  const v = firstVariant.value;
+  if (v) {
+    return v.price;
+  }
+  return props.product.price;
+});
 
 const discountPercent = computed(() => {
-  if (!hasDiscount.value || props.product.price <= 0) return 0;
-  return Math.round((1 - props.product.salePrice! / props.product.price) * 100);
+  if (!hasDiscount.value) return 0;
+  const orig = originalPrice.value;
+  const sale = displayPrice.value;
+  if (orig <= 0 || sale >= orig) return 0;
+  return Math.round((1 - sale / orig) * 100);
 });
 
 function formatCurrency(value: number): string {
@@ -75,7 +97,7 @@ function formatCurrency(value: number): string {
           v-if="hasDiscount"
           class="text-xs font-normal"
         >
-          {{ formatCurrency(product.price) }} تومان
+          {{ formatCurrency(originalPrice) }} تومان
         </del>
 
         <span

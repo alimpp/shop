@@ -168,4 +168,20 @@ export class OrdersService extends BaseApp<TOrder> {
       }
     })
   }
+
+  public async updateMyOrderStatus(
+    id: string,
+    payload: TUpdateOrderStatusPayload
+  ): Promise<ServerResponse<TOrder>> {
+    return this.executeRequest<TOrder>(async () => {
+      const response = await this.Patch<ServerResponse<TRaw>>(
+        `/orders/${id}/status`,
+        payload
+      )
+      return {
+        ...response,
+        data: this.normalizeOrder(response.data ?? {})
+      }
+    })
+  }
 }
