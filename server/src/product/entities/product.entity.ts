@@ -85,7 +85,7 @@ export class Product {
     scale: 2,
     nullable: true,
   })
-  salePrice?: number;
+  salePrice?: number | null;
 
   @Column({
     type: 'decimal',

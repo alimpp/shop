@@ -657,8 +657,7 @@ export class ProductService {
           }
 
           if (typeof patch.salePrice !== 'undefined') {
-            variant.salePrice =
-              patch.salePrice === null ? undefined : patch.salePrice;
+            variant.salePrice = patch.salePrice ?? null;
           }
 
           if (typeof patch.stock === 'number') {
@@ -705,8 +704,7 @@ export class ProductService {
       }
 
       if (typeof dto.salePrice !== 'undefined') {
-        productUpdate.salePrice =
-          dto.salePrice === null ? undefined : dto.salePrice;
+        productUpdate.salePrice = dto.salePrice ?? null;
       }
 
       if (typeof dto.stock === 'number' || dto.variants?.length) {
@@ -1147,8 +1145,8 @@ export class ProductService {
   }
 
   private ensureValidSalePrice(
-    price?: number,
-    salePrice?: number,
+    price?: number | null,
+    salePrice?: number | null,
     subject = 'آیتم',
   ): void {
     if (

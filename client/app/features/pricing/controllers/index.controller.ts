@@ -15,13 +15,24 @@ class PricingController extends BaseController<PricingService> {
   }
 
   private readonly pricingDS = PricingDS.getInstance()
+  private listRequestId = 0
 
   public async getPricingProducts(
     query?: TPricingListQuery
   ): Promise<ControllerResponse<TPricingListData>> {
+    const requestId = ++this.listRequestId
+
     this.pricingDS.setLoading(true)
 
     const response = await this.service.getPricingProducts(query)
+
+    if (requestId !== this.listRequestId) {
+      return {
+        success: true,
+        message: '',
+        data: null
+      }
+    }
 
     if (response.success && response.data) {
       this.pricingDS.setItems(response.data.items, response.data.meta)

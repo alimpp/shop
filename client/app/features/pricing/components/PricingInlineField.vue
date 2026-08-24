@@ -22,6 +22,9 @@ function onInput(value: string | number): void {
 }
 
 function onCommit(): void {
+  if (props.disabled) {
+    return
+  }
   emit('commit')
 }
 </script>

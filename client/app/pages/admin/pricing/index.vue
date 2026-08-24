@@ -21,9 +21,11 @@ const meta = computed(() => pricingDS.getMeta)
 const loading = computed(() => pricingDS.getLoading)
 const categories = computed(() => categoriesDS.getCategories)
 
+const ALL_CATEGORIES = 'all'
+
 const searchInput = ref('')
 const debouncedSearch = ref('')
-const selectedCategoryId = ref('')
+const selectedCategoryId = ref(ALL_CATEGORIES)
 const lowStockOnly = ref(false)
 const page = ref(1)
 
@@ -63,7 +65,10 @@ async function fetchCategories(): Promise<void> {
 async function fetchPricingProducts(): Promise<void> {
   const response = await pricingController.getPricingProducts({
     search: debouncedSearch.value.trim() || undefined,
-    categoryId: selectedCategoryId.value || undefined,
+    categoryId:
+      selectedCategoryId.value === ALL_CATEGORIES
+        ? undefined
+        : selectedCategoryId.value,
     lowStockOnly: lowStockOnly.value || undefined,
     page: page.value,
     limit: 30
@@ -84,16 +89,24 @@ function onSearchInput(): void {
 
   searchTimer = setTimeout(() => {
     debouncedSearch.value = searchInput.value
-    page.value = 1
-    fetchPricingProducts()
+    goToFirstPage()
   }, 280)
+}
+
+function goToFirstPage(): void {
+  if (page.value === 1) {
+    fetchPricingProducts()
+    return
+  }
+
+  page.value = 1
 }
 
 async function handleSave(
   productId: string,
   payload: TUpdateProductPricingPayload | null
 ): Promise<void> {
-  if (!payload) {
+  if (!payload || pricingDS.isSaving(productId)) {
     setSaveState(productId, 'idle')
     return
   }
@@ -117,10 +130,17 @@ async function handleSave(
 function resetFilters(): void {
   searchInput.value = ''
   debouncedSearch.value = ''
-  selectedCategoryId.value = ''
+  selectedCategoryId.value = ALL_CATEGORIES
   lowStockOnly.value = false
-  page.value = 1
-  fetchPricingProducts()
+  goToFirstPage()
+}
+
+function onCategoryChange(): void {
+  goToFirstPage()
+}
+
+function onLowStockChange(): void {
+  goToFirstPage()
 }
 
 onMounted(async () => {
@@ -133,11 +153,6 @@ onBeforeUnmount(() => {
   }
   savedTimers.forEach(timer => clearTimeout(timer))
   savedTimers.clear()
-})
-
-watch([selectedCategoryId, lowStockOnly], () => {
-  page.value = 1
-  fetchPricingProducts()
 })
 
 watch(page, () => {
@@ -192,12 +207,13 @@ watch(page, () => {
               <USelect
                 v-model="selectedCategoryId"
                 :items="[
-                  { id: '', name: 'همه دسته‌ها' },
+                  { id: ALL_CATEGORIES, name: 'همه دسته‌ها' },
                   ...categories
                 ]"
                 value-key="id"
                 label-key="name"
                 class="w-full sm:w-48"
+                @update:model-value="onCategoryChange"
               />
 
               <label class="flex items-center gap-2 rounded-xl border border-default px-3 py-2 text-sm text-toned">
@@ -205,6 +221,7 @@ watch(page, () => {
                   v-model="lowStockOnly"
                   type="checkbox"
                   class="size-4"
+                  @change="onLowStockChange"
                 >
                 فقط موجودی کم
               </label>

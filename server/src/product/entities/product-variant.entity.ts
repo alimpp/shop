@@ -63,7 +63,7 @@ export class ProductVariant {
     precision: 12,
     scale: 2,
   })
-  salePrice?: number;
+  salePrice?: number | null;
 
   @Column({
     default: 0,

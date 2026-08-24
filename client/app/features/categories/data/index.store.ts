@@ -91,3 +91,5 @@ export class CategoriesDS extends BaseStore<ICategoriesState> {
     this._state.submitting = false;
   }
 }
+
+export const useCategoriesDS = () => CategoriesDS.getInstance();
