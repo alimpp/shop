@@ -81,7 +81,7 @@ function toggleExpanded(): void {
     <div class="grid gap-3 p-3 sm:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(88px,1fr))_auto] sm:items-end sm:gap-4 sm:p-4">
       <button
         type="button"
-        class="flex min-w-0 items-center gap-3 text-right"
+        class="flex min-w-0 items-start gap-3 text-right"
         :class="hasVariants ? 'cursor-pointer' : 'cursor-default'"
         @click="toggleExpanded"
       >
@@ -119,7 +119,7 @@ function toggleExpanded(): void {
         <UIcon
           v-if="hasVariants"
           name="i-lucide-chevron-down"
-          class="size-4 shrink-0 text-muted transition-transform"
+          class="mb-0.5 size-4 shrink-0 self-end text-muted transition-transform sm:mb-1"
           :class="expanded ? 'rotate-180' : ''"
         />
       </button>

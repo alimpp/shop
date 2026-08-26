@@ -5,6 +5,7 @@ export type TNotificationType =
   | "order_confirmed"
   | "order_preparing"
   | "order_shipping"
+  | "order_completed"
   | "order_cancelled"
   | "order_returned";
 
@@ -52,6 +53,7 @@ export const NOTIFICATION_TYPE_LABELS: Record<TNotificationType, string> = {
   order_confirmed: "تایید سفارش",
   order_preparing: "سفارش در حال آماده‌سازی",
   order_shipping: "ارسال سفارش",
+  order_completed: "تکمیل سفارش",
   order_cancelled: "لغو سفارش",
   order_returned: "مرجوع سفارش",
 };

@@ -179,24 +179,19 @@ function stepClass(status: TOrderStatus): string {
             <p class="text-sm font-bold text-highlighted">
               {{ item.productName }}
             </p>
+            <PublicProductSelectionChips
+              class="mt-1"
+              :variant="item.variant"
+              :selected-options="item.selectedOptions"
+              :include-sku="false"
+            />
             <p
-              v-if="item.variant?.name"
-              class="mt-1 text-xs text-toned"
+              v-if="item.variant?.sku"
+              class="mt-1 text-[11px] text-muted"
+              dir="ltr"
             >
-              واریانت: {{ item.variant.name }}
+              SKU: {{ item.variant.sku }}
             </p>
-            <div
-              v-if="item.selectedOptions.length"
-              class="mt-2 flex flex-wrap gap-1.5"
-            >
-              <span
-                v-for="option in item.selectedOptions"
-                :key="option.optionValueId || option.value"
-                class="rounded-lg bg-elevated px-2 py-1 text-[11px] text-toned ring-1 ring-default"
-              >
-                {{ option.attributeName }}: {{ option.value }}
-              </span>
-            </div>
             <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-toned">
               <span>
                 تعداد {{ item.quantity.toLocaleString('fa-IR') }}

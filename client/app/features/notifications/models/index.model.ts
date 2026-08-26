@@ -24,7 +24,7 @@ export class NotificationModel implements TNotification {
   }
 
   get typeLabel(): string {
-    return NOTIFICATION_TYPE_LABELS[this.type] || this.type
+    return NOTIFICATION_TYPE_LABELS[this.type] ?? 'اعلان'
   }
 
   get formattedDate(): string {

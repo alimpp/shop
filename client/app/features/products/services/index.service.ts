@@ -140,11 +140,16 @@ export class ProductsService extends BaseApp<TProduct> {
   }
 
   private normalizeOptionValue(item: TRawProduct): TProductOptionValue {
+    const attributeValue = item.attributeValue as TRawProduct | undefined
+
     return {
       id: item.id ?? '',
       productOptionId: item.productOptionId ?? '',
-      attributeValueId: item.attributeValueId ?? '',
-      attributeValue: this.normalizeAttributeValue(item.attributeValue)
+      attributeValueId:
+        item.attributeValueId
+        ?? attributeValue?.id
+        ?? '',
+      attributeValue: this.normalizeAttributeValue(attributeValue)
     }
   }
 

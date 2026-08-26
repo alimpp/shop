@@ -120,6 +120,37 @@ const activeVariant = computed<TProductVariant | null>(() => {
 
 const hasVariants = computed(() => Boolean(product.value?.variants?.length))
 
+const activeVariants = computed(() =>
+  (product.value?.variants ?? []).filter(variant => variant.isActive !== false)
+)
+
+const hasSelectableOptions = computed(() =>
+  (product.value?.options ?? []).some(
+    option => (option.values?.length ?? 0) > 0
+  )
+)
+
+const usesOptionBasedVariants = computed(() => {
+  const p = product.value
+  if (!p?.variants?.length || !hasSelectableOptions.value) {
+    return false
+  }
+
+  return p.variants.some(variant => (variant.values?.length ?? 0) > 0)
+})
+
+const selectableProductOptions = computed(() =>
+  (product.value?.options ?? []).filter(
+    option => (option.values?.length ?? 0) > 0
+  )
+)
+
+const showOptionPicker = computed(() => hasSelectableOptions.value)
+
+const showVariantPicker = computed(
+  () => activeVariants.value.length > 0 && !usesOptionBasedVariants.value
+)
+
 function pickDefaultVariant(p: TProduct): TProductVariant | null {
   const active = (p.variants ?? []).filter(variant => variant.isActive !== false)
   if (!active.length) return null
@@ -415,14 +446,18 @@ async function addToCart(): Promise<void> {
   }
 
   if (hasVariants.value) {
-    const variant =
-      resolveVariantFromOptions()
-      ?? activeVariant.value
+    const variant = usesOptionBasedVariants.value
+      ? resolveVariantFromOptions()
+      : activeVariant.value ?? pickDefaultVariant(product.value)
+
+    const resolved =
+      variant
+      ?? (usesOptionBasedVariants.value ? null : activeVariant.value)
       ?? pickDefaultVariant(product.value)
 
-    if (variant) {
-      payload.variantId = variant.id
-      selectedVariantId.value = variant.id
+    if (resolved) {
+      payload.variantId = resolved.id
+      selectedVariantId.value = resolved.id
     }
   }
 
@@ -453,6 +488,10 @@ function selectOption(slug: string, valueId: string): void {
   if (matched) {
     selectedVariantId.value = matched.id
   }
+}
+
+function selectVariant(variantId: string): void {
+  selectedVariantId.value = variantId
 }
 
 const isProductMissing = computed(
@@ -612,10 +651,25 @@ onMounted(async () => {
           {{ product.shortDescription || product.description }}
         </p>
 
-        <PublicProductOptions
-          :options="product.options"
-          :selected="selectedOptions"
-          @select="selectOption"
+        <section
+          v-if="showOptionPicker"
+          class="space-y-3"
+        >
+          <p class="text-sm font-bold text-highlighted">
+            انتخاب ویژگی‌ها
+          </p>
+          <PublicProductOptions
+            :options="selectableProductOptions"
+            :selected="selectedOptions"
+            @select="selectOption"
+          />
+        </section>
+
+        <PublicProductVariants
+          v-if="showVariantPicker"
+          :variants="activeVariants"
+          :selected-id="selectedVariantId"
+          @select="selectVariant"
         />
 
         <PublicProductActions

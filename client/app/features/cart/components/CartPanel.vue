@@ -32,10 +32,6 @@ function formatPrice(value: number): string {
   return new Intl.NumberFormat('fa-IR').format(value)
 }
 
-function variantLabel(item: CartItemModel): string {
-  return item.optionsLabel
-}
-
 async function ensureAuth(): Promise<boolean> {
   if (token.value) return true
 
@@ -159,7 +155,7 @@ onMounted(() => {
           {{ embedded ? 'محصولات انتخابی شما' : 'سبد خرید شما' }}
         </h1>
         <p class="mt-1 text-sm text-toned">
-          هر وریانت به‌صورت جداگانه در سبد نگه‌داری می‌شود.
+          هر مدل به‌صورت جداگانه در سبد نگه‌داری می‌شود.
         </p>
       </div>
 
@@ -212,7 +208,7 @@ onMounted(() => {
           سبد خرید خالی است
         </h2>
         <p class="max-w-sm text-sm leading-7 text-toned">
-          محصول موردنظر را انتخاب کنید و وریانت دلخواه را به سبد اضافه کنید.
+          محصول موردنظر را انتخاب کنید و مدل دلخواه را به سبد اضافه کنید.
         </p>
       </div>
       <UButton
@@ -266,24 +262,11 @@ onMounted(() => {
                   >
                     {{ item.product.name }}
                   </NuxtLink>
-                  <div
-                    v-if="item.selectedOptions.length"
-                    class="flex flex-wrap gap-1.5 pt-1"
-                  >
-                    <span
-                      v-for="option in item.selectedOptions"
-                      :key="option.optionValueId || option.value"
-                      class="rounded-lg bg-elevated px-2 py-1 text-[11px] font-medium text-toned ring-1 ring-default"
-                    >
-                      {{ option.label }}
-                    </span>
-                  </div>
-                  <p
-                    v-else-if="variantLabel(item)"
-                    class="text-xs leading-6 text-toned"
-                  >
-                    {{ variantLabel(item) }}
-                  </p>
+                  <PublicProductSelectionChips
+                    :variant="item.variant"
+                    :selected-options="item.selectedOptions"
+                    :include-sku="false"
+                  />
                   <p
                     v-if="item.variant?.sku"
                     class="text-[11px] text-muted"
@@ -361,7 +344,7 @@ onMounted(() => {
 
         <dl class="mt-4 space-y-3 text-sm">
           <div class="flex items-center justify-between gap-3">
-            <dt class="text-toned">تعداد وریانت‌ها</dt>
+            <dt class="text-toned">تعداد مدل‌ها</dt>
             <dd class="font-bold text-highlighted">
               {{ itemCount.toLocaleString('fa-IR') }}
             </dd>

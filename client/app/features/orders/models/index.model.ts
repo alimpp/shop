@@ -8,6 +8,7 @@ import type {
   TOrderVariant
 } from '../types/index.type'
 import { ORDER_STATUS_LABELS } from '../types/index.type'
+import { buildProductSelectionChips } from '~/utils/productSelection'
 
 class OrderSelectedOptionModel implements TOrderSelectedOption {
   attributeId?: string
@@ -82,11 +83,28 @@ class OrderItemModel implements TOrderItem {
       ?? []
   }
 
+  get selectionChips() {
+    return buildProductSelectionChips(
+      {
+        variant: this.variant
+          ? {
+              name: this.variant.name,
+              sku: this.variant.sku,
+              options: this.variant.options.map(option => ({
+                attributeName: option.attributeName,
+                value: option.value
+              }))
+            }
+          : null,
+        selectedOptions: this.selectedOptions
+      },
+      { includeSku: false }
+    )
+  }
+
   get optionsLabel(): string {
-    const fromSelected = this.selectedOptions
-      .map(option => option.label)
-      .filter(Boolean)
-    if (fromSelected.length) return fromSelected.join(' · ')
+    const labels = this.selectionChips.map(chip => chip.label)
+    if (labels.length) return labels.join(' · ')
     return this.variant?.name ?? ''
   }
 }

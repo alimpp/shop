@@ -391,11 +391,18 @@ onBeforeUnmount(() => {
                 <p class="text-sm font-bold text-highlighted">
                   {{ item.product.name }}
                 </p>
+                <PublicProductSelectionChips
+                  class="mt-1"
+                  :variant="item.variant"
+                  :selected-options="item.selectedOptions"
+                  :include-sku="false"
+                />
                 <p
-                  v-if="item.optionsLabel"
-                  class="mt-1 text-xs text-toned"
+                  v-if="item.variant?.sku"
+                  class="mt-1 text-[11px] text-muted"
+                  dir="ltr"
                 >
-                  {{ item.optionsLabel }}
+                  SKU: {{ item.variant.sku }}
                 </p>
                 <div class="mt-2 flex justify-between text-xs text-toned">
                   <span>تعداد {{ item.quantity.toLocaleString('fa-IR') }}</span>

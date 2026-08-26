@@ -501,7 +501,9 @@ function syncState(product: TProduct | null): void {
   state.thumbnailUrl = product.medias.find((media) => media.isThumbnail)?.url ?? product.medias[0]?.url ?? "";
   state.options = product.options.map((option) => ({
     attributeId: option.attributeId,
-    valueIds: option.values.map((value) => value.attributeValueId)
+    valueIds: option.values
+      .map((value) => value.attributeValueId || value.attributeValue?.id || '')
+      .filter(Boolean)
   }));
   state.variants = product.variants.map((variant) => ({
     name: variant.name,

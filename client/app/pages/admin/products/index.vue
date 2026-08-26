@@ -82,10 +82,20 @@ function openCreateModal(): void {
   isFormModalOpen.value = true;
 }
 
-function openEditModal(product: TProduct): void {
-  editingProduct.value = product;
-  productsDS.setSelectedProduct(product);
-  isFormModalOpen.value = true;
+async function openEditModal(product: TProduct): Promise<void> {
+  const response = await productsController.getProductById(product.id)
+
+  if (!response.success || !response.data) {
+    toast.add({
+      title: response.message || 'دریافت اطلاعات محصول برای ویرایش ناموفق بود',
+      color: 'error'
+    })
+    return
+  }
+
+  editingProduct.value = response.data
+  productsDS.setSelectedProduct(response.data)
+  isFormModalOpen.value = true
 }
 
 async function openDetailsModal(product: TProduct): Promise<void> {

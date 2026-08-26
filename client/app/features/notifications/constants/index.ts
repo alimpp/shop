@@ -10,6 +10,7 @@ export const NOTIFICATION_TYPE_META: Record<
   order_confirmed: { icon: 'i-lucide-badge-check', color: 'success' },
   order_preparing: { icon: 'i-lucide-package', color: 'warning' },
   order_shipping: { icon: 'i-lucide-truck', color: 'primary' },
+  order_completed: { icon: 'i-lucide-circle-check', color: 'success' },
   order_cancelled: { icon: 'i-lucide-package-x', color: 'error' },
   order_returned: { icon: 'i-lucide-undo-2', color: 'neutral' }
 }
