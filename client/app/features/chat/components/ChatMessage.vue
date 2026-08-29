@@ -27,8 +27,7 @@ const replySenderName = computed(() => {
   if (sender.username) return sender.username;
   return [sender.fristname, sender.lastname].filter(Boolean).join(" ") || "پیام";
 });
-
-
+</script>
 
 <template>
   <div

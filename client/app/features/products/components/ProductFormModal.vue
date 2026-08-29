@@ -575,10 +575,11 @@ function normalizePayload(data: ProductSchema): TProductPayload {
     stock: data.stock,
     manageStock: data.manageStock,
     allowBackorder: data.allowBackorder,
-    weight: data.weight,
-    length: data.length,
-    width: data.width,
-    height: data.height,
+    // وزن و ابعاد فعلا از فرم حذف شده‌اند؛ خالی به بک‌اند می‌روند
+    weight: undefined,
+    length: undefined,
+    width: undefined,
+    height: undefined,
     categoryId: data.categoryId,
     brandId: data.brandId || undefined,
     status: data.status,
@@ -802,24 +803,6 @@ watch(
                 <p v-if="state.variants.length > 0" class="mt-1 text-xs text-muted">
                   با وجود واریانت، موجودی از مجموع موجودی واریانت‌ها محاسبه می‌شود.
                 </p>
-              </UFormField>
-            </div>
-
-            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <UFormField label="وزن" name="weight">
-                <UInput v-model.number="state.weight" type="number" min="0" class="w-full" />
-              </UFormField>
-
-              <UFormField label="طول" name="length">
-                <UInput v-model.number="state.length" type="number" min="0" class="w-full" />
-              </UFormField>
-
-              <UFormField label="عرض" name="width">
-                <UInput v-model.number="state.width" type="number" min="0" class="w-full" />
-              </UFormField>
-
-              <UFormField label="ارتفاع" name="height">
-                <UInput v-model.number="state.height" type="number" min="0" class="w-full" />
               </UFormField>
             </div>
 

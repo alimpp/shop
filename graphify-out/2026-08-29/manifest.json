@@ -235,8 +235,8 @@
     "semantic_hash": ""
   },
   "client/app/config/public-navigation.ts": {
-    "mtime": 1787989805.1403346,
-    "ast_hash": "61e60db38ef32b09cc5187e4b5cb1680",
+    "mtime": 1787473063.187173,
+    "ast_hash": "f064642f788f7f30853e1464d93859e2",
     "semantic_hash": ""
   },
   "client/app/core/BaseApp.ts": {
@@ -2722,41 +2722,6 @@
   "client/app/utils/productSelection.ts": {
     "mtime": 1787985997.5352268,
     "ast_hash": "8e6a63e3370adaef27fd4ca034e05a94",
-    "semantic_hash": ""
-  },
-  "client/app/components/public/PublicContactForm.vue": {
-    "mtime": 1787989760.8369174,
-    "ast_hash": "7844cdac419c9bf5d59f863c060d083e",
-    "semantic_hash": ""
-  },
-  "client/app/components/public/PublicPageHero.vue": {
-    "mtime": 1787989751.56883,
-    "ast_hash": "a8298347de4f95435dd5f205ecfc3bb9",
-    "semantic_hash": ""
-  },
-  "client/app/components/public/PublicPageSection.vue": {
-    "mtime": 1787989817.0256374,
-    "ast_hash": "fa2d984f886b8c76799e37678419db7e",
-    "semantic_hash": ""
-  },
-  "client/app/content/about.content.ts": {
-    "mtime": 1787989714.4228902,
-    "ast_hash": "bbeb5b1d62efc3a033a5c6d787c5c1c6",
-    "semantic_hash": ""
-  },
-  "client/app/content/contact.content.ts": {
-    "mtime": 1787989714.617064,
-    "ast_hash": "8e39c86d6e84c8505b4650a7965046ed",
-    "semantic_hash": ""
-  },
-  "client/app/pages/about.vue": {
-    "mtime": 1787989803.5543196,
-    "ast_hash": "2d74d76e738f7d51556af4a90085f2dd",
-    "semantic_hash": ""
-  },
-  "client/app/pages/contact.vue": {
-    "mtime": 1787989805.1422677,
-    "ast_hash": "e7f0dfbeaec210b03c21588129e14c84",
     "semantic_hash": ""
   }
 }

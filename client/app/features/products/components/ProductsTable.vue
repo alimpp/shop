@@ -50,12 +50,6 @@ function getVisibilityLabel(visibility: TProduct["visibility"]): string {
   return visibility === "hidden" ? "مخفی" : "عمومی";
 }
 
-function getTagNames(product: TProduct): string[] {
-  return product.productTags
-    .map((productTag) => productTag.tag?.name?.trim())
-    .filter((tagName): tagName is string => Boolean(tagName));
-}
-
 const currentPage = ref(1);
 const itemsPerPage = 5;
 
@@ -84,7 +78,7 @@ watch(totalItems, (value) => {
       :loading="loading"
       :has-items="products.length > 0"
       empty-message="هنوز هیچ محصولی ثبت نشده است."
-      desktop-table-min-width="min-w-[1120px]"
+      desktop-table-min-width="min-w-[900px]"
     >
       <template #mobile-skeleton>
         <BaseCardSkeletonList>
@@ -111,11 +105,9 @@ watch(totalItems, (value) => {
         <BaseTableSkeleton table-class="min-w-full border-separate border-spacing-0 text-right text-sm">
           <template #header>
             <th class="border-b border-default px-4 py-3 font-semibold text-toned">محصول</th>
-            <th class="border-b border-default px-4 py-3 font-semibold text-toned">دسته‌بندی</th>
             <th class="border-b border-default px-4 py-3 font-semibold text-toned">قیمت</th>
             <th class="border-b border-default px-4 py-3 font-semibold text-toned">موجودی</th>
             <th class="border-b border-default px-4 py-3 font-semibold text-toned">وضعیت</th>
-            <th class="border-b border-default px-4 py-3 font-semibold text-toned">نمایش</th>
             <th class="border-b border-default px-4 py-3 font-semibold text-toned">عملیات</th>
           </template>
 
@@ -130,9 +122,6 @@ watch(totalItems, (value) => {
               </div>
             </td>
             <td class="border-b border-default px-4 py-4">
-              <div class="h-3 w-2/3 rounded bg-default/40" />
-            </td>
-            <td class="border-b border-default px-4 py-4">
               <div class="h-3 w-1/2 rounded bg-default/40" />
             </td>
             <td class="border-b border-default px-4 py-4">
@@ -140,9 +129,6 @@ watch(totalItems, (value) => {
             </td>
             <td class="border-b border-default px-4 py-4">
               <div class="h-6 w-20 rounded bg-default/40" />
-            </td>
-            <td class="border-b border-default px-4 py-4">
-              <div class="h-3 w-2/3 rounded bg-default/40" />
             </td>
             <td class="border-b border-default px-4 py-4">
               <div class="flex items-center gap-2">
@@ -200,10 +186,6 @@ watch(totalItems, (value) => {
                 <p class="text-toned">{{ product.category?.name || "نامشخص" }}</p>
               </div>
               <div class="space-y-1">
-                <p class="text-xs text-muted">برند</p>
-                <p class="text-toned">{{ product.brand?.name || "ثبت نشده" }}</p>
-              </div>
-              <div class="space-y-1">
                 <p class="text-xs text-muted">قیمت</p>
                 <p class="font-medium text-highlighted">{{ formatCurrency(product.price) }} تومان</p>
                 <p v-if="product.salePrice" class="text-xs text-success">
@@ -214,10 +196,6 @@ watch(totalItems, (value) => {
                 <p class="text-xs text-muted">موجودی</p>
                 <p class="text-toned">{{ product.stock }}</p>
               </div>
-            </div>
-
-            <div class="mt-3 text-xs text-muted">
-              فروش: {{ product.soldCount }} | بازدید: {{ product.viewCount }} | لایک: {{ product.likeCount }} | کامنت: {{ product.commentCount }}
             </div>
 
             <div class="mt-4 flex items-center justify-start gap-2">
@@ -259,11 +237,9 @@ watch(totalItems, (value) => {
           <thead>
             <tr>
               <th class="border-b border-default px-4 py-3 font-semibold text-toned">محصول</th>
-              <th class="border-b border-default px-4 py-3 font-semibold text-toned">دسته‌بندی</th>
               <th class="border-b border-default px-4 py-3 font-semibold text-toned">قیمت</th>
               <th class="border-b border-default px-4 py-3 font-semibold text-toned">موجودی</th>
               <th class="border-b border-default px-4 py-3 font-semibold text-toned">وضعیت</th>
-              <th class="border-b border-default px-4 py-3 font-semibold text-toned">نمایش</th>
               <th class="border-b border-default px-4 py-3 font-semibold text-toned">عملیات</th>
             </tr>
           </thead>
@@ -274,7 +250,7 @@ watch(totalItems, (value) => {
               class="transition-colors hover:bg-elevated/40"
             >
               <td class="border-b border-default px-4 py-4">
-                <div class="flex min-w-[260px] items-center gap-3">
+                <div class="flex min-w-[240px] items-center gap-3">
                   <div
                     class="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-default bg-default/40"
                   >
@@ -293,6 +269,10 @@ watch(totalItems, (value) => {
                     <p class="truncate text-xs text-muted" dir="ltr">
                       {{ product.sku }}
                     </p>
+                    <p class="truncate text-xs text-toned">
+                      {{ product.category?.name || "بدون دسته" }}
+                      <span v-if="product.brand?.name"> · {{ product.brand.name }}</span>
+                    </p>
                     <div class="flex flex-wrap items-center gap-2">
                       <UBadge :color="product.isActive ? 'success' : 'neutral'" variant="soft">
                         {{ product.isActive ? "فعال" : "غیرفعال" }}
@@ -301,28 +281,7 @@ watch(totalItems, (value) => {
                         ویژه
                       </UBadge>
                     </div>
-                    <div
-                      v-if="getTagNames(product).length"
-                      class="flex flex-wrap items-center gap-1"
-                    >
-                      <UBadge
-                        v-for="tagName in getTagNames(product)"
-                        :key="tagName"
-                        color="neutral"
-                        variant="subtle"
-                      >
-                        {{ tagName }}
-                      </UBadge>
-                    </div>
                   </div>
-                </div>
-              </td>
-              <td class="border-b border-default px-4 py-4 text-toned">
-                <div class="space-y-1">
-                  <p>{{ product.category?.name || "نامشخص" }}</p>
-                  <p v-if="product.brand?.name" class="text-xs text-muted">
-                    برند: {{ product.brand.name }}
-                  </p>
                 </div>
               </td>
               <td class="border-b border-default px-4 py-4 text-toned">
@@ -336,15 +295,7 @@ watch(totalItems, (value) => {
                 </div>
               </td>
               <td class="border-b border-default px-4 py-4 text-toned">
-                <div class="space-y-1">
-                  <p>{{ product.stock }}</p>
-                  <p class="text-xs text-muted">
-                    فروش: {{ product.soldCount }} | بازدید: {{ product.viewCount }}
-                  </p>
-                  <p class="text-xs text-muted">
-                    لایک: {{ product.likeCount }} | کامنت: {{ product.commentCount }}
-                  </p>
-                </div>
+                {{ product.stock }}
               </td>
               <td class="border-b border-default px-4 py-4">
                 <div class="flex flex-col items-start gap-2">
@@ -354,11 +305,6 @@ watch(totalItems, (value) => {
                   <UBadge color="neutral" variant="soft">
                     {{ getVisibilityLabel(product.visibility) }}
                   </UBadge>
-                </div>
-              </td>
-              <td class="border-b border-default px-4 py-4 text-toned">
-                <div class="space-y-1">
-                  <p>{{ product.slug }}</p>
                 </div>
               </td>
               <td class="border-b border-default px-4 py-4">

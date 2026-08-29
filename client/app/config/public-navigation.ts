@@ -23,11 +23,11 @@ export const publicNavigation: PublicNavigationItem[] = [
   {
     label: "درباره ما",
     icon: "i-lucide-info",
-    to: "/#about"
+    to: "/about"
   },
   {
     label: "تماس با ما",
     icon: "i-lucide-phone",
-    to: "/#contact"
+    to: "/contact"
   }
 ];
