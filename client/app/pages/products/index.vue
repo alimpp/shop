@@ -13,6 +13,7 @@ import { SITE_NAME } from '~/utils/seo'
 
 const toast = useToast()
 const requestURL = useRequestURL()
+const route = useRoute()
 
 const isFiltersOpen = ref(false)
 const currentPage = ref(1)
@@ -330,6 +331,11 @@ watch(currentPage, async () => {
 })
 
 onMounted(async () => {
+  const categoryFromQuery = String(route.query.category ?? '')
+  if (categoryFromQuery) {
+    selectedCategoryId.value = categoryFromQuery
+  }
+
   await Promise.all([
     fetchCategories(),
     fetchBrands(),
@@ -346,9 +352,18 @@ onMounted(async () => {
   >
     <div class="flex min-h-0 flex-1 overflow-hidden">
       <aside
-        class="hidden w-72 shrink-0 flex-col overflow-hidden border-e border-default bg-elevated/40 lg:flex xl:w-80"
+        class="hidden w-72 shrink-0 flex-col overflow-hidden bg-elevated/30 lg:flex xl:w-80"
       >
-        <div class="flex-1 space-y-4 p-4">
+        <div class="flex-1 space-y-5 overflow-y-auto p-5">
+          <div class="space-y-1">
+            <h2 class="text-sm font-bold text-highlighted">
+              فیلترها
+            </h2>
+            <p class="text-xs text-muted">
+              دسته‌بندی، برند و ویژگی‌ها
+            </p>
+          </div>
+
           <PublicProductFilters
             :search-input="searchInput"
             :selected-category-id="selectedCategoryId"
@@ -364,23 +379,21 @@ onMounted(async () => {
             @clear="clearFilters"
           />
 
-          <UButton
-            color="neutral"
-            variant="outline"
-            icon="i-lucide-x"
-            class="w-full justify-center"
+          <button
+            type="button"
+            class="text-xs font-medium text-primary transition-colors hover:text-primary/70"
             @click="clearFilters"
           >
             پاک کردن همه فیلترها
-          </UButton>
+          </button>
         </div>
 
-        <div class="shrink-0 border-t border-default p-4">
+        <div class="shrink-0 px-5 py-4">
           <p
             v-if="!loading && products.length > 0"
             class="text-sm text-muted"
           >
-            {{ totalProducts }} محصول یافت شد
+            {{ totalProducts.toLocaleString('fa-IR') }} محصول یافت شد
           </p>
         </div>
       </aside>
@@ -388,7 +401,7 @@ onMounted(async () => {
       <section class="flex min-h-0 min-w-0 flex-1 flex-col">
         <div
           :class="[
-            'flex shrink-0 items-center gap-3 border-b border-default bg-default px-4 py-2.5 lg:px-6',
+            'flex shrink-0 items-center gap-3 bg-default px-4 py-3 lg:px-6',
             hasActiveFilters ? '' : 'lg:hidden'
           ]"
         >
@@ -474,7 +487,7 @@ onMounted(async () => {
     >
       <template #body>
         <div
-          class="flex flex-col gap-4"
+          class="flex flex-col gap-6"
           dir="rtl"
         >
           <PublicProductFilters
@@ -492,23 +505,20 @@ onMounted(async () => {
             @clear="clearFilters"
           />
 
-          <div class="grid grid-cols-2 gap-3">
-            <UButton
-              color="neutral"
-              variant="outline"
-              icon="i-lucide-x"
-              class="w-full justify-center"
+          <div class="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              class="text-xs font-medium text-primary"
               @click="clearFilters"
             >
               پاک کردن
-            </UButton>
+            </button>
             <UButton
               color="primary"
-              icon="i-lucide-check"
-              class="w-full justify-center"
+              class="min-w-[7rem] justify-center"
               @click="isFiltersOpen = false"
             >
-              بستن
+              اعمال
             </UButton>
           </div>
         </div>

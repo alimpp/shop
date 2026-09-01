@@ -80,8 +80,8 @@
     "semantic_hash": ""
   },
   "client/app/components/public/PublicActiveFilterChips.vue": {
-    "mtime": 1788273603.4028273,
-    "ast_hash": "cc46ec50269eec0b41531213178896d3",
+    "mtime": 1786780970.8900282,
+    "ast_hash": "3da2956bc0dc8fd10445d24dc53b8f51",
     "semantic_hash": ""
   },
   "client/app/components/public/PublicBannerCarousel.vue": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "client/app/components/public/PublicCategoryGrid.vue": {
-    "mtime": 1788273693.4621608,
-    "ast_hash": "2d7be8da1b30e0641c8fb21423e6bfc8",
+    "mtime": 1785928918.0908499,
+    "ast_hash": "aa581ad0d9ad6a0f8f8f9cdd1a78cdda",
     "semantic_hash": ""
   },
   "client/app/components/public/PublicCommentTextarea.vue": {
@@ -155,8 +155,8 @@
     "semantic_hash": ""
   },
   "client/app/components/public/PublicProductFilters.vue": {
-    "mtime": 1788273592.5153742,
-    "ast_hash": "71ba120cb217c9f55a3fca7beb9f7125",
+    "mtime": 1786184816.1826904,
+    "ast_hash": "03d9e3148df555672fd44ca9510f8ce8",
     "semantic_hash": ""
   },
   "client/app/components/public/PublicProductGallery.vue": {
@@ -235,7 +235,7 @@
     "semantic_hash": ""
   },
   "client/app/config/public-navigation.ts": {
-    "mtime": 1788273182.778182,
+    "mtime": 1787989805.1403346,
     "ast_hash": "61e60db38ef32b09cc5187e4b5cb1680",
     "semantic_hash": ""
   },
@@ -510,7 +510,7 @@
     "semantic_hash": ""
   },
   "client/app/features/chat/components/ChatMessage.vue": {
-    "mtime": 1788273182.775182,
+    "mtime": 1787988652.421541,
     "ast_hash": "a71b6f5351e9cff5892e4f393bae8423",
     "semantic_hash": ""
   },
@@ -635,12 +635,12 @@
     "semantic_hash": ""
   },
   "client/app/features/products/components/ProductFormModal.vue": {
-    "mtime": 1788273182.778182,
+    "mtime": 1787988677.01577,
     "ast_hash": "c3dbe5fec374d284feb81fc807900aa4",
     "semantic_hash": ""
   },
   "client/app/features/products/components/ProductsTable.vue": {
-    "mtime": 1788273182.777182,
+    "mtime": 1787988756.8709,
     "ast_hash": "5b17b245f3ec065cc56da36836daf848",
     "semantic_hash": ""
   },
@@ -865,8 +865,8 @@
     "semantic_hash": ""
   },
   "client/app/pages/products/index.vue": {
-    "mtime": 1788273659.9342172,
-    "ast_hash": "477e34e1de2256dd93b8b767669e3458",
+    "mtime": 1787378569.2833025,
+    "ast_hash": "e348a8c84e607cfb39965972b49ea884",
     "semantic_hash": ""
   },
   "client/app/pages/profile/addresses.vue": {
@@ -2725,48 +2725,38 @@
     "semantic_hash": ""
   },
   "client/app/components/public/PublicContactForm.vue": {
-    "mtime": 1788273182.778182,
+    "mtime": 1787989760.8369174,
     "ast_hash": "7844cdac419c9bf5d59f863c060d083e",
     "semantic_hash": ""
   },
   "client/app/components/public/PublicPageHero.vue": {
-    "mtime": 1788273182.777182,
+    "mtime": 1787989751.56883,
     "ast_hash": "a8298347de4f95435dd5f205ecfc3bb9",
     "semantic_hash": ""
   },
   "client/app/components/public/PublicPageSection.vue": {
-    "mtime": 1788273182.775182,
+    "mtime": 1787989817.0256374,
     "ast_hash": "fa2d984f886b8c76799e37678419db7e",
     "semantic_hash": ""
   },
   "client/app/content/about.content.ts": {
-    "mtime": 1788273182.7761822,
+    "mtime": 1787989714.4228902,
     "ast_hash": "bbeb5b1d62efc3a033a5c6d787c5c1c6",
     "semantic_hash": ""
   },
   "client/app/content/contact.content.ts": {
-    "mtime": 1788273182.7761822,
+    "mtime": 1787989714.617064,
     "ast_hash": "8e39c86d6e84c8505b4650a7965046ed",
     "semantic_hash": ""
   },
   "client/app/pages/about.vue": {
-    "mtime": 1788273182.777182,
+    "mtime": 1787989803.5543196,
     "ast_hash": "2d74d76e738f7d51556af4a90085f2dd",
     "semantic_hash": ""
   },
   "client/app/pages/contact.vue": {
-    "mtime": 1788273182.777182,
+    "mtime": 1787989805.1422677,
     "ast_hash": "e7f0dfbeaec210b03c21588129e14c84",
-    "semantic_hash": ""
-  },
-  "client/app/pages/search.vue": {
-    "mtime": 1788273642.7643712,
-    "ast_hash": "e2825e96c68fcbe8423f890a5fb478ef",
-    "semantic_hash": ""
-  },
-  "client/app/utils/searchHistory.ts": {
-    "mtime": 1788273581.4732883,
-    "ast_hash": "a6295ae097be2734fd09b55cb1299fbc",
     "semantic_hash": ""
   }
 }
