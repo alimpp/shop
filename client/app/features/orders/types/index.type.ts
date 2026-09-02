@@ -87,12 +87,23 @@ export interface TOrder {
   orderNumber: string
   userId: string
   status: TOrderStatus
+  subtotalAmount: number
+  discountAmount: number
+  discountCode?: string | null
+  discountCodeId?: string | null
   paidAmount: number
   addressId: string | null
   address: TOrderAddress
   items: TOrderItem[]
   itemCount: number
   totalQuantity: number
+  payment?: {
+    id: string
+    trackingCode: string
+    status: 'success' | 'failed' | 'unknown'
+    amount: number
+    createdAt: string
+  } | null
   created_at: string
   updated_at: string
   user?: TOrderUser | null
@@ -118,6 +129,7 @@ export interface TOrderListQuery {
 
 export interface TCreateOrderPayload {
   addressId: string
+  discountCode?: string
 }
 
 export interface TUpdateOrderStatusPayload {

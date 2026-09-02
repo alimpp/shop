@@ -5,7 +5,9 @@ import { CommentModel } from '../models/index.model'
 import type {
   TComment,
   TCommentListData,
-  TInteractionTargetType
+  TInteractionTargetType,
+  TRatingDistribution,
+  TRatingSummary
 } from '../types/index.type'
 
 interface ICommentsMeta {
@@ -26,6 +28,12 @@ interface IInteractionsState {
   commentsLoading: boolean
   commentSubmitting: boolean
   commentsLoaded: boolean
+  ratingAvg: number
+  ratingCount: number
+  ratingDistribution: TRatingDistribution
+  myScore: number | null
+  ratingLoading: boolean
+  ratingSubmitting: boolean
 }
 
 const emptyMeta = (): ICommentsMeta => ({
@@ -33,6 +41,14 @@ const emptyMeta = (): ICommentsMeta => ({
   page: 1,
   limit: 10,
   totalPages: 0
+})
+
+const emptyDistribution = (): TRatingDistribution => ({
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0
 })
 
 export class InteractionsDS extends BaseStore<IInteractionsState> {
@@ -56,7 +72,13 @@ export class InteractionsDS extends BaseStore<IInteractionsState> {
       likeLoading: false,
       commentsLoading: false,
       commentSubmitting: false,
-      commentsLoaded: false
+      commentsLoaded: false,
+      ratingAvg: 0,
+      ratingCount: 0,
+      ratingDistribution: emptyDistribution(),
+      myScore: null,
+      ratingLoading: false,
+      ratingSubmitting: false
     })
     StoreManager.register(this)
   }
@@ -97,6 +119,30 @@ export class InteractionsDS extends BaseStore<IInteractionsState> {
     return this._state.commentsMeta.page < this._state.commentsMeta.totalPages
   }
 
+  public get getRatingAvg(): number {
+    return this._state.ratingAvg
+  }
+
+  public get getRatingCount(): number {
+    return this._state.ratingCount
+  }
+
+  public get getRatingDistribution(): TRatingDistribution {
+    return this._state.ratingDistribution
+  }
+
+  public get getMyScore(): number | null {
+    return this._state.myScore
+  }
+
+  public get getRatingLoading(): boolean {
+    return this._state.ratingLoading
+  }
+
+  public get getRatingSubmitting(): boolean {
+    return this._state.ratingSubmitting
+  }
+
   public setEntity(
     entityType: TInteractionTargetType,
     entityId: string
@@ -115,6 +161,10 @@ export class InteractionsDS extends BaseStore<IInteractionsState> {
     this._state.liked = false
     this._state.likeCount = 0
     this._state.commentsLoaded = false
+    this._state.ratingAvg = 0
+    this._state.ratingCount = 0
+    this._state.ratingDistribution = emptyDistribution()
+    this._state.myScore = null
   }
 
   public setLikeLoading(loading: boolean): void {
@@ -142,6 +192,27 @@ export class InteractionsDS extends BaseStore<IInteractionsState> {
     if (typeof likeCount === 'number') {
       this._state.likeCount = likeCount
     }
+  }
+
+  public setRatingLoading(loading: boolean): void {
+    this._state.ratingLoading = loading
+  }
+
+  public setRatingSubmitting(submitting: boolean): void {
+    this._state.ratingSubmitting = submitting
+  }
+
+  public setRatingSummary(summary: TRatingSummary): void {
+    this._state.ratingAvg = Number(summary.ratingAvg ?? 0)
+    this._state.ratingCount = Number(summary.ratingCount ?? 0)
+    this._state.ratingDistribution = {
+      ...emptyDistribution(),
+      ...(summary.distribution ?? {})
+    }
+  }
+
+  public setMyScore(score: number | null): void {
+    this._state.myScore = score
   }
 
   public setComments(data: TCommentListData, append = false): void {
@@ -174,6 +245,12 @@ export class InteractionsDS extends BaseStore<IInteractionsState> {
     this._state.commentsLoading = false
     this._state.commentSubmitting = false
     this._state.commentsLoaded = false
+    this._state.ratingAvg = 0
+    this._state.ratingCount = 0
+    this._state.ratingDistribution = emptyDistribution()
+    this._state.myScore = null
+    this._state.ratingLoading = false
+    this._state.ratingSubmitting = false
   }
 }
 

@@ -10,11 +10,20 @@ const isNoindexPage = computed(() =>
   )
 )
 
+const defaultOgImage = computed(
+  () => `${requestURL.origin}/image/og/default.png`
+)
+
 useSeoMeta({
   robots: () =>
     isNoindexPage.value
       ? 'noindex, nofollow'
-      : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+      : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+  ogImage: () => defaultOgImage.value,
+  ogImageAlt: 'فروشگاه دیجیتال',
+  ogImageType: 'image/png',
+  twitterCard: 'summary_large_image',
+  twitterImage: () => defaultOgImage.value
 })
 
 const color = computed(() =>

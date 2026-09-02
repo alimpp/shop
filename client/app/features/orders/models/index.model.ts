@@ -138,12 +138,17 @@ export class OrderModel implements TOrder {
   orderNumber: string
   userId: string
   status: TOrderStatus
+  subtotalAmount: number
+  discountAmount: number
+  discountCode?: string | null
+  discountCodeId?: string | null
   paidAmount: number
   addressId: string | null
   address: OrderAddressModel
   items: OrderItemModel[]
   itemCount: number
   totalQuantity: number
+  payment?: TOrder['payment']
   created_at: string
   updated_at: string
   user?: TOrderUser | null
@@ -153,6 +158,10 @@ export class OrderModel implements TOrder {
     this.orderNumber = data?.orderNumber ?? ''
     this.userId = data?.userId ?? ''
     this.status = data?.status ?? 'pending_confirmation'
+    this.subtotalAmount = data?.subtotalAmount ?? data?.paidAmount ?? 0
+    this.discountAmount = data?.discountAmount ?? 0
+    this.discountCode = data?.discountCode ?? null
+    this.discountCodeId = data?.discountCodeId ?? null
     this.paidAmount = data?.paidAmount ?? 0
     this.addressId = data?.addressId ?? null
     this.address = new OrderAddressModel(data?.address)
@@ -161,6 +170,7 @@ export class OrderModel implements TOrder {
     this.totalQuantity =
       data?.totalQuantity
       ?? this.items.reduce((sum, item) => sum + item.quantity, 0)
+    this.payment = data?.payment ?? null
     this.created_at = data?.created_at ?? ''
     this.updated_at = data?.updated_at ?? ''
     this.user = data?.user ?? null

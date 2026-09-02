@@ -4,6 +4,8 @@ import { addressesController } from '~/features/addresses/controllers/index.cont
 import { useAddressesDS } from '~/features/addresses/data/index.store'
 import type { AddressModel } from '~/features/addresses/models/index.model'
 import type { TAddressPayload } from '~/features/addresses/types/index.type'
+import { discountsController } from '~/features/discounts/controllers/index.controller'
+import type { TValidateDiscountResult } from '~/features/discounts/types/index.type'
 
 const props = defineProps<{
   open: boolean
@@ -13,7 +15,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  confirm: [addressId: string]
+  confirm: [payload: { addressId: string; discountCode?: string }]
 }>()
 
 const toast = useToast()
@@ -25,6 +27,9 @@ const addressSubmitting = computed(() => addressesDS.getSubmitting)
 
 const selectedAddressId = ref('')
 const isFormModalOpen = ref(false)
+const discountCodeInput = ref('')
+const discountValidating = ref(false)
+const appliedDiscount = ref<TValidateDiscountResult | null>(null)
 
 const modalOpen = computed({
   get: () => props.open,
@@ -33,6 +38,10 @@ const modalOpen = computed({
 
 const selectedAddress = computed(
   () => addresses.value.find(item => item.id === selectedAddressId.value) ?? null
+)
+
+const payableAmount = computed(
+  () => appliedDiscount.value?.payableAmount ?? props.paidAmount
 )
 
 function formatPrice(value: number): string {
@@ -76,6 +85,42 @@ async function handleCreateAddress(payload: TAddressPayload): Promise<void> {
   })
 }
 
+async function applyDiscount(): Promise<void> {
+  const code = discountCodeInput.value.trim()
+  if (!code) {
+    toast.add({ title: 'کد تخفیف را وارد کنید', color: 'warning' })
+    return
+  }
+
+  discountValidating.value = true
+  const response = await discountsController.validate({
+    code,
+    cartTotal: props.paidAmount
+  })
+  discountValidating.value = false
+
+  if (!response.success || !response.data) {
+    appliedDiscount.value = null
+    toast.add({
+      title: response.message || 'کد تخفیف معتبر نیست',
+      color: 'error'
+    })
+    return
+  }
+
+  appliedDiscount.value = response.data
+  discountCodeInput.value = response.data.code
+  toast.add({
+    title: `تخفیف ${formatPrice(response.data.discountAmount)} تومان اعمال شد`,
+    color: 'success'
+  })
+}
+
+function clearDiscount(): void {
+  appliedDiscount.value = null
+  discountCodeInput.value = ''
+}
+
 function confirmCheckout(): void {
   if (!selectedAddressId.value) {
     toast.add({
@@ -84,7 +129,10 @@ function confirmCheckout(): void {
     })
     return
   }
-  emit('confirm', selectedAddressId.value)
+  emit('confirm', {
+    addressId: selectedAddressId.value,
+    discountCode: appliedDiscount.value?.code
+  })
 }
 
 watch(
@@ -92,7 +140,17 @@ watch(
   async (isOpen) => {
     if (!isOpen) return
     selectedAddressId.value = ''
+    clearDiscount()
     await loadAddresses()
+  }
+)
+
+watch(
+  () => props.paidAmount,
+  () => {
+    if (appliedDiscount.value) {
+      void applyDiscount()
+    }
   }
 )
 </script>
@@ -195,15 +253,75 @@ watch(
           — {{ selectedAddress.summary }}
         </div>
 
-        <div class="flex items-center justify-between border-t border-default pt-3 text-sm">
-          <span class="text-toned">مبلغ پرداخت</span>
-          <span
-            class="font-black text-primary"
-            dir="ltr"
+        <div class="space-y-2 rounded-2xl border border-default p-3">
+          <p class="text-sm font-bold text-highlighted">
+            کد تخفیف
+          </p>
+          <div class="flex gap-2">
+            <UInput
+              v-model="discountCodeInput"
+              placeholder="مثلاً OFF-SUMMER"
+              class="flex-1"
+              dir="ltr"
+              :disabled="Boolean(appliedDiscount)"
+            />
+            <UButton
+              v-if="!appliedDiscount"
+              color="primary"
+              variant="soft"
+              :loading="discountValidating"
+              @click="applyDiscount"
+            >
+              اعمال
+            </UButton>
+            <UButton
+              v-else
+              color="neutral"
+              variant="soft"
+              @click="clearDiscount"
+            >
+              حذف
+            </UButton>
+          </div>
+          <p
+            v-if="appliedDiscount"
+            class="text-xs text-success"
           >
-            {{ formatPrice(paidAmount) }}
-            <span class="text-xs font-medium text-toned">تومان</span>
-          </span>
+            کد {{ appliedDiscount.code }} — تخفیف
+            {{ formatPrice(appliedDiscount.discountAmount) }} تومان
+          </p>
+        </div>
+
+        <div class="space-y-2 border-t border-default pt-3 text-sm">
+          <div
+            v-if="appliedDiscount"
+            class="flex items-center justify-between text-toned"
+          >
+            <span>جمع سبد</span>
+            <span dir="ltr">{{ formatPrice(paidAmount) }} تومان</span>
+          </div>
+          <div
+            v-if="appliedDiscount"
+            class="flex items-center justify-between text-toned"
+          >
+            <span>تخفیف</span>
+            <span
+              class="text-success"
+              dir="ltr"
+            >
+              − {{ formatPrice(appliedDiscount.discountAmount) }} تومان
+            </span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-toned">مبلغ پرداخت</span>
+            <span
+              class="font-black text-primary"
+              dir="ltr"
+            >
+              {{ formatPrice(payableAmount) }}
+              <span class="text-xs font-medium text-toned">تومان</span>
+            </span>
+          </div>
         </div>
 
         <div class="flex flex-col gap-3 sm:grid sm:grid-cols-2">

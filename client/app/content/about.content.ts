@@ -56,7 +56,7 @@ export const aboutContent = {
       `${SITE_NAME}؛ فروشگاه آنلاین لپ‌تاپ، مانیتور، موبایل و لوازم دیجیتال با ضمانت اصالت، قیمت شفاف و پشتیبانی واقعی.`,
     keywords:
       'درباره فروشگاه دیجیتال, فروشگاه آنلاین لپ تاپ, خرید مانیتور, خرید موبایل, ضمانت اصالت کالا, پشتیبانی فروشگاه دیجیتال',
-    ogImage: '/image/logo/logo.png',
-    ogImageAlt: `لوگوی ${SITE_NAME}`
+    ogImage: '/image/og/about.png',
+    ogImageAlt: `درباره ${SITE_NAME}`
   }
 } as const

@@ -4,10 +4,14 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
+import { captureException } from '../monitoring/sentry';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(HttpExceptionFilter.name);
+
   private formatMessage(message: unknown): string {
     if (Array.isArray(message)) {
       return message
@@ -45,6 +49,23 @@ export class HttpExceptionFilter implements ExceptionFilter {
       } else if (typeof errorResponse === 'string') {
         message = errorResponse;
       }
+    }
+
+    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+      this.logger.error(
+        `${request.method} ${request.url} → ${status}`,
+        exception instanceof Error ? exception.stack : String(exception),
+      );
+      captureException(exception, {
+        path: request.url,
+        method: request.method,
+        statusCode: status,
+        userId: request.user?.sub ?? null,
+      });
+    } else if (status >= HttpStatus.BAD_REQUEST) {
+      this.logger.warn(
+        `${request.method} ${request.url} → ${status}: ${message}`,
+      );
     }
 
     response.status(status).json({

@@ -2,6 +2,20 @@ export const SITE_NAME = 'فروشگاه دیجیتال'
 
 export const SITE_LOGO_PATH = '/image/logo/logo.png'
 
+/** Dedicated Open Graph share cards (1200×630) — not the logo */
+export const SITE_OG_PATHS = {
+  default: '/image/og/default.png',
+  home: '/image/og/home.png',
+  products: '/image/og/products.png',
+  blog: '/image/og/blog.png',
+  about: '/image/og/about.png',
+  contact: '/image/og/contact.png',
+  legal: '/image/og/legal.png',
+  search: '/image/og/search.png'
+} as const
+
+export type TSiteOgKey = keyof typeof SITE_OG_PATHS
+
 export const DEFAULT_ROBOTS =
   'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
 
@@ -30,6 +44,13 @@ export function buildCanonicalUrl(origin: string, path: string): string {
 
 export function resolveSiteLogoUrl(origin: string): string {
   return toAbsoluteUrl(SITE_LOGO_PATH, origin)
+}
+
+export function resolveSiteOgImage(
+  origin: string,
+  key: TSiteOgKey = 'default'
+): string {
+  return toAbsoluteUrl(SITE_OG_PATHS[key] || SITE_OG_PATHS.default, origin)
 }
 
 export function clampMetaDescription(text: string, maxLength = 160): string {
@@ -96,19 +117,22 @@ export function resolveProductOgImage(
     | undefined,
   origin: string
 ): string {
-  if (!product) return ''
+  if (!product) return resolveSiteOgImage(origin, 'products')
 
   const dedicated = product.ogImage?.trim()
   if (dedicated) return toAbsoluteUrl(dedicated, origin)
 
-  return toAbsoluteUrl(product.medias?.[0]?.url, origin)
+  const media = toAbsoluteUrl(product.medias?.[0]?.url, origin)
+  if (media) return media
+
+  return resolveSiteOgImage(origin, 'products')
 }
 
 export function resolveProductImages(
   product: { ogImage?: string; medias?: Array<{ url?: string }> } | null | undefined,
   origin: string
 ): string[] {
-  if (!product) return []
+  if (!product) return [resolveSiteOgImage(origin, 'products')]
 
   const images = new Set<string>()
 
@@ -181,10 +205,12 @@ export function resolveBlogOgImage(
     | undefined,
   origin: string
 ): string {
-  if (!blog) return ''
+  if (!blog) return resolveSiteOgImage(origin, 'blog')
 
   const dedicated = blog.ogImage?.trim() || blog.coverImage?.trim()
-  return toAbsoluteUrl(dedicated, origin)
+  if (dedicated) return toAbsoluteUrl(dedicated, origin)
+
+  return resolveSiteOgImage(origin, 'blog')
 }
 
 export function resolveBlogCanonical(

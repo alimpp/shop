@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { initSentry } from './common/monitoring/sentry';
 
 function translateValidationMessage(message: string): string {
   return message
@@ -15,6 +16,8 @@ function translateValidationMessage(message: string): string {
 }
 
 async function bootstrap() {
+  initSentry();
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
     origin: true,
@@ -48,7 +51,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
   const port = Number(process.env.PORT ?? 4000);
-  await app.listen(port, "0.0.0.0");
+  await app.listen(port, '0.0.0.0');
   console.log(`API listening on http://0.0.0.0:${port}`);
 }
 bootstrap();

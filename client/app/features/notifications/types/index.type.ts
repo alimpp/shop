@@ -16,6 +16,7 @@ export interface TNotification {
   description: string;
   type: TNotificationType;
   seen: boolean;
+  link?: string | null;
   created_at: string;
 }
 
@@ -44,6 +45,7 @@ export interface TCreateNotificationPayload {
   title: string;
   description: string;
   type: TNotificationType;
+  link?: string;
 }
 
 export const NOTIFICATION_TYPE_LABELS: Record<TNotificationType, string> = {

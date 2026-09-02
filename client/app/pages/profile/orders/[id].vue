@@ -68,7 +68,7 @@ onUnmounted(() => {
     title="جزئیات سفارش"
     back-to="/profile/orders"
   >
-    <div class="mb-4">
+    <div class="mb-4 flex flex-wrap gap-2">
       <UButton
         to="/profile/orders"
         color="neutral"
@@ -76,6 +76,15 @@ onUnmounted(() => {
         icon="i-lucide-arrow-right"
       >
         بازگشت به سفارش‌ها
+      </UButton>
+      <UButton
+        v-if="order"
+        :to="`/profile/orders/${order.id}/invoice`"
+        color="primary"
+        variant="soft"
+        icon="i-lucide-file-text"
+      >
+        مشاهده فاکتور
       </UButton>
     </div>
 

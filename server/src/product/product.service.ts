@@ -138,6 +138,8 @@ export class ProductService {
         `
         product.name ILIKE :search
         OR product.sku ILIKE :search
+        OR COALESCE(product.shortDescription, '') ILIKE :search
+        OR COALESCE(brand.name, '') ILIKE :search
         `,
         {
           search: `%${search}%`,
@@ -201,6 +203,61 @@ export class ProductService {
       page,
       limit,
       totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async suggest(query: string, limit = 8) {
+    const normalized = query.trim();
+    const safeLimit = Math.min(Math.max(Number(limit) || 8, 1), 12);
+
+    if (normalized.length < 2) {
+      return { items: [] };
+    }
+
+    const products = await this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.medias', 'medias')
+      .where('product.deletedAt IS NULL')
+      .andWhere('product.isActive = true')
+      .andWhere('product.status = :status', { status: ProductStatus.PUBLISHED })
+      .andWhere('product.visibility = :visibility', {
+        visibility: ProductVisibility.PUBLIC,
+      })
+      .andWhere(
+        `
+        product.name ILIKE :search
+        OR product.sku ILIKE :search
+        OR COALESCE(product.shortDescription, '') ILIKE :search
+        OR COALESCE(brand.name, '') ILIKE :search
+        `,
+        { search: `%${normalized}%` },
+      )
+      .orderBy('product.soldCount', 'DESC')
+      .addOrderBy('product.createdAt', 'DESC')
+      .take(safeLimit)
+      .getMany();
+
+    return {
+      items: products.map((product) => {
+        const image =
+          product.medias?.find((media) => media.isThumbnail)?.url ||
+          product.medias?.[0]?.url ||
+          '';
+
+        return {
+          id: product.id,
+          name: product.name,
+          slug: product.slug,
+          price: Number(product.price),
+          salePrice:
+            product.salePrice == null ? null : Number(product.salePrice),
+          image,
+          brandName: product.brand?.name ?? null,
+          ratingAvg: Number(product.ratingAvg ?? 0),
+          ratingCount: Number(product.ratingCount ?? 0),
+        };
+      }),
     };
   }
 

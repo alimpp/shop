@@ -96,8 +96,14 @@ async function openCheckout(): Promise<void> {
   checkoutOpen.value = true
 }
 
-async function confirmCheckout(addressId: string): Promise<void> {
-  const response = await ordersController.createOrder({ addressId })
+async function confirmCheckout(payload: {
+  addressId: string
+  discountCode?: string
+}): Promise<void> {
+  const response = await ordersController.createOrder({
+    addressId: payload.addressId,
+    discountCode: payload.discountCode
+  })
 
   if (!response.success || !response.data) {
     toast.add({

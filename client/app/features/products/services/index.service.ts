@@ -17,6 +17,7 @@ import type {
   TProductOptionValue,
   TProductPayload,
   TProductSpecification,
+  TProductSuggestData,
   TProductTag,
   TProductTagRef,
   TProductVariant,
@@ -281,6 +282,8 @@ export class ProductsService extends BaseApp<TProduct> {
       viewCount: this.toNumber(item.viewCount, 0) ?? 0,
       likeCount: this.toNumber(item.likeCount, 0) ?? 0,
       commentCount: this.toNumber(item.commentCount, 0) ?? 0,
+      ratingAvg: this.toNumber(item.ratingAvg, 0) ?? 0,
+      ratingCount: this.toNumber(item.ratingCount, 0) ?? 0,
       publishedAt: item.publishedAt ?? '',
       metaTitle: item.metaTitle ?? '',
       metaDescription: item.metaDescription ?? '',
@@ -392,6 +395,18 @@ export class ProductsService extends BaseApp<TProduct> {
         ...response,
         data: items
       }
+    })
+  }
+
+  public async suggest(
+    q: string,
+    limit = 8
+  ): Promise<ServerResponse<TProductSuggestData>> {
+    return this.executeRequest<TProductSuggestData>(async () => {
+      return await this.Get<ServerResponse<TProductSuggestData>>(
+        '/products/suggest',
+        { q, limit }
+      )
     })
   }
 

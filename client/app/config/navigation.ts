@@ -92,6 +92,18 @@ export const navigation: AppNavigationItem[][] = [
       permission: true,
     },
     {
+      label: "تراکنش‌های پرداخت",
+      icon: "i-lucide-credit-card",
+      to: "/admin/payments",
+      permission: true,
+    },
+    {
+      label: "کدهای تخفیف",
+      icon: "i-lucide-ticket-percent",
+      to: "/admin/discounts",
+      permission: true,
+    },
+    {
       label: "اعلان‌ها",
       icon: "i-lucide-bell",
       to: "/admin/notifications",

@@ -10,7 +10,7 @@ import type { TStory } from '~/features/stories/types/index.type'
 import type { TBanner } from '~/features/banners/types/index.type'
 import type { TCategory } from '~/features/categories/types/index.type'
 import type { TProduct, TProductBrandRef } from '~/features/products/types/index.type'
-import { SITE_NAME, toAbsoluteUrl } from '~/utils/seo'
+import { SITE_NAME, resolveSiteOgImage, toAbsoluteUrl } from '~/utils/seo'
 
 const PublicStoryViewer = defineAsyncComponent(
   () => import('~/components/public/PublicStoryViewer.vue')
@@ -132,12 +132,17 @@ useSeoMeta({
   ogTitle: `${SITE_NAME} - خرید لپ‌تاپ، موبایل و لوازم دیجیتال`,
   ogDescription:
     'خرید آنلاین لپ‌تاپ، موبایل، مانیتور و لوازم دیجیتال با ضمانت اصالت کالا و ارسال سریع به سراسر ایران.',
+  ogImage: () => resolveSiteOgImage(requestURL.origin, 'home'),
+  ogImageAlt: `${SITE_NAME} - خرید آنلاین`,
+  ogImageType: 'image/png',
   ogSiteName: SITE_NAME,
   ogType: 'website',
   ogUrl: () => requestURL.href,
+  twitterCard: 'summary_large_image',
   twitterTitle: `${SITE_NAME} - خرید لپ‌تاپ، موبایل و لوازم دیجیتال`,
   twitterDescription:
-    'خرید آنلاین لپ‌تاپ، موبایل، مانیتور و لوازم دیجیتال با ضمانت اصالت کالا و ارسال سریع به سراسر ایران.'
+    'خرید آنلاین لپ‌تاپ، موبایل، مانیتور و لوازم دیجیتال با ضمانت اصالت کالا و ارسال سریع به سراسر ایران.',
+  twitterImage: () => resolveSiteOgImage(requestURL.origin, 'home')
 })
 
 useHead({
@@ -156,7 +161,7 @@ useSchemaOrg([
     description:
       'فروشگاه آنلاین لپ‌تاپ، موبایل، مانیتور و لوازم جانبی دیجیتال',
     url: requestURL.origin,
-    logo: toAbsoluteUrl('/favicon.ico', requestURL.origin)
+    logo: toAbsoluteUrl('/image/logo/logo.png', requestURL.origin)
   }),
   defineWebSite({
     name: SITE_NAME,

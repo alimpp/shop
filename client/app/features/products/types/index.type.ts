@@ -148,6 +148,8 @@ export interface TProduct {
   viewCount: number;
   likeCount: number;
   commentCount: number;
+  ratingAvg?: number;
+  ratingCount?: number;
   publishedAt?: string;
   metaTitle?: string;
   metaDescription?: string;
@@ -238,4 +240,20 @@ export interface TProductListMeta {
 export interface TProductListData {
   items: TProduct[];
   meta: TProductListMeta;
+}
+
+export interface TProductSuggestItem {
+  id: string
+  name: string
+  slug: string
+  price: number
+  salePrice: number | null
+  image: string
+  brandName: string | null
+  ratingAvg: number
+  ratingCount: number
+}
+
+export interface TProductSuggestData {
+  items: TProductSuggestItem[]
 }

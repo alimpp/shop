@@ -9,7 +9,7 @@ import type {
   TProductListMeta,
   TProductListQuery
 } from '~/features/products/types/index.type'
-import { SITE_NAME } from '~/utils/seo'
+import { SITE_NAME, resolveSiteOgImage } from '~/utils/seo'
 
 const toast = useToast()
 const requestURL = useRequestURL()
@@ -99,11 +99,16 @@ useSeoMeta({
   description: seoDescription,
   ogTitle: () => `${seoTitle.value} | ${SITE_NAME}`,
   ogDescription: seoDescription,
+  ogImage: () => resolveSiteOgImage(requestURL.origin, 'products'),
+  ogImageAlt: 'کاتالوگ محصولات فروشگاه دیجیتال',
+  ogImageType: 'image/png',
   ogSiteName: SITE_NAME,
   ogType: 'website',
   ogUrl: () => requestURL.href,
+  twitterCard: 'summary_large_image',
   twitterTitle: () => `${seoTitle.value} | ${SITE_NAME}`,
-  twitterDescription: seoDescription
+  twitterDescription: seoDescription,
+  twitterImage: () => resolveSiteOgImage(requestURL.origin, 'products')
 })
 
 useHead({

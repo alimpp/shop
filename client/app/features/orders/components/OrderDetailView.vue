@@ -6,6 +6,10 @@ import {
   ORDER_STATUS_LABELS,
   type TOrderStatus
 } from '../types/index.type'
+import {
+  PAYMENT_STATUS_COLORS,
+  PAYMENT_STATUS_LABELS
+} from '~/features/payments/types/index.type'
 
 const props = withDefaults(
   defineProps<{
@@ -112,12 +116,43 @@ function stepClass(status: TOrderStatus): string {
         </div>
         <div class="bg-default/80 px-4 py-3">
           <p class="text-[11px] text-toned">
-            مبلغ پرداخت‌شده
+            وضعیت پرداخت
           </p>
-          <p class="mt-1 text-sm font-bold text-primary">
-            {{ formatPrice(order.paidAmount) }}
-          </p>
+          <div class="mt-1">
+            <UBadge
+              v-if="order.payment"
+              :color="PAYMENT_STATUS_COLORS[order.payment.status]"
+              variant="subtle"
+              size="sm"
+            >
+              {{ PAYMENT_STATUS_LABELS[order.payment.status] }}
+            </UBadge>
+            <p
+              v-else
+              class="text-sm font-bold text-highlighted"
+            >
+              —
+            </p>
+          </div>
         </div>
+      </div>
+
+      <div
+        v-if="order.discountAmount > 0 || order.payment?.trackingCode"
+        class="space-y-1 border-t border-default px-4 py-3 text-xs text-toned"
+      >
+        <p v-if="order.discountAmount > 0">
+          تخفیف
+          <span v-if="order.discountCode">({{ order.discountCode }})</span>:
+          {{ formatPrice(order.discountAmount) }}
+          — جمع قبل تخفیف {{ formatPrice(order.subtotalAmount) }}
+        </p>
+        <p
+          v-if="order.payment?.trackingCode"
+          dir="ltr"
+        >
+          کد تراکنش: {{ order.payment.trackingCode }}
+        </p>
       </div>
     </section>
 

@@ -11,6 +11,9 @@ import { CartService } from '../cart/cart.service';
 import { CartItem } from '../cart/entities/cart-item.entity';
 import { NotificationType } from '../notifications/enums/notification-type.enum';
 import { NotificationsService } from '../notifications/notifications.service';
+import { PaymentsService } from '../payments/payments.service';
+import { PaymentTransactionStatus } from '../payments/enums/payment-transaction-status.enum';
+import { DiscountsService } from '../discounts/discounts.service';
 import { ProductVariant } from '../product/entities/product-variant.entity';
 import { Product } from '../product/entities/product.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -31,6 +34,8 @@ export class OrdersService {
     private readonly cartService: CartService,
     private readonly addressesService: AddressesService,
     private readonly notificationsService: NotificationsService,
+    private readonly paymentsService: PaymentsService,
+    private readonly discountsService: DiscountsService,
   ) {}
 
   async create(userId: string, dto: CreateOrderDto) {
@@ -41,72 +46,127 @@ export class OrdersService {
     }
 
     const address = await this.addressesService.findOwned(userId, dto.addressId);
+    const subtotalAmount = this.toNumber(cart.totalPrice);
 
-    const savedOrder = await this.dataSource.transaction(async (manager) => {
-      const remaining = await manager.getRepository(CartItem).count({
-        where: { userId },
-      });
+    const { order: savedOrder, paymentId } = await this.dataSource.transaction(
+      async (manager) => {
+        const freshCartItems = await manager.getRepository(CartItem).find({
+          where: { userId },
+        });
 
-      if (!remaining) {
-        throw new BadRequestException('سبد خرید خالی است');
-      }
+        if (!freshCartItems.length) {
+          throw new BadRequestException('سبد خرید خالی است');
+        }
 
-      const order = manager.getRepository(Order).create({
-        userId,
-        orderNumber: this.buildOrderNumber(),
-        status: OrderStatus.PENDING_CONFIRMATION,
-        paidAmount: cart.totalPrice,
-        addressId: address.id,
-        address: {
-          id: address.id,
-          name: address.name,
-          province: address.province,
-          city: address.city,
-          address: address.address,
-          postalCode: address.postalCode,
-        },
-      });
+        if (freshCartItems.length !== cart.items.length) {
+          throw new BadRequestException(
+            'سبد خرید تغییر کرده است. لطفاً صفحه را تازه کنید و دوباره تلاش کنید.',
+          );
+        }
 
-      const persisted = await manager.getRepository(Order).save(order);
+        const freshByKey = new Map(
+          freshCartItems.map((item) => [
+            `${item.productId ?? ''}:${item.variantId ?? ''}`,
+            item,
+          ]),
+        );
 
-      const items = cart.items.map((item) =>
-        manager.getRepository(OrderItem).create({
+        for (const item of cart.items) {
+          const key = `${item.productId ?? ''}:${item.variantId ?? ''}`;
+          const fresh = freshByKey.get(key);
+          if (!fresh || Number(fresh.quantity) !== Number(item.quantity)) {
+            throw new BadRequestException(
+              'تعداد اقلام سبد خرید تغییر کرده است. لطفاً دوباره تلاش کنید.',
+            );
+          }
+        }
+
+        await this.assertCartStockAvailable(manager, cart.items);
+
+        const discountResult = await this.discountsService.consumeForOrder(
+          manager,
+          dto.discountCode,
+          subtotalAmount,
+        );
+
+        const order = manager.getRepository(Order).create({
+          userId,
+          orderNumber: this.buildOrderNumber(),
+          status: OrderStatus.PENDING_CONFIRMATION,
+          subtotalAmount,
+          discountAmount: discountResult.discountAmount,
+          discountCode: discountResult.discount?.code ?? null,
+          discountCodeId: discountResult.discount?.id ?? null,
+          paidAmount: discountResult.payableAmount,
+          addressId: address.id,
+          address: {
+            id: address.id,
+            name: address.name,
+            province: address.province,
+            city: address.city,
+            address: address.address,
+            postalCode: address.postalCode,
+          },
+        });
+
+        const persisted = await manager.getRepository(Order).save(order);
+
+        const items = cart.items.map((item) =>
+          manager.getRepository(OrderItem).create({
+            orderId: persisted.id,
+            productId: item.productId,
+            variantId: item.variantId,
+            productName: item.product.name,
+            productSlug: item.product.slug,
+            productImage: item.product.image ?? '',
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            lineTotal: item.lineTotal,
+            variantSnapshot: item.variant
+              ? {
+                  id: item.variant.id,
+                  name: item.variant.name,
+                  sku: item.variant.sku,
+                  price: item.variant.price,
+                  salePrice: item.variant.salePrice,
+                  image: item.variant.image,
+                  options: item.variant.options ?? [],
+                }
+              : null,
+            selectedOptions: item.selectedOptions ?? [],
+          }),
+        );
+
+        await manager.getRepository(OrderItem).save(items);
+        await this.applyStockChange(manager, items, 'decrement');
+        await manager.getRepository(CartItem).delete({ userId });
+
+        const payment = await this.paymentsService.createForOrder(manager, {
+          userId,
           orderId: persisted.id,
-          productId: item.productId,
-          variantId: item.variantId,
-          productName: item.product.name,
-          productSlug: item.product.slug,
-          productImage: item.product.image ?? '',
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          lineTotal: item.lineTotal,
-          variantSnapshot: item.variant
-            ? {
-                id: item.variant.id,
-                name: item.variant.name,
-                sku: item.variant.sku,
-                price: item.variant.price,
-                salePrice: item.variant.salePrice,
-                image: item.variant.image,
-                options: item.variant.options ?? [],
-              }
-            : null,
-          selectedOptions: item.selectedOptions ?? [],
-        }),
-      );
+          orderNumber: persisted.orderNumber,
+          amount: this.toNumber(persisted.paidAmount),
+          status: PaymentTransactionStatus.SUCCESS,
+        });
 
-      await manager.getRepository(OrderItem).save(items);
-      await this.applyStockChange(manager, items, 'decrement');
-      await manager.getRepository(CartItem).delete({ userId });
-
-      return persisted;
-    });
+        return { order: persisted, paymentId: payment.id };
+      },
+    );
 
     await this.notificationsService.notify({
       userId,
       title: 'ثبت سفارش',
       description: `مشتری عزیز سفارش شما با شماره ${savedOrder.orderNumber} ثبت شد و در انتظار تایید است.`,
       type: NotificationType.ORDER_REGISTERED,
+      link: `/profile/orders/${savedOrder.id}`,
+    });
+
+    await this.notificationsService.notify({
+      userId,
+      title: 'پرداخت شما انجام شد',
+      description: `ممنون از پرداخت شما 💚 مبلغ سفارش ${savedOrder.orderNumber} با موفقیت ثبت شد. از اعتمادتان سپاسگزاریم؛ به‌زودی وضعیت سفارش را از طریق پیامک هم به شما اطلاع می‌دهیم.`,
+      type: NotificationType.TRANSACTION,
+      link: `/profile/payments/${paymentId}`,
     });
 
     return this.findOneForUser(userId, savedOrder.id);
@@ -127,19 +187,19 @@ export class OrdersService {
       throw new ForbiddenException('دسترسی به این سفارش مجاز نیست');
     }
 
-    return this.toResponse(order);
+    return await this.toResponse(order);
   }
 
   async findOneForAdmin(id: string) {
     const order = await this.loadOrder(id);
-    return this.toResponse(order);
+    return await this.toResponse(order);
   }
 
   async updateStatus(id: string, dto: UpdateOrderStatusDto) {
     const order = await this.loadOrder(id);
 
     if (order.status === dto.status) {
-      return this.toResponse(order);
+      return await this.toResponse(order);
     }
 
     const previousStatus = order.status;
@@ -182,7 +242,7 @@ export class OrdersService {
       });
     }
 
-    return this.toResponse(await this.loadOrder(id));
+    return await this.toResponse(await this.loadOrder(id));
   }
 
   private async findMany(
@@ -213,7 +273,7 @@ export class OrdersService {
     });
 
     return {
-      items: orders.map((order) => this.toResponse(order)),
+      items: await Promise.all(orders.map((order) => this.toResponse(order))),
       meta: {
         total,
         page,
@@ -253,6 +313,73 @@ export class OrdersService {
 
   private isStockHoldingStatus(status: OrderStatus) {
     return !this.isStockReleasedStatus(status);
+  }
+
+  private async assertCartStockAvailable(
+    manager: EntityManager,
+    items: Array<{
+      productId: string | null;
+      variantId: string | null;
+      quantity: number;
+      product: { name: string };
+      variant?: { name?: string } | null;
+    }>,
+  ) {
+    for (const item of items) {
+      const quantity = Number(item.quantity) || 0;
+      if (quantity <= 0) {
+        throw new BadRequestException(
+          `تعداد نامعتبر برای محصول «${item.product.name}».`,
+        );
+      }
+
+      if (item.productId) {
+        const product = await manager.findOne(Product, {
+          where: { id: item.productId },
+          lock: { mode: 'pessimistic_write' },
+        });
+
+        if (!product) {
+          throw new BadRequestException(
+            `محصول «${item.product.name}» دیگر در دسترس نیست.`,
+          );
+        }
+
+        if (
+          product.manageStock &&
+          !product.allowBackorder &&
+          Number(product.stock ?? 0) < quantity
+        ) {
+          throw new BadRequestException(
+            `موجودی لحظه‌ای محصول «${item.product.name}» کافی نیست. موجودی فعلی ${Number(product.stock ?? 0).toLocaleString('fa-IR')} و تعداد درخواستی ${quantity.toLocaleString('fa-IR')} است.`,
+          );
+        }
+      }
+
+      if (item.variantId) {
+        const variant = await manager.findOne(ProductVariant, {
+          where: { id: item.variantId },
+          lock: { mode: 'pessimistic_write' },
+        });
+
+        if (!variant) {
+          throw new BadRequestException(
+            `واریانت محصول «${item.product.name}» دیگر در دسترس نیست.`,
+          );
+        }
+
+        if (
+          variant.manageStock &&
+          !variant.allowBackorder &&
+          Number(variant.stock ?? 0) < quantity
+        ) {
+          const variantName = item.variant?.name || variant.name;
+          throw new BadRequestException(
+            `موجودی لحظه‌ای واریانت «${variantName}» از محصول «${item.product.name}» کافی نیست. موجودی فعلی ${Number(variant.stock ?? 0).toLocaleString('fa-IR')} و تعداد درخواستی ${quantity.toLocaleString('fa-IR')} است.`,
+          );
+        }
+      }
+    }
   }
 
   private async applyStockChange(
@@ -387,7 +514,7 @@ export class OrdersService {
       case OrderStatus.RETURNED:
         return {
           title: 'مرجوع سفارش',
-          description: `مشتری عزیز سفارش شما با شماره ${orderNumber} مرجوع شد.`,
+          description: `اگر به هر دلیلی محصول برای شما ارسال نشد یا مرجوع شد، از سمت پشتیبانی با شما تماس گرفته می‌شود و مبلغ عودت داده می‌شود. شماره سفارش: ${orderNumber}`,
           type: NotificationType.ORDER_RETURNED,
         };
       case OrderStatus.PENDING_CONFIRMATION:
@@ -414,7 +541,7 @@ export class OrdersService {
     }
 
     if (order.status === dto.status) {
-      return this.toResponse(order);
+      return await this.toResponse(order);
     }
 
     const previousStatus = order.status;
@@ -457,7 +584,7 @@ export class OrdersService {
       });
     }
 
-    return this.toResponse(await this.loadOrder(id));
+    return await this.toResponse(await this.loadOrder(id));
   }
 
   private toNumber(value: unknown): number {
@@ -465,7 +592,7 @@ export class OrdersService {
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  private toResponse(order: Order) {
+  private async toResponse(order: Order) {
     const items = (order.items ?? []).map((item) => ({
       id: item.id,
       productId: item.productId,
@@ -480,17 +607,26 @@ export class OrdersService {
       selectedOptions: item.selectedOptions ?? [],
     }));
 
+    const payment = order.id
+      ? await this.paymentsService.findLatestByOrderId(order.id)
+      : null;
+
     return {
       id: order.id,
       orderNumber: order.orderNumber,
       userId: order.userId,
       status: order.status,
+      subtotalAmount: this.toNumber(order.subtotalAmount ?? order.paidAmount),
+      discountAmount: this.toNumber(order.discountAmount),
+      discountCode: order.discountCode ?? null,
+      discountCodeId: order.discountCodeId ?? null,
       paidAmount: this.toNumber(order.paidAmount),
       addressId: order.addressId,
       address: order.address,
       items,
       itemCount: items.length,
       totalQuantity: items.reduce((sum, item) => sum + item.quantity, 0),
+      payment,
       created_at: order.created_at,
       updated_at: order.updated_at,
       user: order.user

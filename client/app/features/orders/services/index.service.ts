@@ -25,6 +25,12 @@ export class OrdersService extends BaseApp<TOrder> {
       orderNumber: String(item.orderNumber ?? ''),
       userId: String(item.userId ?? ''),
       status: (item.status as TOrder['status']) ?? 'pending_confirmation',
+      subtotalAmount: Number(
+        item.subtotalAmount ?? item.paidAmount ?? 0
+      ),
+      discountAmount: Number(item.discountAmount ?? 0),
+      discountCode: (item.discountCode as string | null) ?? null,
+      discountCodeId: (item.discountCodeId as string | null) ?? null,
       paidAmount: Number(item.paidAmount ?? 0),
       addressId: (item.addressId as string | null) ?? null,
       address: {
@@ -55,6 +61,20 @@ export class OrdersService extends BaseApp<TOrder> {
       }),
       itemCount: Number(item.itemCount ?? items.length),
       totalQuantity: Number(item.totalQuantity ?? 0),
+      payment: item.payment
+        ? (() => {
+            const payment = item.payment as Record<string, unknown>
+            return {
+              id: String(payment.id ?? ''),
+              trackingCode: String(payment.trackingCode ?? ''),
+              status:
+                (payment.status as 'success' | 'failed' | 'unknown')
+                ?? 'unknown',
+              amount: Number(payment.amount ?? 0),
+              createdAt: String(payment.createdAt ?? '')
+            }
+          })()
+        : null,
       created_at: String(item.created_at ?? ''),
       updated_at: String(item.updated_at ?? ''),
       user: user

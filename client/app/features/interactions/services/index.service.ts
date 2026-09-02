@@ -9,7 +9,11 @@ import type {
   TCommentPayload,
   TLikeStatusQuery,
   TLikeTogglePayload,
-  TLikeToggleResult
+  TLikeToggleResult,
+  TMyRating,
+  TRatingSummary,
+  TUpsertRatingPayload,
+  TUpsertRatingResult
 } from '../types/index.type'
 
 export class InteractionsService extends BaseApp<TComment> {
@@ -33,6 +37,37 @@ export class InteractionsService extends BaseApp<TComment> {
   ): Promise<ServerResponse<boolean>> {
     return this.executeRequest<boolean>(async () => {
       return await this.Get<ServerResponse<boolean>>('/likes/status', query)
+    })
+  }
+
+  public async getRatingSummary(
+    productId: string
+  ): Promise<ServerResponse<TRatingSummary>> {
+    return this.executeRequest<TRatingSummary>(async () => {
+      return await this.Get<ServerResponse<TRatingSummary>>('/ratings', {
+        productId
+      })
+    })
+  }
+
+  public async getMyRating(
+    productId: string
+  ): Promise<ServerResponse<TMyRating>> {
+    return this.executeRequest<TMyRating>(async () => {
+      return await this.Get<ServerResponse<TMyRating>>('/ratings/mine', {
+        productId
+      })
+    })
+  }
+
+  public async upsertRating(
+    payload: TUpsertRatingPayload
+  ): Promise<ServerResponse<TUpsertRatingResult>> {
+    return this.executeRequest<TUpsertRatingResult>(async () => {
+      return await this.Put<ServerResponse<TUpsertRatingResult>>(
+        '/ratings',
+        payload
+      )
     })
   }
 

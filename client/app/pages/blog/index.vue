@@ -5,7 +5,8 @@ import { blogsPublicController } from '~/features/blogs/controllers/public.contr
 import type { TBlogPublicCard } from '~/features/blogs/types/public.type'
 import {
   DEFAULT_ROBOTS,
-  SITE_NAME
+  SITE_NAME,
+  resolveSiteOgImage
 } from '~/utils/seo'
 
 definePageMeta({
@@ -79,11 +80,16 @@ useSeoMeta({
   description: seoDescription,
   ogTitle: () => `${seoTitle.value} | ${SITE_NAME}`,
   ogDescription: seoDescription,
+  ogImage: () => resolveSiteOgImage(requestURL.origin, 'blog'),
+  ogImageAlt: 'مجله فروشگاه دیجیتال',
+  ogImageType: 'image/png',
   ogSiteName: SITE_NAME,
   ogType: 'website',
   ogUrl: () => requestURL.href,
+  twitterCard: 'summary_large_image',
   twitterTitle: () => `${seoTitle.value} | ${SITE_NAME}`,
   twitterDescription: seoDescription,
+  twitterImage: () => resolveSiteOgImage(requestURL.origin, 'blog'),
   robots: DEFAULT_ROBOTS
 })
 

@@ -11,6 +11,7 @@ export class NotificationModel implements TNotification {
   description: string
   type: TNotificationType
   seen: boolean
+  link: string | null
   created_at: string
 
   constructor(data?: Partial<TNotification>) {
@@ -20,6 +21,7 @@ export class NotificationModel implements TNotification {
     this.description = data?.description ?? ''
     this.type = data?.type ?? 'message'
     this.seen = data?.seen ?? false
+    this.link = data?.link ?? null
     this.created_at = data?.created_at ?? ''
   }
 

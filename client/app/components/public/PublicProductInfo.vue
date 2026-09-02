@@ -8,6 +8,8 @@ defineProps<{
   likeLoading: boolean;
   commentCount: number;
   viewCount: number;
+  ratingAvg?: number;
+  ratingCount?: number;
 }>();
 
 const emit = defineEmits<{
@@ -44,6 +46,22 @@ const { formatCurrency } = useCurrencyFormatter();
           class="size-4"
         />
         دسته بندی: {{ product.category.name }}
+      </span>
+    </div>
+
+    <div
+      v-if="(ratingCount ?? 0) > 0"
+      class="mt-3 inline-flex items-center gap-2 rounded-full bg-amber-400/10 px-3 py-1.5 text-sm text-amber-500"
+    >
+      <UIcon
+        name="i-lucide-star"
+        class="size-4 fill-amber-400 text-amber-400"
+      />
+      <span class="font-bold tabular-nums">
+        {{ (ratingAvg ?? 0).toLocaleString('fa-IR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) }}
+      </span>
+      <span class="text-xs text-toned">
+        ({{ (ratingCount ?? 0).toLocaleString('fa-IR') }} امتیاز)
       </span>
     </div>
 

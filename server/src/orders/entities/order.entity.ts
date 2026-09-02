@@ -35,6 +35,18 @@ export class Order {
   @Column({ type: 'varchar', length: 40, default: OrderStatus.PENDING_CONFIRMATION })
   status!: OrderStatus;
 
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  subtotalAmount!: number;
+
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  discountAmount!: number;
+
+  @Column({ type: 'varchar', length: 40, nullable: true })
+  discountCode!: string | null;
+
+  @Column({ type: 'uuid', nullable: true })
+  discountCodeId!: string | null;
+
   @Column({ type: 'decimal', precision: 12, scale: 2 })
   paidAmount!: number;
 

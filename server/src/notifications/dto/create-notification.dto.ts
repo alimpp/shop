@@ -1,6 +1,7 @@
 import {
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
   MaxLength,
@@ -23,4 +24,9 @@ export class CreateNotificationDto {
 
   @IsEnum(NotificationType, { message: 'نوع اعلان نامعتبر است' })
   type!: NotificationType;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500, { message: 'لینک نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد' })
+  link?: string;
 }

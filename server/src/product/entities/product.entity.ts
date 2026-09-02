@@ -187,6 +187,19 @@ export class Product {
   commentCount!: number;
 
   @Column({
+    type: 'decimal',
+    precision: 3,
+    scale: 2,
+    default: 0,
+  })
+  ratingAvg!: number;
+
+  @Column({
+    default: 0,
+  })
+  ratingCount!: number;
+
+  @Column({
     type: 'timestamp',
     nullable: true,
   })

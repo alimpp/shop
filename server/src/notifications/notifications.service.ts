@@ -16,6 +16,7 @@ export type NotifyPayload = {
   title: string;
   description: string;
   type: NotificationType;
+  link?: string | null;
 };
 
 @Injectable()
@@ -67,6 +68,7 @@ export class NotificationsService {
           title: payload.title,
           description: payload.description,
           type: payload.type,
+          link: payload.link?.trim() || null,
           seen: false,
         }),
       );
@@ -88,12 +90,18 @@ export class NotificationsService {
       throw new NotFoundException('کاربر یافت نشد');
     }
 
+    const link =
+      'link' in dto && typeof dto.link === 'string'
+        ? dto.link.trim() || null
+        : null;
+
     const notification = await this.notificationRepository.save(
       this.notificationRepository.create({
         userId: dto.userId,
         title: dto.title,
         description: dto.description,
         type: dto.type,
+        link,
         seen: false,
       }),
     );
@@ -195,6 +203,7 @@ export class NotificationsService {
       description: notification.description,
       type: notification.type,
       seen: notification.seen,
+      link: notification.link ?? null,
       created_at: notification.created_at,
     };
   }

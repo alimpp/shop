@@ -11,7 +11,11 @@ import type {
   TCommentPayload,
   TLikeStatusQuery,
   TLikeTogglePayload,
-  TLikeToggleResult
+  TLikeToggleResult,
+  TMyRating,
+  TRatingSummary,
+  TUpsertRatingPayload,
+  TUpsertRatingResult
 } from '../types/index.type'
 
 class InteractionsController extends BaseController<InteractionsService> {
@@ -53,6 +57,45 @@ class InteractionsController extends BaseController<InteractionsService> {
       this.interactionsDS.setLiked(Boolean(response.data))
     }
 
+    return this.handleResponse(response)
+  }
+
+  public async getRatingSummary(
+    productId: string
+  ): Promise<ControllerResponse<TRatingSummary>> {
+    this.interactionsDS.setRatingLoading(true)
+    const response = await this.service.getRatingSummary(productId)
+    if (response.success && response.data) {
+      this.interactionsDS.setRatingSummary(response.data)
+    }
+    this.interactionsDS.setRatingLoading(false)
+    return this.handleResponse(response)
+  }
+
+  public async getMyRating(
+    productId: string
+  ): Promise<ControllerResponse<TMyRating>> {
+    const response = await this.service.getMyRating(productId)
+    if (response.success) {
+      this.interactionsDS.setMyScore(response.data?.score ?? null)
+    }
+    return this.handleResponse(response)
+  }
+
+  public async upsertRating(
+    payload: TUpsertRatingPayload
+  ): Promise<ControllerResponse<TUpsertRatingResult>> {
+    this.interactionsDS.setRatingSubmitting(true)
+    const response = await this.service.upsertRating(payload)
+    if (response.success && response.data) {
+      this.interactionsDS.setMyScore(response.data.score)
+      this.interactionsDS.setRatingSummary({
+        ratingAvg: response.data.ratingAvg,
+        ratingCount: response.data.ratingCount,
+        distribution: response.data.distribution
+      })
+    }
+    this.interactionsDS.setRatingSubmitting(false)
     return this.handleResponse(response)
   }
 

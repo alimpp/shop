@@ -57,3 +57,30 @@ export interface TLikeToggleResult {
   liked: boolean
   likeCount: number
 }
+
+export interface TRatingDistribution {
+  1: number
+  2: number
+  3: number
+  4: number
+  5: number
+}
+
+export interface TRatingSummary {
+  ratingAvg: number
+  ratingCount: number
+  distribution: TRatingDistribution
+}
+
+export interface TMyRating {
+  score: number | null
+}
+
+export interface TUpsertRatingPayload {
+  productId: string
+  score: number
+}
+
+export interface TUpsertRatingResult extends TRatingSummary {
+  score: number
+}

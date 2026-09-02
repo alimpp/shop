@@ -12,9 +12,12 @@ const shopLinks = [
   { label: 'پروفایل', to: '/profile' }
 ]
 
-const helpLinks = publicNavigation.filter(item =>
-  ['/about', '/contact'].includes(item.to)
-)
+const helpLinks = [
+  ...publicNavigation.filter(item => ['/about', '/contact'].includes(item.to)),
+  { label: 'قوانین و مقررات', to: '/terms' },
+  { label: 'حریم خصوصی', to: '/privacy' },
+  { label: 'شرایط مرجوعی', to: '/returns' }
+]
 
 const contactItems = contactContent.channels.items.filter(item =>
   ['phone', 'email', 'address'].includes(item.key)

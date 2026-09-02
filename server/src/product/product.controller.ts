@@ -62,6 +62,17 @@ export class ProductController {
     return await this.productService.getFilters(query);
   }
 
+  @Get('suggest')
+  async suggest(
+    @Query('q') q?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return await this.productService.suggest(
+      q ?? '',
+      limit ? Number(limit) : 8,
+    );
+  }
+
   /*
   |--------------------------------------------------------------------------
   | Get Product Detail

@@ -46,6 +46,12 @@ const commentsLoading = computed(() => interactionsDS.getCommentsLoading)
 const commentsLoaded = computed(() => interactionsDS.getCommentsLoaded)
 const commentSubmitting = computed(() => interactionsDS.getCommentSubmitting)
 const hasMoreComments = computed(() => interactionsDS.getHasMoreComments)
+const ratingAvg = computed(() => interactionsDS.getRatingAvg)
+const ratingCount = computed(() => interactionsDS.getRatingCount)
+const ratingDistribution = computed(() => interactionsDS.getRatingDistribution)
+const myScore = computed(() => interactionsDS.getMyScore)
+const ratingLoading = computed(() => interactionsDS.getRatingLoading)
+const ratingSubmitting = computed(() => interactionsDS.getRatingSubmitting)
 const favorited = computed(() =>
   product.value ? favoritesDS.isFavorited(product.value.id) : false
 )
@@ -265,6 +271,11 @@ async function loadProduct(): Promise<TProduct | null> {
     product.value = response.data
     interactionsDS.setEntity(TInteractionTargetType.PRODUCT, response.data.id)
     interactionsDS.setLikeCount(response.data.likeCount ?? 0)
+    interactionsDS.setRatingSummary({
+      ratingAvg: Number(response.data.ratingAvg ?? 0),
+      ratingCount: Number(response.data.ratingCount ?? 0),
+      distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+    })
     applyProductDefaults(response.data)
   } else {
     notFound.value = true
@@ -305,6 +316,33 @@ async function loadLikeStatus(): Promise<void> {
   await interactionsController.getLikeStatus({
     entityType: TInteractionTargetType.PRODUCT,
     entityId: product.value.id
+  })
+}
+
+async function loadRatings(): Promise<void> {
+  if (!product.value) return
+  await interactionsController.getRatingSummary(product.value.id)
+  if (isLoggedIn.value) {
+    await interactionsController.getMyRating(product.value.id)
+  }
+}
+
+async function submitRating(score: number): Promise<void> {
+  if (!product.value || !requireLogin()) return
+  const response = await interactionsController.upsertRating({
+    productId: product.value.id,
+    score
+  })
+  if (!response.success) {
+    toast.add({
+      title: response.message || 'ثبت امتیاز ناموفق بود',
+      color: 'error'
+    })
+    return
+  }
+  toast.add({
+    title: 'امتیاز شما ثبت شد',
+    color: 'success'
   })
 }
 
@@ -596,7 +634,15 @@ useSchemaOrg(() => {
           itemCondition: 'NewCondition',
           url: productUrl
         })
-      ]
+      ],
+      ...(Number(p.ratingCount ?? ratingCount.value) > 0
+        ? {
+            aggregateRating: defineAggregateRating({
+              ratingValue: Number(p.ratingAvg ?? ratingAvg.value) || 0,
+              reviewCount: Number(p.ratingCount ?? ratingCount.value) || 0
+            })
+          }
+        : {})
     }),
     defineBreadcrumb({
       itemListElement: [
@@ -620,7 +666,12 @@ onMounted(async () => {
     await loadProduct()
   }
   if (product.value) {
-    await Promise.all([loadLikeStatus(), loadFavoriteStatus(), loadComments(1)])
+    await Promise.all([
+      loadLikeStatus(),
+      loadFavoriteStatus(),
+      loadComments(1),
+      loadRatings()
+    ])
     await track('product_view', {
       productId: product.value.id,
       product: product.value,
@@ -676,6 +727,8 @@ watch(selectedMediaIndex, async (index, previous) => {
           :like-loading="likeLoading"
           :comment-count="commentsMeta.total || product.commentCount || 0"
           :view-count="product.viewCount ?? 0"
+          :rating-avg="ratingAvg || Number(product.ratingAvg ?? 0)"
+          :rating-count="ratingCount || Number(product.ratingCount ?? 0)"
           @like="toggleLike"
         />
 
@@ -738,6 +791,17 @@ watch(selectedMediaIndex, async (index, previous) => {
           <ProductSupportAsk :product="product" />
         </template>
       </PublicProductDetails>
+
+      <PublicProductRating
+        :rating-avg="ratingAvg || Number(product.ratingAvg ?? 0)"
+        :rating-count="ratingCount || Number(product.ratingCount ?? 0)"
+        :my-score="myScore"
+        :distribution="ratingDistribution"
+        :is-logged-in="isLoggedIn"
+        :loading="ratingLoading"
+        :submitting="ratingSubmitting"
+        @rate="submitRating"
+      />
 
       <PublicProductComments
         :comments="comments"

@@ -39,6 +39,9 @@ export class Notification {
   @Column({ default: false })
   seen!: boolean;
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  link!: string | null;
+
   @CreateDateColumn({ type: 'timestamp' })
   created_at!: Date;
 }

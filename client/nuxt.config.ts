@@ -21,7 +21,7 @@ export default defineNuxtConfig({
     identity: {
       type: "Organization",
       name: "فروشگاه دیجیتال",
-      logo: "/favicon.ico",
+      logo: "/image/logo/logo.png",
     },
   },
 
@@ -43,6 +43,9 @@ export default defineNuxtConfig({
     public: {
       apiBase: process.env.API_BASE_URL,
       vesrion: process.env.VESRION,
+      sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN || "",
+      sentryTracesSampleRate:
+        process.env.NUXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE || "0.1",
     },
   },
 

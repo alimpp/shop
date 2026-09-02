@@ -110,7 +110,7 @@ export const contactContent = {
       `ارتباط با پشتیبانی ${SITE_NAME}؛ تلفن، ایمیل و فرم تماس برای مشاوره خرید لپ‌تاپ، مانیتور و پیگیری سفارش.`,
     keywords:
       'تماس با فروشگاه دیجیتال, پشتیبانی فروشگاه, مشاوره خرید لپ تاپ, پیگیری سفارش, فرم تماس',
-    ogImage: '/image/logo/logo.png',
+    ogImage: '/image/og/contact.png',
     ogImageAlt: `پشتیبانی و تماس با ${SITE_NAME}`
   }
 } as const

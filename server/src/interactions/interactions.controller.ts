@@ -8,6 +8,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -18,6 +19,8 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { LikeStatusQueryDto } from './dto/like-status-query.dto';
 import { LikeToggleDto } from './dto/like-toggle.dto';
 import { QueryCommentsDto } from './dto/query-comments.dto';
+import { RatingQueryDto } from './dto/rating-query.dto';
+import { UpsertRatingDto } from './dto/upsert-rating.dto';
 import { InteractionsService } from './interactions.service';
 
 type AuthenticatedRequest = Request & {
@@ -49,6 +52,33 @@ export class InteractionsController {
       query.entityId,
       req.user.sub,
     );
+  }
+
+  @Get('ratings')
+  async ratingSummary(@Query() query: RatingQueryDto) {
+    return await this.interactionsService.getRatingSummary(query.productId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('ratings/mine')
+  async myRating(
+    @Query() query: RatingQueryDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return await this.interactionsService.getMyRating(
+      query.productId,
+      req.user.sub,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('ratings')
+  @HttpCode(HttpStatus.OK)
+  async upsertRating(
+    @Body() dto: UpsertRatingDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return await this.interactionsService.upsertRating(dto, req.user.sub);
   }
 
   @Get('comments')

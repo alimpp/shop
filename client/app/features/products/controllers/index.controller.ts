@@ -10,7 +10,8 @@ import type {
   TProductBrandRef,
   TProductListData,
   TProductListQuery,
-  TProductPayload
+  TProductPayload,
+  TProductSuggestData
 } from '../types/index.type'
 
 class ProductsController extends BaseController<ProductsService> {
@@ -161,6 +162,14 @@ class ProductsController extends BaseController<ProductsService> {
     const response: ServerResponse<TProductAttributeWithValues[]>
       = await this.service.getFilterAttributes(query)
 
+    return this.handleResponse(response)
+  }
+
+  public async suggest(
+    q: string,
+    limit = 8
+  ): Promise<ControllerResponse<TProductSuggestData>> {
+    const response = await this.service.suggest(q, limit)
     return this.handleResponse(response)
   }
 }

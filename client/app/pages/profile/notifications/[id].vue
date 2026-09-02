@@ -168,6 +168,19 @@ onUnmounted(() => {
             aria-hidden="true"
           />
         </p>
+
+        <div
+          v-if="notification.link"
+          class="mt-6"
+        >
+          <UButton
+            :to="notification.link"
+            color="primary"
+            icon="i-lucide-external-link"
+          >
+            مشاهده جزئیات
+          </UButton>
+        </div>
       </div>
     </article>
   </ProfileShell>
