@@ -355,6 +355,46 @@ export class ProductsService extends BaseApp<TProduct> {
     return response
   }
 
+  public async getBestsellers(
+    limit = 10
+  ): Promise<ServerResponse<TProduct[]>> {
+    return this.executeRequest<TProduct[]>(async () => {
+      const response = await this.Get<ServerResponse<TRawProduct[]>>(
+        '/products/bestsellers',
+        { limit }
+      )
+
+      const items = Array.isArray(response.data)
+        ? response.data.map(item => this.normalizeProduct(item))
+        : []
+
+      return {
+        ...response,
+        data: items
+      }
+    })
+  }
+
+  public async getDiscounted(
+    limit = 10
+  ): Promise<ServerResponse<TProduct[]>> {
+    return this.executeRequest<TProduct[]>(async () => {
+      const response = await this.Get<ServerResponse<TRawProduct[]>>(
+        '/products/discounted',
+        { limit }
+      )
+
+      const items = Array.isArray(response.data)
+        ? response.data.map(item => this.normalizeProduct(item))
+        : []
+
+      return {
+        ...response,
+        data: items
+      }
+    })
+  }
+
   public async getProductById(
     id: string
   ): Promise<ServerResponse<TProduct>> {

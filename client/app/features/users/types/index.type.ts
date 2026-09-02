@@ -74,6 +74,7 @@ export type TAdminUserTab =
   | 'likes'
   | 'comments'
   | 'favorites'
+  | 'behavior'
   | 'chat'
 
 export type { TAddress, TCartResponse, TChat, TFavoriteProduct, TFavoritesResponse, TOrder, TOrderListData }

@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import PublicPageBreadcrumb from '~/components/public/PublicPageBreadcrumb.vue'
 import PublicPageHero from '~/components/public/PublicPageHero.vue'
 import PublicPageSection from '~/components/public/PublicPageSection.vue'
 import { aboutContent } from '~/content/about.content'
 import {
   DEFAULT_ROBOTS,
   SITE_NAME,
+  buildCanonicalUrl,
+  clampMetaDescription,
+  resolvePageSocialTitle,
+  resolveSiteLogoUrl,
   toAbsoluteUrl
 } from '~/utils/seo'
 
@@ -13,49 +18,121 @@ definePageMeta({
 })
 
 const requestURL = useRequestURL()
-const canonical = computed(() => `${requestURL.origin}/about`)
 const content = aboutContent
 
+const canonical = computed(() =>
+  buildCanonicalUrl(requestURL.origin, content.seo.path)
+)
+const seoTitle = computed(() => content.seo.title)
+const seoSocialTitle = computed(() =>
+  resolvePageSocialTitle(content.seo.socialTitle || content.seo.title)
+)
+const seoDescription = computed(() =>
+  clampMetaDescription(content.seo.description)
+)
+const seoImage = computed(() =>
+  toAbsoluteUrl(content.seo.ogImage, requestURL.origin) || resolveSiteLogoUrl(requestURL.origin)
+)
+const seoImageAlt = computed(() => content.seo.ogImageAlt)
+
 useSeoMeta({
-  title: content.seo.title,
-  description: content.seo.description,
-  keywords: content.seo.keywords,
-  ogTitle: content.seo.title,
-  ogDescription: content.seo.description,
+  title: () => seoTitle.value,
+  description: () => seoDescription.value,
+  robots: DEFAULT_ROBOTS,
+  author: SITE_NAME,
+  ogTitle: () => seoSocialTitle.value,
+  ogDescription: () => seoDescription.value,
+  ogImage: () => seoImage.value,
+  ogImageAlt: () => seoImageAlt.value,
+  ogImageType: 'image/png',
+  ogUrl: () => canonical.value,
   ogSiteName: SITE_NAME,
-  ogType: 'website',
-  ogUrl: canonical,
   ogLocale: 'fa_IR',
+  ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: content.seo.title,
-  twitterDescription: content.seo.description,
-  robots: DEFAULT_ROBOTS
+  twitterTitle: () => seoSocialTitle.value,
+  twitterDescription: () => seoDescription.value,
+  twitterImage: () => seoImage.value,
+  twitterImageAlt: () => seoImageAlt.value
 })
 
-useHead({
+useHead(() => ({
   link: [
     {
       key: 'canonical',
       rel: 'canonical',
-      href: canonical
+      href: canonical.value
+    },
+    {
+      key: 'alternate-fa',
+      rel: 'alternate',
+      hreflang: 'fa-IR',
+      href: canonical.value
+    },
+    {
+      key: 'alternate-x-default',
+      rel: 'alternate',
+      hreflang: 'x-default',
+      href: canonical.value
+    }
+  ],
+  meta: [
+    {
+      key: 'keywords',
+      name: 'keywords',
+      content: content.seo.keywords
+    },
+    {
+      key: 'og:image:secure_url',
+      property: 'og:image:secure_url',
+      content: seoImage.value
     }
   ]
-})
+}))
 
-useSchemaOrg(() => [
-  defineWebPage({
-    '@type': 'AboutPage',
-    name: content.seo.title,
-    description: content.seo.description,
-    url: canonical.value
-  }),
-  defineOrganization({
-    name: SITE_NAME,
-    url: requestURL.origin,
-    logo: toAbsoluteUrl('/image/logo/logo.png', requestURL.origin),
-    description: content.seo.description
-  })
-])
+useSchemaOrg(() => {
+  const origin = requestURL.origin
+  const logo = resolveSiteLogoUrl(origin)
+  const pageUrl = canonical.value
+
+  return [
+    defineWebPage({
+      '@type': 'AboutPage',
+      name: seoSocialTitle.value,
+      description: seoDescription.value,
+      url: pageUrl,
+      inLanguage: 'fa-IR',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: origin
+      },
+      primaryImageOfPage: {
+        '@type': 'ImageObject',
+        url: seoImage.value,
+        caption: seoImageAlt.value
+      },
+      about: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        url: origin
+      }
+    }),
+    defineOrganization({
+      name: SITE_NAME,
+      url: origin,
+      logo,
+      image: logo,
+      description: seoDescription.value
+    }),
+    defineBreadcrumb({
+      itemListElement: [
+        defineListItem({ name: 'خانه', url: origin, position: 1 }),
+        defineListItem({ name: 'درباره ما', url: pageUrl, position: 2 })
+      ]
+    })
+  ]
+})
 </script>
 
 <template>
@@ -63,6 +140,13 @@ useSchemaOrg(() => [
     class="pb-16"
     dir="rtl"
   >
+    <PublicPageBreadcrumb
+      :items="[
+        { label: 'خانه', to: '/' },
+        { label: 'درباره ما' }
+      ]"
+    />
+
     <PublicPageHero
       :brand="content.brand"
       :headline="content.hero.headline"

@@ -56,6 +56,11 @@ class AuthController extends BaseController<AuthService> {
     if (response.success && response.data) {
       const token = useCookie("token");
       token.value = response.data.token;
+
+      if (import.meta.client) {
+        const { syncLocalToServer } = useBehaviorTracker();
+        void syncLocalToServer();
+      }
     }
 
     return this.handleResponse(response);

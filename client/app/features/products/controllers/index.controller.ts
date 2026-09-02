@@ -127,6 +127,20 @@ class ProductsController extends BaseController<ProductsService> {
     return this.handleResponse(response)
   }
 
+  public async getBestsellers(
+    limit = 10
+  ): Promise<ControllerResponse<TProduct[]>> {
+    const response = await this.service.getBestsellers(limit)
+    return this.handleResponse(response)
+  }
+
+  public async getDiscounted(
+    limit = 10
+  ): Promise<ControllerResponse<TProduct[]>> {
+    const response = await this.service.getDiscounted(limit)
+    return this.handleResponse(response)
+  }
+
   public async getBrands(): Promise<ControllerResponse<TProductBrandRef[]>> {
     const response: ServerResponse<TProductBrandRef[]>
       = await this.service.getBrands()

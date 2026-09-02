@@ -14,6 +14,8 @@ import { SITE_NAME } from '~/utils/seo'
 const toast = useToast()
 const requestURL = useRequestURL()
 const route = useRoute()
+const { track } = useBehaviorTracker()
+let filterTrackTimer: ReturnType<typeof setTimeout> | null = null
 
 const isFiltersOpen = ref(false)
 const currentPage = ref(1)
@@ -312,6 +314,7 @@ watch([debouncedSearch, selectedCategoryId, selectedBrandId], async () => {
   if (shouldFetchProducts) {
     await fetchProducts()
   }
+  scheduleFilterTrack()
 })
 
 watch(
@@ -323,8 +326,24 @@ watch(
     if (shouldFetchProducts) {
       await fetchProducts()
     }
+    scheduleFilterTrack()
   }
 )
+
+function scheduleFilterTrack(): void {
+  if (filterTrackTimer) clearTimeout(filterTrackTimer)
+  filterTrackTimer = setTimeout(() => {
+    if (!hasActiveFilters.value) return
+    track('filter', {
+      metadata: {
+        search: debouncedSearch.value.trim() || null,
+        categoryId: selectedCategoryId.value || null,
+        brandId: selectedBrandId.value || null,
+        attributeValueIds: Object.values(attributeSelections).flat()
+      }
+    })
+  }, 800)
+}
 
 watch(currentPage, async () => {
   await fetchProducts()
@@ -332,8 +351,12 @@ watch(currentPage, async () => {
 
 onMounted(async () => {
   const categoryFromQuery = String(route.query.category ?? '')
+  const brandFromQuery = String(route.query.brand ?? '')
   if (categoryFromQuery) {
     selectedCategoryId.value = categoryFromQuery
+  }
+  if (brandFromQuery) {
+    selectedBrandId.value = brandFromQuery
   }
 
   await Promise.all([

@@ -22,6 +22,7 @@ import { ProductVariant } from './entities/product-variant.entity';
 import { Product } from './entities/product.entity';
 import { MediaType } from './enums/media-type.enum';
 import { ProductStatus } from './enums/product-status.enum';
+import { ProductVisibility } from './enums/product-visibility.enum';
 
 @Injectable()
 export class ProductService {
@@ -201,6 +202,122 @@ export class ProductService {
       limit,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  async findBestsellers(limit = 10) {
+    const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 40);
+
+    const bestsellers = await this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.medias', 'medias')
+      .leftJoinAndSelect('product.variants', 'variants')
+      .where('product.deletedAt IS NULL')
+      .andWhere('product.isActive = true')
+      .andWhere('product.status = :status', { status: ProductStatus.PUBLISHED })
+      .andWhere('product.visibility = :visibility', {
+        visibility: ProductVisibility.PUBLIC,
+      })
+      .andWhere('product.soldCount > 0')
+      .orderBy('product.soldCount', 'DESC')
+      .addOrderBy('product.createdAt', 'DESC')
+      .take(safeLimit)
+      .getMany();
+
+    if (bestsellers.length > 0) {
+      return bestsellers;
+    }
+
+    return this.findLatestPublicProducts(safeLimit);
+  }
+
+  async findDiscounted(limit = 10) {
+    const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 40);
+
+    const discounted = await this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.medias', 'medias')
+      .leftJoinAndSelect('product.variants', 'variants')
+      .where('product.deletedAt IS NULL')
+      .andWhere('product.isActive = true')
+      .andWhere('product.status = :status', { status: ProductStatus.PUBLISHED })
+      .andWhere('product.visibility = :visibility', {
+        visibility: ProductVisibility.PUBLIC,
+      })
+      .andWhere(
+        `
+        (
+          product.salePrice IS NOT NULL
+          AND product.salePrice > 0
+          AND product.salePrice < product.price
+        )
+        OR EXISTS (
+          SELECT 1
+          FROM product_variants variant
+          WHERE variant."productId" = product.id
+            AND variant."salePrice" IS NOT NULL
+            AND variant."salePrice" > 0
+            AND variant."salePrice" < variant.price
+            AND variant."deletedAt" IS NULL
+        )
+        `,
+      )
+      .addSelect(
+        `
+        CASE
+          WHEN product.price > 0
+            AND product.salePrice IS NOT NULL
+            AND product.salePrice < product.price
+          THEN ((product.price - product.salePrice) / product.price) * 100
+          ELSE COALESCE((
+            SELECT MAX(
+              CASE
+                WHEN variant.price > 0
+                  AND variant."salePrice" IS NOT NULL
+                  AND variant."salePrice" < variant.price
+                THEN ((variant.price - variant."salePrice") / variant.price) * 100
+                ELSE 0
+              END
+            )
+            FROM product_variants variant
+            WHERE variant."productId" = product.id
+              AND variant."deletedAt" IS NULL
+          ), 0)
+        END
+        `,
+        'discount_percent',
+      )
+      .orderBy('discount_percent', 'DESC')
+      .addOrderBy('product.createdAt', 'DESC')
+      .take(safeLimit)
+      .getMany();
+
+    if (discounted.length > 0) {
+      return discounted;
+    }
+
+    return this.findLatestPublicProducts(safeLimit);
+  }
+
+  private async findLatestPublicProducts(limit: number) {
+    return this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.medias', 'medias')
+      .leftJoinAndSelect('product.variants', 'variants')
+      .where('product.deletedAt IS NULL')
+      .andWhere('product.isActive = true')
+      .andWhere('product.status = :status', { status: ProductStatus.PUBLISHED })
+      .andWhere('product.visibility = :visibility', {
+        visibility: ProductVisibility.PUBLIC,
+      })
+      .orderBy('product.createdAt', 'DESC')
+      .take(limit)
+      .getMany();
   }
 
   async getFilters(query: QueryProductDto) {

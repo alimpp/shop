@@ -26,6 +26,7 @@ const toast = useToast()
 const addingToCart = ref(false)
 const interactionsDS = useInteractionsDS()
 const favoritesDS = useFavoritesDS()
+const { track } = useBehaviorTracker()
 
 const slug = String(route.params.slug ?? '')
 
@@ -326,7 +327,13 @@ async function toggleLike(): Promise<void> {
       title: response.message,
       color: 'error'
     })
+    return
   }
+
+  await track(response.data?.liked ? 'like' : 'unlike', {
+    productId: product.value.id,
+    product: product.value
+  })
 }
 
 async function toggleFavorite(): Promise<void> {
@@ -342,6 +349,10 @@ async function toggleFavorite(): Promise<void> {
     toast.add({
       title: response.data.favorited ? 'به علاقه مندی ها اضافه شد' : 'از علاقه مندی ها حذف شد',
       color: 'success'
+    })
+    await track(response.data.favorited ? 'favorite' : 'unfavorite', {
+      productId: product.value.id,
+      product: product.value
     })
   } else {
     toast.add({
@@ -381,6 +392,10 @@ async function submitComment(): Promise<void> {
   if (response.success) {
     commentText.value = ''
     toast.add({ title: 'کامنت شما ثبت شد', color: 'success' })
+    await track('comment', {
+      productId: product.value.id,
+      product: product.value
+    })
   } else {
     toast.add({
       title: response.message,
@@ -476,6 +491,14 @@ async function addToCart(): Promise<void> {
   toast.add({
     title: 'به سبد خرید اضافه شد',
     color: 'success'
+  })
+  await track('add_to_cart', {
+    productId: product.value.id,
+    product: product.value,
+    metadata: {
+      variantId: payload.variantId ?? null,
+      quantity: payload.quantity
+    }
   })
 }
 
@@ -598,7 +621,25 @@ onMounted(async () => {
   }
   if (product.value) {
     await Promise.all([loadLikeStatus(), loadFavoriteStatus(), loadComments(1)])
+    await track('product_view', {
+      productId: product.value.id,
+      product: product.value,
+      metadata: {
+        slug: product.value.slug,
+        categoryId: product.value.categoryId || null,
+        brandId: product.value.brandId || null
+      }
+    })
   }
+})
+
+watch(selectedMediaIndex, async (index, previous) => {
+  if (!product.value || index === previous || index <= 0) return
+  await track('gallery_view', {
+    productId: product.value.id,
+    product: product.value,
+    metadata: { mediaIndex: index }
+  })
 })
 </script>
 

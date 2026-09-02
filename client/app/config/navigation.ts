@@ -74,6 +74,12 @@ export const navigation: AppNavigationItem[][] = [
       permission: true,
     },
     {
+      label: "پیام‌های تماس",
+      icon: "i-lucide-mail",
+      to: "/admin/contact",
+      permission: true,
+    },
+    {
       label: "کاربران",
       icon: "i-lucide-users",
       to: "/admin/users",

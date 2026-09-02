@@ -48,10 +48,15 @@ export const aboutContent = {
     secondaryCta: { label: 'صفحه تماس', to: '/contact' }
   },
   seo: {
-    title: `درباره ما | ${SITE_NAME}`,
+    path: '/about',
+    /** Document title without site name — app titleTemplate appends it */
+    title: 'درباره ما',
+    socialTitle: `درباره ${SITE_NAME}؛ خرید دیجیتال مطمئن`,
     description:
       `${SITE_NAME}؛ فروشگاه آنلاین لپ‌تاپ، مانیتور، موبایل و لوازم دیجیتال با ضمانت اصالت، قیمت شفاف و پشتیبانی واقعی.`,
     keywords:
-      'درباره فروشگاه دیجیتال, خرید لپ تاپ, خرید مانیتور, فروشگاه آنلاین دیجیتال'
+      'درباره فروشگاه دیجیتال, فروشگاه آنلاین لپ تاپ, خرید مانیتور, خرید موبایل, ضمانت اصالت کالا, پشتیبانی فروشگاه دیجیتال',
+    ogImage: '/image/logo/logo.png',
+    ogImageAlt: `لوگوی ${SITE_NAME}`
   }
 } as const

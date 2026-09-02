@@ -55,6 +55,36 @@ export const contactContent = {
       { day: 'جمعه و تعطیلات رسمی', time: 'تعطیل' }
     ]
   },
+  identity: {
+    email: 'support@vistashop.ir',
+    telephone: '+982191091234',
+    mobile: '+989121234567',
+    address: {
+      streetAddress: 'خیابان ولیعصر، پلاک ۱۲۴۰',
+      addressLocality: 'تهران',
+      addressRegion: 'تهران',
+      addressCountry: 'IR',
+      postalCode: ''
+    },
+    openingHours: [
+      {
+        dayOfWeek: [
+          'Saturday',
+          'Sunday',
+          'Monday',
+          'Tuesday',
+          'Wednesday'
+        ] as const,
+        opens: '09:00',
+        closes: '18:00'
+      },
+      {
+        dayOfWeek: ['Thursday'] as const,
+        opens: '09:00',
+        closes: '14:00'
+      }
+    ]
+  },
   form: {
     title: 'پیام بگذارید',
     support: 'فرم را پر کنید؛ در کوتاه‌ترین زمان با شما تماس می‌گیریم.',
@@ -72,10 +102,15 @@ export const contactContent = {
     successDescription: 'به‌زودی از طریق شماره تماس با شما ارتباط می‌گیریم.'
   },
   seo: {
-    title: `تماس با ما | ${SITE_NAME}`,
+    path: '/contact',
+    /** Document title without site name — app titleTemplate appends it */
+    title: 'تماس با ما',
+    socialTitle: `تماس با ${SITE_NAME} | پشتیبانی و مشاوره خرید`,
     description:
       `ارتباط با پشتیبانی ${SITE_NAME}؛ تلفن، ایمیل و فرم تماس برای مشاوره خرید لپ‌تاپ، مانیتور و پیگیری سفارش.`,
     keywords:
-      'تماس با فروشگاه دیجیتال, پشتیبانی فروشگاه, مشاوره خرید لپ تاپ'
+      'تماس با فروشگاه دیجیتال, پشتیبانی فروشگاه, مشاوره خرید لپ تاپ, پیگیری سفارش, فرم تماس',
+    ogImage: '/image/logo/logo.png',
+    ogImageAlt: `پشتیبانی و تماس با ${SITE_NAME}`
   }
 } as const

@@ -1,5 +1,7 @@
 export const SITE_NAME = 'فروشگاه دیجیتال'
 
+export const SITE_LOGO_PATH = '/image/logo/logo.png'
+
 export const DEFAULT_ROBOTS =
   'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
 
@@ -15,7 +17,36 @@ export function toAbsoluteUrl(
   if (/^https?:\/\//i.test(value)) return value
 
   const path = value.startsWith('/') ? value : `/${value}`
-  return `${origin}${path}`
+  return `${origin.replace(/\/+$/, '')}${path}`
+}
+
+export function buildCanonicalUrl(origin: string, path: string): string {
+  const base = origin.replace(/\/+$/, '')
+  const normalized = path.startsWith('/') ? path : `/${path}`
+  const cleanPath
+    = normalized.length > 1 ? normalized.replace(/\/+$/, '') : normalized
+  return `${base}${cleanPath}`
+}
+
+export function resolveSiteLogoUrl(origin: string): string {
+  return toAbsoluteUrl(SITE_LOGO_PATH, origin)
+}
+
+export function clampMetaDescription(text: string, maxLength = 160): string {
+  const normalized = text.trim().replace(/\s+/g, ' ')
+  if (normalized.length <= maxLength) return normalized
+
+  const slice = normalized.slice(0, Math.max(0, maxLength - 1))
+  const lastSpace = slice.lastIndexOf(' ')
+  const cut = lastSpace > Math.floor(maxLength * 0.6) ? slice.slice(0, lastSpace) : slice
+  return `${cut.trim()}…`
+}
+
+export function resolvePageSocialTitle(pageTitle: string): string {
+  const title = pageTitle.trim()
+  if (!title) return SITE_NAME
+  if (title.includes(SITE_NAME)) return title
+  return `${title} | ${SITE_NAME}`
 }
 
 export function resolveProductTitle(

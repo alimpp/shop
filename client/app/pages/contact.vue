@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import PublicContactForm from '~/components/public/PublicContactForm.vue'
+import PublicPageBreadcrumb from '~/components/public/PublicPageBreadcrumb.vue'
 import PublicPageHero from '~/components/public/PublicPageHero.vue'
 import PublicPageSection from '~/components/public/PublicPageSection.vue'
 import { contactContent } from '~/content/contact.content'
 import {
   DEFAULT_ROBOTS,
   SITE_NAME,
+  buildCanonicalUrl,
+  clampMetaDescription,
+  resolvePageSocialTitle,
+  resolveSiteLogoUrl,
   toAbsoluteUrl
 } from '~/utils/seo'
 
@@ -14,63 +19,184 @@ definePageMeta({
 })
 
 const requestURL = useRequestURL()
-const canonical = computed(() => `${requestURL.origin}/contact`)
 const content = contactContent
+const identity = content.identity
+
+const canonical = computed(() =>
+  buildCanonicalUrl(requestURL.origin, content.seo.path)
+)
+const seoTitle = computed(() => content.seo.title)
+const seoSocialTitle = computed(() =>
+  resolvePageSocialTitle(content.seo.socialTitle || content.seo.title)
+)
+const seoDescription = computed(() =>
+  clampMetaDescription(content.seo.description)
+)
+const seoImage = computed(() =>
+  toAbsoluteUrl(content.seo.ogImage, requestURL.origin) || resolveSiteLogoUrl(requestURL.origin)
+)
+const seoImageAlt = computed(() => content.seo.ogImageAlt)
 
 useSeoMeta({
-  title: content.seo.title,
-  description: content.seo.description,
-  keywords: content.seo.keywords,
-  ogTitle: content.seo.title,
-  ogDescription: content.seo.description,
+  title: () => seoTitle.value,
+  description: () => seoDescription.value,
+  robots: DEFAULT_ROBOTS,
+  author: SITE_NAME,
+  ogTitle: () => seoSocialTitle.value,
+  ogDescription: () => seoDescription.value,
+  ogImage: () => seoImage.value,
+  ogImageAlt: () => seoImageAlt.value,
+  ogImageType: 'image/png',
+  ogUrl: () => canonical.value,
   ogSiteName: SITE_NAME,
-  ogType: 'website',
-  ogUrl: canonical,
   ogLocale: 'fa_IR',
+  ogType: 'website',
   twitterCard: 'summary_large_image',
-  twitterTitle: content.seo.title,
-  twitterDescription: content.seo.description,
-  robots: DEFAULT_ROBOTS
+  twitterTitle: () => seoSocialTitle.value,
+  twitterDescription: () => seoDescription.value,
+  twitterImage: () => seoImage.value,
+  twitterImageAlt: () => seoImageAlt.value
 })
 
-useHead({
+useHead(() => ({
   link: [
     {
       key: 'canonical',
       rel: 'canonical',
-      href: canonical
+      href: canonical.value
+    },
+    {
+      key: 'alternate-fa',
+      rel: 'alternate',
+      hreflang: 'fa-IR',
+      href: canonical.value
+    },
+    {
+      key: 'alternate-x-default',
+      rel: 'alternate',
+      hreflang: 'x-default',
+      href: canonical.value
+    }
+  ],
+  meta: [
+    {
+      key: 'keywords',
+      name: 'keywords',
+      content: content.seo.keywords
+    },
+    {
+      key: 'og:image:secure_url',
+      property: 'og:image:secure_url',
+      content: seoImage.value
+    },
+    {
+      key: 'geo.region',
+      name: 'geo.region',
+      content: 'IR-23'
+    },
+    {
+      key: 'geo.placename',
+      name: 'geo.placename',
+      content: identity.address.addressLocality
     }
   ]
-})
+}))
 
-useSchemaOrg(() => [
-  defineWebPage({
-    '@type': 'ContactPage',
-    name: content.seo.title,
-    description: content.seo.description,
-    url: canonical.value
-  }),
-  defineOrganization({
-    name: SITE_NAME,
-    url: requestURL.origin,
-    logo: toAbsoluteUrl('/image/logo/logo.png', requestURL.origin),
-    email: 'support@vistashop.ir',
-    telephone: '+98-21-91091234',
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'تهران',
-      streetAddress: 'خیابان ولیعصر، پلاک ۱۲۴۰',
-      addressCountry: 'IR'
-    },
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: '+98-21-91091234',
-      contactType: 'customer support',
-      availableLanguage: ['Persian', 'fa'],
-      areaServed: 'IR'
-    }
+useSchemaOrg(() => {
+  const origin = requestURL.origin
+  const logo = resolveSiteLogoUrl(origin)
+  const pageUrl = canonical.value
+  const address = defineAddress({
+    streetAddress: identity.address.streetAddress,
+    addressLocality: identity.address.addressLocality,
+    addressRegion: identity.address.addressRegion,
+    addressCountry: identity.address.addressCountry
   })
-])
+
+  const openingHoursSpecification = identity.openingHours.map(slot =>
+    defineOpeningHours({
+      dayOfWeek: [...slot.dayOfWeek],
+      opens: slot.opens,
+      closes: slot.closes
+    })
+  )
+
+  return [
+    defineWebPage({
+      '@type': 'ContactPage',
+      name: seoSocialTitle.value,
+      description: seoDescription.value,
+      url: pageUrl,
+      inLanguage: 'fa-IR',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: origin
+      },
+      primaryImageOfPage: {
+        '@type': 'ImageObject',
+        url: seoImage.value,
+        caption: seoImageAlt.value
+      },
+      mainEntity: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        url: origin,
+        email: identity.email,
+        telephone: identity.telephone
+      }
+    }),
+    defineOrganization({
+      name: SITE_NAME,
+      url: origin,
+      logo,
+      image: logo,
+      email: identity.email,
+      telephone: identity.telephone,
+      address,
+      contactPoint: [
+        {
+          '@type': 'ContactPoint',
+          telephone: identity.telephone,
+          contactType: 'customer support',
+          availableLanguage: ['fa', 'Persian'],
+          areaServed: 'IR',
+          email: identity.email
+        },
+        {
+          '@type': 'ContactPoint',
+          telephone: identity.mobile,
+          contactType: 'customer support',
+          availableLanguage: ['fa', 'Persian'],
+          areaServed: 'IR'
+        }
+      ]
+    }),
+    defineLocalBusiness({
+      '@type': 'Store',
+      name: SITE_NAME,
+      url: origin,
+      image: logo,
+      email: identity.email,
+      telephone: identity.telephone,
+      address,
+      openingHoursSpecification,
+      priceRange: '$$',
+      currenciesAccepted: 'IRR',
+      paymentAccepted: 'Cash, Credit Card',
+      areaServed: {
+        '@type': 'Country',
+        name: 'Iran'
+      }
+    }),
+    defineBreadcrumb({
+      itemListElement: [
+        defineListItem({ name: 'خانه', url: origin, position: 1 }),
+        defineListItem({ name: 'تماس با ما', url: pageUrl, position: 2 })
+      ]
+    })
+  ]
+})
 </script>
 
 <template>
@@ -78,6 +204,13 @@ useSchemaOrg(() => [
     class="pb-16"
     dir="rtl"
   >
+    <PublicPageBreadcrumb
+      :items="[
+        { label: 'خانه', to: '/' },
+        { label: 'تماس با ما' }
+      ]"
+    />
+
     <PublicPageHero
       :brand="content.brand"
       :headline="content.hero.headline"
@@ -139,10 +272,17 @@ useSchemaOrg(() => [
         </div>
       </PublicPageSection>
 
-      <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section
+        id="contact-form-section"
+        class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+        aria-labelledby="contact-form-heading"
+      >
         <div class="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-12">
           <div class="space-y-4 lg:sticky lg:top-28">
-            <h2 class="text-2xl font-black text-highlighted sm:text-3xl">
+            <h2
+              id="contact-form-heading"
+              class="text-2xl font-black text-highlighted sm:text-3xl"
+            >
               مستقیم بنویسید
             </h2>
             <p class="text-sm leading-8 text-toned sm:text-base">

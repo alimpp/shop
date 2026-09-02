@@ -22,6 +22,8 @@ import { CartModule } from './cart/cart.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { OrdersModule } from './orders/orders.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { BehaviorModule } from './behavior/behavior.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
@@ -43,6 +45,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     AddressesModule,
     OrdersModule,
     DashboardModule,
+    BehaviorModule,
+    ContactModule,
     TypeOrmModule.forRoot(pgConfig),
   ],
   controllers: [AppController],

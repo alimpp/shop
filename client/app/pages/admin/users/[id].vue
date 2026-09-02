@@ -6,6 +6,8 @@ import { usersController } from '~/features/users/controllers/index.controller'
 import { useUsersDS } from '~/features/users/data/index.store'
 import type { TAdminUserTab } from '~/features/users/types/index.type'
 import type { OrderModel } from '~/features/orders/models/index.model'
+import type { TAdminUserBehaviorData } from '~/features/behavior/types/index.type'
+import { behaviorController } from '~/features/behavior/controllers/index.controller'
 import {
   ORDER_STATUS_COLORS,
   ORDER_STATUS_LABELS
@@ -41,8 +43,22 @@ const tab = ref<TAdminUserTab>('info')
 const loadedTabs = ref<Set<TAdminUserTab>>(new Set(['info']))
 const selectedOrder = ref<OrderModel | null>(null)
 const adminReady = ref(false)
+const behaviorData = ref<TAdminUserBehaviorData | null>(null)
+const behaviorLoading = ref(false)
 
 const adminId = computed(() => adminDS.getAdmin.id || adminIdFromToken())
+
+const BEHAVIOR_LABELS: Record<string, string> = {
+  product_view: 'بازدید محصول',
+  gallery_view: 'مشاهده گالری',
+  like: 'لایک',
+  unlike: 'آنلایک',
+  comment: 'کامنت',
+  favorite: 'علاقه‌مندی',
+  unfavorite: 'حذف علاقه‌مندی',
+  add_to_cart: 'افزودن به سبد',
+  filter: 'فیلتر'
+}
 
 const tabs: Array<{ value: TAdminUserTab; label: string; icon: string; count?: () => number }> = [
   { value: 'info', label: 'اطلاعات', icon: 'i-lucide-user' },
@@ -51,6 +67,7 @@ const tabs: Array<{ value: TAdminUserTab; label: string; icon: string; count?: (
   { value: 'likes', label: 'لایک‌ها', icon: 'i-lucide-heart', count: () => stats.value.likes },
   { value: 'comments', label: 'کامنت‌ها', icon: 'i-lucide-message-square', count: () => stats.value.comments },
   { value: 'favorites', label: 'علاقه‌مندی', icon: 'i-lucide-bookmark', count: () => stats.value.favorites },
+  { value: 'behavior', label: 'رفتار', icon: 'i-lucide-activity' },
   { value: 'chat', label: 'پشتیبانی', icon: 'i-lucide-headphones' }
 ]
 
@@ -120,10 +137,29 @@ async function loadOverview(): Promise<void> {
 }
 
 async function loadTab(next: TAdminUserTab): Promise<void> {
-  if (loadedTabs.value.has(next) && next !== 'chat') return
+  if (loadedTabs.value.has(next) && next !== 'chat' && next !== 'behavior') return
   loadedTabs.value.add(next)
 
-  const loaders: Record<TAdminUserTab, () => Promise<{ success: boolean; message?: string }>> = {
+  if (next === 'behavior') {
+    behaviorLoading.value = true
+    const response = await behaviorController.getAdminUserBehavior(userId.value, {
+      page: 1,
+      limit: 40
+    })
+    behaviorLoading.value = false
+    if (!response.success) {
+      loadedTabs.value.delete(next)
+      toast.add({
+        title: response.message || 'دریافت رفتار کاربر ناموفق بود',
+        color: 'error'
+      })
+      return
+    }
+    behaviorData.value = response.data ?? null
+    return
+  }
+
+  const loaders: Record<Exclude<TAdminUserTab, 'behavior'>, () => Promise<{ success: boolean; message?: string }>> = {
     info: () => usersController.getAddresses(userId.value),
     cart: () => usersController.getCart(userId.value),
     orders: () => usersController.getOrders(userId.value),
@@ -551,6 +587,137 @@ onBeforeUnmount(() => {
                 </p>
               </div>
             </article>
+          </section>
+
+          <section
+            v-else-if="tab === 'behavior'"
+            class="space-y-4"
+          >
+            <div
+              v-if="behaviorLoading && !behaviorData"
+              class="flex justify-center py-16"
+            >
+              <UIcon
+                name="i-lucide-loader-2"
+                class="size-7 animate-spin text-primary"
+              />
+            </div>
+
+            <template v-else-if="behaviorData">
+              <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="rounded-2xl bg-elevated/50 px-4 py-3">
+                  <p class="text-xs text-muted">
+                    کل رویدادها
+                  </p>
+                  <p class="mt-1 text-lg font-black text-highlighted">
+                    {{ behaviorData.summary.totalEvents.toLocaleString('fa-IR') }}
+                  </p>
+                </div>
+                <div
+                  v-for="item in behaviorData.summary.eventTypeCounts.slice(0, 3)"
+                  :key="item.eventType"
+                  class="rounded-2xl bg-elevated/50 px-4 py-3"
+                >
+                  <p class="text-xs text-muted">
+                    {{ BEHAVIOR_LABELS[item.eventType] || item.eventType }}
+                  </p>
+                  <p class="mt-1 text-lg font-black text-highlighted">
+                    {{ item.count.toLocaleString('fa-IR') }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <h3 class="text-sm font-bold text-highlighted">
+                  بیشترین علاقه به محصولات
+                </h3>
+                <div
+                  v-if="!behaviorData.summary.topInterests.length"
+                  class="rounded-2xl border border-dashed border-default px-4 py-8 text-center text-sm text-toned"
+                >
+                  هنوز علاقه محصولی ثبت نشده است.
+                </div>
+                <article
+                  v-for="item in behaviorData.summary.topInterests"
+                  :key="item.productId"
+                  class="flex gap-3 rounded-2xl bg-elevated/40 p-3"
+                >
+                  <div class="size-14 shrink-0 overflow-hidden rounded-xl bg-default">
+                    <NuxtImg
+                      v-if="item.product?.image"
+                      :src="item.product.image"
+                      :alt="item.product?.name || ''"
+                      class="size-full object-cover"
+                    />
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-bold text-highlighted">
+                      {{ item.product?.name || item.productId }}
+                    </p>
+                    <p class="mt-1 text-xs text-toned">
+                      امتیاز {{ item.score.toLocaleString('fa-IR') }} ·
+                      بازدید {{ item.viewCount.toLocaleString('fa-IR') }} ·
+                      گالری {{ item.galleryViewCount.toLocaleString('fa-IR') }} ·
+                      لایک {{ item.likeCount.toLocaleString('fa-IR') }}
+                    </p>
+                  </div>
+                </article>
+              </div>
+
+              <div class="space-y-3">
+                <h3 class="text-sm font-bold text-highlighted">
+                  فیلترهای اخیر
+                </h3>
+                <div
+                  v-if="!behaviorData.filters.length"
+                  class="rounded-2xl border border-dashed border-default px-4 py-8 text-center text-sm text-toned"
+                >
+                  فیلتری ثبت نشده است.
+                </div>
+                <div
+                  v-for="item in behaviorData.filters"
+                  :key="item.id"
+                  class="rounded-2xl bg-elevated/40 px-4 py-3 text-xs text-toned"
+                >
+                  <p class="font-medium text-highlighted">
+                    {{ new Date(item.createdAt).toLocaleString('fa-IR') }}
+                  </p>
+                  <p class="mt-1 break-all" dir="ltr">
+                    {{ JSON.stringify(item.metadata) }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <h3 class="text-sm font-bold text-highlighted">
+                  رویدادهای اخیر
+                </h3>
+                <article
+                  v-for="item in behaviorData.events"
+                  :key="item.id"
+                  class="flex items-start justify-between gap-3 rounded-2xl bg-elevated/40 px-4 py-3"
+                >
+                  <div class="min-w-0">
+                    <p class="text-sm font-bold text-highlighted">
+                      {{ BEHAVIOR_LABELS[item.eventType] || item.eventType }}
+                    </p>
+                    <p class="mt-1 truncate text-xs text-toned">
+                      {{ item.product?.name || '—' }}
+                    </p>
+                  </div>
+                  <p class="shrink-0 text-[11px] text-muted">
+                    {{ new Date(item.createdAt).toLocaleString('fa-IR') }}
+                  </p>
+                </article>
+              </div>
+            </template>
+
+            <div
+              v-else
+              class="rounded-2xl border border-dashed border-default px-4 py-12 text-center text-sm text-toned"
+            >
+              داده‌ای برای رفتار کاربر یافت نشد.
+            </div>
           </section>
 
           <section

@@ -45,6 +45,18 @@ export class ProductController {
     return await this.productService.findAll(query);
   }
 
+  @Get('bestsellers')
+  async findBestsellers(@Query('limit') limit?: string) {
+    return await this.productService.findBestsellers(
+      limit ? Number(limit) : 10,
+    );
+  }
+
+  @Get('discounted')
+  async findDiscounted(@Query('limit') limit?: string) {
+    return await this.productService.findDiscounted(limit ? Number(limit) : 10);
+  }
+
   @Get('filters')
   async filters(@Query() query: QueryProductDto) {
     return await this.productService.getFilters(query);

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { contactContent } from '~/content/contact.content'
+import { contactController } from '~/features/contact/controllers/index.controller'
 
 const toast = useToast()
 const submitting = ref(false)
@@ -13,10 +14,23 @@ const form = reactive({
 
 const fields = contactContent.form.fields
 
+function toEnglishDigits(value: string): string {
+  return value
+    .trim()
+    .replace(/[۰-۹]/g, digit => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
+    .replace(/[٠-٩]/g, digit => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)))
+    .replace(/[\s-]/g, '')
+}
+
 async function handleSubmit(): Promise<void> {
   if (submitting.value) return
 
-  if (!form.name.trim() || !form.phone.trim() || !form.message.trim()) {
+  const name = form.name.trim()
+  const phone = toEnglishDigits(form.phone)
+  const subject = form.subject.trim()
+  const message = form.message.trim()
+
+  if (!name || !phone || !message) {
     toast.add({
       title: 'لطفاً نام، شماره تماس و متن پیام را کامل کنید',
       color: 'warning'
@@ -24,9 +38,31 @@ async function handleSubmit(): Promise<void> {
     return
   }
 
+  if (!/^09\d{9}$/.test(phone)) {
+    toast.add({
+      title: 'شماره تماس معتبر نیست',
+      description: 'مثلاً 09121234567',
+      color: 'warning'
+    })
+    return
+  }
+
   submitting.value = true
-  await new Promise(resolve => setTimeout(resolve, 650))
+  const response = await contactController.createMessage({
+    name,
+    phone,
+    subject: subject || undefined,
+    message
+  })
   submitting.value = false
+
+  if (!response.success) {
+    toast.add({
+      title: response.message || 'ارسال پیام ناموفق بود',
+      color: 'error'
+    })
+    return
+  }
 
   form.name = ''
   form.phone = ''
@@ -57,7 +93,11 @@ async function handleSubmit(): Promise<void> {
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2">
-      <UFormField :label="fields.name.label" name="name" required>
+      <UFormField
+        :label="fields.name.label"
+        name="name"
+        required
+      >
         <UInput
           v-model="form.name"
           :placeholder="fields.name.placeholder"
@@ -66,7 +106,11 @@ async function handleSubmit(): Promise<void> {
         />
       </UFormField>
 
-      <UFormField :label="fields.phone.label" name="phone" required>
+      <UFormField
+        :label="fields.phone.label"
+        name="phone"
+        required
+      >
         <UInput
           v-model="form.phone"
           :placeholder="fields.phone.placeholder"
@@ -78,7 +122,10 @@ async function handleSubmit(): Promise<void> {
       </UFormField>
     </div>
 
-    <UFormField :label="fields.subject.label" name="subject">
+    <UFormField
+      :label="fields.subject.label"
+      name="subject"
+    >
       <UInput
         v-model="form.subject"
         :placeholder="fields.subject.placeholder"
@@ -86,7 +133,11 @@ async function handleSubmit(): Promise<void> {
       />
     </UFormField>
 
-    <UFormField :label="fields.message.label" name="message" required>
+    <UFormField
+      :label="fields.message.label"
+      name="message"
+      required
+    >
       <UTextarea
         v-model="form.message"
         :placeholder="fields.message.placeholder"
