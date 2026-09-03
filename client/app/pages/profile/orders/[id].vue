@@ -109,18 +109,5 @@ onUnmounted(() => {
       v-else
       :order="order"
     />
-
-    <div
-      v-if="order && order.status !== 'success' && order.status !== 'cancelled' && order.status !== 'returned'"
-      class="mt-4"
-    >
-      <UButton
-        color="success"
-        :loading="statusSubmitting"
-        @click="markAsSuccess"
-      >
-        تکمیل سفارش
-      </UButton>
-    </div>
   </ProfileShell>
 </template>

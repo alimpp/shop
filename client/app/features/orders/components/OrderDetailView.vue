@@ -53,9 +53,14 @@ function stepClass(status: TOrderStatus): string {
   const state = stepState(status)
   if (status === 'cancelled') return 'bg-error text-white'
   if (status === 'returned') return 'bg-neutral text-white'
-  if (status === 'success') return 'bg-success text-white'
-  if (state === 'done') return 'bg-primary text-white'
-  if (state === 'current') return 'bg-primary/15 text-primary ring-2 ring-primary/40'
+  if (state === 'done') {
+    if (status === 'success') return 'bg-success text-white'
+    return 'bg-primary text-white'
+  }
+  if (state === 'current') {
+    if (status === 'success') return 'bg-success text-white'
+    return 'bg-primary/15 text-primary ring-2 ring-primary/40'
+  }
   return 'bg-elevated text-muted'
 }
 </script>
