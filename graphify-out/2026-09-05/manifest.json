@@ -2344,6 +2344,11 @@
     "ast_hash": "f671789f40526a1b34a2385e85e59b10",
     "semantic_hash": ""
   },
+  "client/app/pages/profile/orders/[id].vue": {
+    "mtime": 1788589201.3932266,
+    "ast_hash": "b1f8fb62420529731d49f51498a04718",
+    "semantic_hash": ""
+  },
   "server/src/orders/dto/create-order.dto.ts": {
     "mtime": 1788353889.548517,
     "ast_hash": "21c77e4c752d9b48ed983df14b7d2b2d",
@@ -3157,11 +3162,6 @@
   "server/scripts/patch-slowbuffer.js": {
     "mtime": 1788589177.0829685,
     "ast_hash": "027a2599d0259ed357cb886410a71406",
-    "semantic_hash": ""
-  },
-  "client/app/pages/profile/orders/[id]/index.vue": {
-    "mtime": 1788589201.3932266,
-    "ast_hash": "b1f8fb62420529731d49f51498a04718",
     "semantic_hash": ""
   }
 }

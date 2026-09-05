@@ -20316,8 +20316,8 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "client_app_features_products_controllers_index_controller_productscontroller_getbrands",
-      "community": 50,
-      "community_name": "ProductFiltersDrawer.vue",
+      "community": 16,
+      "community_name": "ProductsController",
       "norm_label": ".getbrands()"
     },
     {
@@ -20569,8 +20569,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "client_app_features_products_models_index_model_productbrandrefmodel",
-      "community": 50,
-      "community_name": "ProductFiltersDrawer.vue",
+      "community": 16,
+      "community_name": "ProductsController",
       "norm_label": "productbrandrefmodel"
     },
     {
@@ -20580,8 +20580,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "client_app_features_products_models_index_model_productbrandrefmodel_constructor",
-      "community": 50,
-      "community_name": "ProductFiltersDrawer.vue",
+      "community": 16,
+      "community_name": "ProductsController",
       "norm_label": ".constructor()"
     },
     {
@@ -21053,8 +21053,8 @@
       "source_location": "L310",
       "_origin": "ast",
       "id": "client_app_features_products_services_index_service_productsservice_normalizelistresponse",
-      "community": 16,
-      "community_name": "ProductsController",
+      "community": 18,
+      "community_name": "ProductsService",
       "norm_label": ".normalizelistresponse()"
     },
     {
@@ -21064,8 +21064,8 @@
       "source_location": "L339",
       "_origin": "ast",
       "id": "client_app_features_products_services_index_service_productsservice_getproducts",
-      "community": 16,
-      "community_name": "ProductsController",
+      "community": 18,
+      "community_name": "ProductsService",
       "norm_label": ".getproducts()"
     },
     {
@@ -21251,8 +21251,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "client_app_features_products_types_index_type_tproductbrandref",
-      "community": 50,
-      "community_name": "ProductFiltersDrawer.vue",
+      "community": 16,
+      "community_name": "ProductsController",
       "norm_label": "tproductbrandref"
     },
     {
@@ -30507,124 +30507,124 @@
       "norm_label": "handlemarkallasseen()"
     },
     {
-      "label": "[id]/index.vue",
+      "label": "orders/[id].vue",
       "file_type": "code",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "client_app_pages_profile_orders_id_index",
-      "community": 193,
-      "community_name": "[id]/index.vue",
-      "norm_label": "[id]/index.vue"
+      "id": "client_app_pages_profile_orders_id",
+      "community": 270,
+      "community_name": "orders/[id].vue",
+      "norm_label": "orders/[id].vue"
     },
     {
       "label": "route",
       "file_type": "code",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L10",
       "_origin": "ast",
-      "id": "client_app_pages_profile_orders_id_index_route",
-      "community": 193,
-      "community_name": "[id]/index.vue",
+      "id": "client_app_pages_profile_orders_id_route",
+      "community": 270,
+      "community_name": "orders/[id].vue",
       "norm_label": "route"
     },
     {
       "label": "toast",
       "file_type": "code",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L11",
       "_origin": "ast",
-      "id": "client_app_pages_profile_orders_id_index_toast",
-      "community": 193,
-      "community_name": "[id]/index.vue",
+      "id": "client_app_pages_profile_orders_id_toast",
+      "community": 270,
+      "community_name": "orders/[id].vue",
       "norm_label": "toast"
     },
     {
       "label": "ordersDS",
       "file_type": "code",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L12",
       "_origin": "ast",
-      "id": "client_app_pages_profile_orders_id_index_ordersds",
-      "community": 193,
-      "community_name": "[id]/index.vue",
+      "id": "client_app_pages_profile_orders_id_ordersds",
+      "community": 270,
+      "community_name": "orders/[id].vue",
       "norm_label": "ordersds"
     },
     {
       "label": "orderId",
       "file_type": "code",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L14",
       "_origin": "ast",
-      "id": "client_app_pages_profile_orders_id_index_orderid",
-      "community": 193,
-      "community_name": "[id]/index.vue",
+      "id": "client_app_pages_profile_orders_id_orderid",
+      "community": 270,
+      "community_name": "orders/[id].vue",
       "norm_label": "orderid"
     },
     {
       "label": "pageLoading",
       "file_type": "code",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L15",
       "_origin": "ast",
-      "id": "client_app_pages_profile_orders_id_index_pageloading",
-      "community": 193,
-      "community_name": "[id]/index.vue",
+      "id": "client_app_pages_profile_orders_id_pageloading",
+      "community": 270,
+      "community_name": "orders/[id].vue",
       "norm_label": "pageloading"
     },
     {
       "label": "statusSubmitting",
       "file_type": "code",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L16",
       "_origin": "ast",
-      "id": "client_app_pages_profile_orders_id_index_statussubmitting",
-      "community": 193,
-      "community_name": "[id]/index.vue",
+      "id": "client_app_pages_profile_orders_id_statussubmitting",
+      "community": 270,
+      "community_name": "orders/[id].vue",
       "norm_label": "statussubmitting"
     },
     {
       "label": "order",
       "file_type": "code",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L18",
       "_origin": "ast",
-      "id": "client_app_pages_profile_orders_id_index_order",
-      "community": 193,
-      "community_name": "[id]/index.vue",
+      "id": "client_app_pages_profile_orders_id_order",
+      "community": 270,
+      "community_name": "orders/[id].vue",
       "norm_label": "order"
     },
     {
       "label": "fetching",
       "file_type": "code",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L19",
       "_origin": "ast",
-      "id": "client_app_pages_profile_orders_id_index_fetching",
-      "community": 193,
-      "community_name": "[id]/index.vue",
+      "id": "client_app_pages_profile_orders_id_fetching",
+      "community": 270,
+      "community_name": "orders/[id].vue",
       "norm_label": "fetching"
     },
     {
       "label": "loadOrder()",
       "file_type": "code",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L21",
       "_origin": "ast",
-      "id": "client_app_pages_profile_orders_id_index_loadorder",
-      "community": 193,
-      "community_name": "[id]/index.vue",
+      "id": "client_app_pages_profile_orders_id_loadorder",
+      "community": 270,
+      "community_name": "orders/[id].vue",
       "norm_label": "loadorder()"
     },
     {
       "label": "markAsSuccess()",
       "file_type": "code",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L43",
       "_origin": "ast",
-      "id": "client_app_pages_profile_orders_id_index_markassuccess",
-      "community": 193,
-      "community_name": "[id]/index.vue",
+      "id": "client_app_pages_profile_orders_id_markassuccess",
+      "community": 270,
+      "community_name": "orders/[id].vue",
       "norm_label": "markassuccess()"
     },
     {
@@ -32526,8 +32526,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "client_package_dependencies_nuxt_ui",
-      "community": 314,
-      "community_name": "@nuxt/ui",
+      "community": 55,
+      "community_name": "dependencies",
       "norm_label": "@nuxt/ui"
     },
     {
@@ -32537,8 +32537,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "nuxt_ui",
-      "community": 314,
-      "community_name": "@nuxt/ui",
+      "community": 55,
+      "community_name": "dependencies",
       "norm_label": "@nuxt/ui"
     },
     {
@@ -33010,8 +33010,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "client_package_dependencies_zod",
-      "community": 55,
-      "community_name": "dependencies",
+      "community": 193,
+      "community_name": "zod",
       "norm_label": "zod"
     },
     {
@@ -33021,8 +33021,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "zod",
-      "community": 55,
-      "community_name": "dependencies",
+      "community": 193,
+      "community_name": "zod",
       "norm_label": "zod"
     },
     {
@@ -33285,8 +33285,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_data_source",
-      "community": 270,
-      "community_name": "dbConfig.ts",
+      "community": 115,
+      "community_name": "UserEntity",
       "norm_label": "data-source.ts"
     },
     {
@@ -33297,7 +33297,7 @@
       "_origin": "ast",
       "id": "server_data_source_datasource",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": "datasource"
     },
     {
@@ -33307,8 +33307,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_dbconfig",
-      "community": 270,
-      "community_name": "dbConfig.ts",
+      "community": 115,
+      "community_name": "UserEntity",
       "norm_label": "dbconfig.ts"
     },
     {
@@ -33318,8 +33318,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "server_dbconfig_dbport",
-      "community": 270,
-      "community_name": "dbConfig.ts",
+      "community": 115,
+      "community_name": "UserEntity",
       "norm_label": "dbport"
     },
     {
@@ -33329,8 +33329,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "server_dbconfig_migrationpaths",
-      "community": 270,
-      "community_name": "dbConfig.ts",
+      "community": 115,
+      "community_name": "UserEntity",
       "norm_label": "migrationpaths"
     },
     {
@@ -33340,8 +33340,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "server_dbconfig_pgconnectionconfig",
-      "community": 270,
-      "community_name": "dbConfig.ts",
+      "community": 115,
+      "community_name": "UserEntity",
       "norm_label": "pgconnectionconfig"
     },
     {
@@ -33351,8 +33351,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "server_dbconfig_pgconfig",
-      "community": 270,
-      "community_name": "dbConfig.ts",
+      "community": 115,
+      "community_name": "UserEntity",
       "norm_label": "pgconfig"
     },
     {
@@ -33362,8 +33362,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "server_dbconfig_pgmigrationconfig",
-      "community": 270,
-      "community_name": "dbConfig.ts",
+      "community": 115,
+      "community_name": "UserEntity",
       "norm_label": "pgmigrationconfig"
     },
     {
@@ -34605,8 +34605,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "server_package_devdependencies_eslint",
-      "community": 326,
-      "community_name": "eslint",
+      "community": 114,
+      "community_name": "devDependencies",
       "norm_label": "eslint"
     },
     {
@@ -34616,8 +34616,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "eslint",
-      "community": 326,
-      "community_name": "eslint",
+      "community": 114,
+      "community_name": "devDependencies",
       "norm_label": "eslint"
     },
     {
@@ -34627,8 +34627,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "server_package_devdependencies_eslint_config_prettier",
-      "community": 114,
-      "community_name": "devDependencies",
+      "community": 314,
+      "community_name": "eslint-config-prettier",
       "norm_label": "eslint-config-prettier"
     },
     {
@@ -34638,8 +34638,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "eslint_config_prettier",
-      "community": 114,
-      "community_name": "devDependencies",
+      "community": 314,
+      "community_name": "eslint-config-prettier",
       "norm_label": "eslint-config-prettier"
     },
     {
@@ -35617,8 +35617,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "server_src_addresses_entities_address_entity_address",
-      "community": 22,
-      "community_name": "Comment",
+      "community": 359,
+      "community_name": "Address",
       "norm_label": "address"
     },
     {
@@ -35628,8 +35628,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_addresses_entities_address_entity_ts_entity",
-      "community": 22,
-      "community_name": "Comment",
+      "community": 359,
+      "community_name": "Address",
       "norm_label": "entity"
     },
     {
@@ -35639,8 +35639,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_addresses_entities_address_entity_ts_index",
-      "community": 22,
-      "community_name": "Comment",
+      "community": 359,
+      "community_name": "Address",
       "norm_label": "index"
     },
     {
@@ -35650,8 +35650,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_addresses_entities_address_entity_ts_primarygeneratedcolumn",
-      "community": 22,
-      "community_name": "Comment",
+      "community": 359,
+      "community_name": "Address",
       "norm_label": "primarygeneratedcolumn"
     },
     {
@@ -35661,8 +35661,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_addresses_entities_address_entity_ts_column",
-      "community": 22,
-      "community_name": "Comment",
+      "community": 359,
+      "community_name": "Address",
       "norm_label": "column"
     },
     {
@@ -35672,8 +35672,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_addresses_entities_address_entity_ts_manytoone",
-      "community": 22,
-      "community_name": "Comment",
+      "community": 359,
+      "community_name": "Address",
       "norm_label": "manytoone"
     },
     {
@@ -35683,8 +35683,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_addresses_entities_address_entity_ts_joincolumn",
-      "community": 22,
-      "community_name": "Comment",
+      "community": 359,
+      "community_name": "Address",
       "norm_label": "joincolumn"
     },
     {
@@ -35694,8 +35694,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_addresses_entities_address_entity_ts_createdatecolumn",
-      "community": 22,
-      "community_name": "Comment",
+      "community": 359,
+      "community_name": "Address",
       "norm_label": "createdatecolumn"
     },
     {
@@ -35705,8 +35705,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_addresses_entities_address_entity_ts_updatedatecolumn",
-      "community": 22,
-      "community_name": "Comment",
+      "community": 359,
+      "community_name": "Address",
       "norm_label": "updatedatecolumn"
     },
     {
@@ -39632,8 +39632,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_cart_cart_service_ts_injectrepository",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "injectrepository"
     },
     {
@@ -39643,8 +39643,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "server_src_cart_cart_service_cartservice_constructor",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": ".constructor()"
     },
     {
@@ -40029,7 +40029,7 @@
       "_origin": "ast",
       "id": "server_src_cart_entities_cart_item_entity",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "cart-item.entity.ts"
     },
     {
@@ -40050,8 +40050,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "server_src_cart_entities_cart_item_entity_cartitem",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "cartitem"
     },
     {
@@ -40061,8 +40061,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_cart_entities_cart_item_entity_ts_entity",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "entity"
     },
     {
@@ -40072,8 +40072,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_cart_entities_cart_item_entity_ts_index",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "index"
     },
     {
@@ -40083,8 +40083,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_cart_entities_cart_item_entity_ts_primarygeneratedcolumn",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "primarygeneratedcolumn"
     },
     {
@@ -40094,8 +40094,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_cart_entities_cart_item_entity_ts_column",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "column"
     },
     {
@@ -40105,8 +40105,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_cart_entities_cart_item_entity_ts_manytoone",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "manytoone"
     },
     {
@@ -40116,8 +40116,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_cart_entities_cart_item_entity_ts_joincolumn",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "joincolumn"
     },
     {
@@ -40127,8 +40127,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_cart_entities_cart_item_entity_ts_createdatecolumn",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "createdatecolumn"
     },
     {
@@ -40138,8 +40138,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_cart_entities_cart_item_entity_ts_updatedatecolumn",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "updatedatecolumn"
     },
     {
@@ -42900,7 +42900,7 @@
       "_origin": "ast",
       "id": "server_src_dashboard_dashboard_module",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "dashboard.module.ts"
     },
     {
@@ -42933,7 +42933,7 @@
       "_origin": "ast",
       "id": "server_src_dashboard_dashboard_service",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "dashboard.service.ts"
     },
     {
@@ -42944,7 +42944,7 @@
       "_origin": "ast",
       "id": "server_src_dashboard_dashboard_service_revenue_excluded_statuses",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "revenue_excluded_statuses"
     },
     {
@@ -42955,7 +42955,7 @@
       "_origin": "ast",
       "id": "server_src_dashboard_dashboard_service_revenuebucketrow",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "revenuebucketrow"
     },
     {
@@ -42987,7 +42987,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_dashboard_dashboard_service_ts_injectrepository",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "injectrepository"
     },
@@ -42998,7 +42998,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "server_src_dashboard_dashboard_service_dashboardservice_constructor",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": ".constructor()"
     },
@@ -45771,7 +45771,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_entities_comment_entity_comment",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": "comment"
     },
     {
@@ -45782,7 +45782,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_entities_comment_entity_ts_entity",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": "entity"
     },
     {
@@ -45793,7 +45793,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_entities_comment_entity_ts_index",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": "index"
     },
     {
@@ -45804,7 +45804,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_entities_comment_entity_ts_primarygeneratedcolumn",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": "primarygeneratedcolumn"
     },
     {
@@ -45815,7 +45815,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_entities_comment_entity_ts_column",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": "column"
     },
     {
@@ -45826,7 +45826,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_entities_comment_entity_ts_manytoone",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": "manytoone"
     },
     {
@@ -45837,7 +45837,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_entities_comment_entity_ts_joincolumn",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": "joincolumn"
     },
     {
@@ -45848,7 +45848,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_entities_comment_entity_ts_createdatecolumn",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": "createdatecolumn"
     },
     {
@@ -45859,7 +45859,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_entities_comment_entity_ts_updatedatecolumn",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": "updatedatecolumn"
     },
     {
@@ -45870,7 +45870,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_entities_comment_entity_ts_deletedatecolumn",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": "deletedatecolumn"
     },
     {
@@ -45957,8 +45957,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_interactions_entities_product_rating_entity",
-      "community": 115,
-      "community_name": "UserEntity",
+      "community": 22,
+      "community_name": "Product",
       "norm_label": "product-rating.entity.ts"
     },
     {
@@ -45968,8 +45968,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "server_src_interactions_entities_product_rating_entity_productrating",
-      "community": 115,
-      "community_name": "UserEntity",
+      "community": 22,
+      "community_name": "Product",
       "norm_label": "productrating"
     },
     {
@@ -45979,8 +45979,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_interactions_entities_product_rating_entity_ts_entity",
-      "community": 115,
-      "community_name": "UserEntity",
+      "community": 22,
+      "community_name": "Product",
       "norm_label": "entity"
     },
     {
@@ -45990,8 +45990,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "unique",
-      "community": 115,
-      "community_name": "UserEntity",
+      "community": 22,
+      "community_name": "Product",
       "norm_label": "unique"
     },
     {
@@ -46001,8 +46001,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_interactions_entities_product_rating_entity_ts_index",
-      "community": 115,
-      "community_name": "UserEntity",
+      "community": 22,
+      "community_name": "Product",
       "norm_label": "index"
     },
     {
@@ -46012,8 +46012,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_interactions_entities_product_rating_entity_ts_primarygeneratedcolumn",
-      "community": 115,
-      "community_name": "UserEntity",
+      "community": 22,
+      "community_name": "Product",
       "norm_label": "primarygeneratedcolumn"
     },
     {
@@ -46023,8 +46023,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_interactions_entities_product_rating_entity_ts_column",
-      "community": 115,
-      "community_name": "UserEntity",
+      "community": 22,
+      "community_name": "Product",
       "norm_label": "column"
     },
     {
@@ -46034,8 +46034,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_interactions_entities_product_rating_entity_ts_manytoone",
-      "community": 115,
-      "community_name": "UserEntity",
+      "community": 22,
+      "community_name": "Product",
       "norm_label": "manytoone"
     },
     {
@@ -46045,8 +46045,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_interactions_entities_product_rating_entity_ts_joincolumn",
-      "community": 115,
-      "community_name": "UserEntity",
+      "community": 22,
+      "community_name": "Product",
       "norm_label": "joincolumn"
     },
     {
@@ -46056,8 +46056,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_interactions_entities_product_rating_entity_ts_createdatecolumn",
-      "community": 115,
-      "community_name": "UserEntity",
+      "community": 22,
+      "community_name": "Product",
       "norm_label": "createdatecolumn"
     },
     {
@@ -46067,8 +46067,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_interactions_entities_product_rating_entity_ts_updatedatecolumn",
-      "community": 115,
-      "community_name": "UserEntity",
+      "community": 22,
+      "community_name": "Product",
       "norm_label": "updatedatecolumn"
     },
     {
@@ -46420,7 +46420,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_interactions_service_ts_injectrepository",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": "injectrepository"
     },
     {
@@ -46431,7 +46431,7 @@
       "_origin": "ast",
       "id": "server_src_interactions_interactions_service_interactionsservice_constructor",
       "community": 22,
-      "community_name": "Comment",
+      "community_name": "Product",
       "norm_label": ".constructor()"
     },
     {
@@ -47322,7 +47322,7 @@
       "_origin": "ast",
       "id": "server_src_notifications_notifications_service_notificationsservice_notify",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".notify()"
     },
     {
@@ -47420,7 +47420,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_orders_dto_create_order_dto",
-      "community": 70,
+      "community": 200,
       "community_name": "orders.service.ts",
       "norm_label": "create-order.dto.ts"
     },
@@ -47431,8 +47431,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "server_src_orders_dto_create_order_dto_createorderdto",
-      "community": 70,
-      "community_name": "orders.service.ts",
+      "community": 180,
+      "community_name": "CreateOrderDto",
       "norm_label": "createorderdto"
     },
     {
@@ -47442,8 +47442,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_orders_dto_create_order_dto_ts_isuuid",
-      "community": 70,
-      "community_name": "orders.service.ts",
+      "community": 180,
+      "community_name": "CreateOrderDto",
       "norm_label": "isuuid"
     },
     {
@@ -47453,8 +47453,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_orders_dto_create_order_dto_ts_isoptional",
-      "community": 70,
-      "community_name": "orders.service.ts",
+      "community": 180,
+      "community_name": "CreateOrderDto",
       "norm_label": "isoptional"
     },
     {
@@ -47464,8 +47464,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_orders_dto_create_order_dto_ts_transform",
-      "community": 70,
-      "community_name": "orders.service.ts",
+      "community": 180,
+      "community_name": "CreateOrderDto",
       "norm_label": "transform"
     },
     {
@@ -47475,8 +47475,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_orders_dto_create_order_dto_ts_isstring",
-      "community": 70,
-      "community_name": "orders.service.ts",
+      "community": 180,
+      "community_name": "CreateOrderDto",
       "norm_label": "isstring"
     },
     {
@@ -47486,8 +47486,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_orders_dto_create_order_dto_ts_minlength",
-      "community": 70,
-      "community_name": "orders.service.ts",
+      "community": 180,
+      "community_name": "CreateOrderDto",
       "norm_label": "minlength"
     },
     {
@@ -47497,8 +47497,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_orders_dto_create_order_dto_ts_maxlength",
-      "community": 70,
-      "community_name": "orders.service.ts",
+      "community": 180,
+      "community_name": "CreateOrderDto",
       "norm_label": "maxlength"
     },
     {
@@ -47508,7 +47508,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_orders_dto_query_orders_dto",
-      "community": 70,
+      "community": 200,
       "community_name": "orders.service.ts",
       "norm_label": "query-orders.dto.ts"
     },
@@ -47520,7 +47520,7 @@
       "_origin": "ast",
       "id": "server_src_orders_dto_query_orders_dto_queryordersdto",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": "queryordersdto"
     },
     {
@@ -47531,7 +47531,7 @@
       "_origin": "ast",
       "id": "server_src_orders_dto_query_orders_dto_ts_isoptional",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": "isoptional"
     },
     {
@@ -47542,7 +47542,7 @@
       "_origin": "ast",
       "id": "server_src_orders_dto_query_orders_dto_ts_type",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": "type"
     },
     {
@@ -47553,7 +47553,7 @@
       "_origin": "ast",
       "id": "server_src_orders_dto_query_orders_dto_ts_isint",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": "isint"
     },
     {
@@ -47564,7 +47564,7 @@
       "_origin": "ast",
       "id": "server_src_orders_dto_query_orders_dto_ts_min",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": "min"
     },
     {
@@ -47575,7 +47575,7 @@
       "_origin": "ast",
       "id": "server_src_orders_dto_query_orders_dto_ts_max",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": "max"
     },
     {
@@ -47586,7 +47586,7 @@
       "_origin": "ast",
       "id": "server_src_orders_dto_query_orders_dto_ts_isenum",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": "isenum"
     },
     {
@@ -47596,7 +47596,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_orders_dto_update_order_status_dto",
-      "community": 70,
+      "community": 200,
       "community_name": "orders.service.ts",
       "norm_label": "update-order-status.dto.ts"
     },
@@ -47607,7 +47607,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "server_src_orders_dto_update_order_status_dto_updateorderstatusdto",
-      "community": 70,
+      "community": 200,
       "community_name": "orders.service.ts",
       "norm_label": "updateorderstatusdto"
     },
@@ -47618,7 +47618,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_orders_dto_update_order_status_dto_ts_isenum",
-      "community": 70,
+      "community": 200,
       "community_name": "orders.service.ts",
       "norm_label": "isenum"
     },
@@ -47630,7 +47630,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_item_entity",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "order-item.entity.ts"
     },
     {
@@ -47641,7 +47641,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_item_entity_orderitem",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "orderitem"
     },
     {
@@ -47652,7 +47652,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_item_entity_ts_entity",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "entity"
     },
     {
@@ -47663,7 +47663,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_item_entity_ts_index",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "index"
     },
     {
@@ -47674,7 +47674,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_item_entity_ts_primarygeneratedcolumn",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "primarygeneratedcolumn"
     },
     {
@@ -47685,7 +47685,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_item_entity_ts_column",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "column"
     },
     {
@@ -47696,7 +47696,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_item_entity_ts_manytoone",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "manytoone"
     },
     {
@@ -47707,7 +47707,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_item_entity_ts_joincolumn",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "joincolumn"
     },
     {
@@ -47718,7 +47718,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_entity",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "order.entity.ts"
     },
     {
@@ -47729,7 +47729,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_entity_order",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "order"
     },
     {
@@ -47740,7 +47740,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_entity_ts_entity",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "entity"
     },
     {
@@ -47751,7 +47751,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_entity_ts_index",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "index"
     },
     {
@@ -47762,7 +47762,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_entity_ts_primarygeneratedcolumn",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "primarygeneratedcolumn"
     },
     {
@@ -47773,7 +47773,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_entity_ts_column",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "column"
     },
     {
@@ -47784,7 +47784,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_entity_ts_manytoone",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "manytoone"
     },
     {
@@ -47795,7 +47795,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_entity_ts_joincolumn",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "joincolumn"
     },
     {
@@ -47806,7 +47806,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_entity_ts_onetomany",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "onetomany"
     },
     {
@@ -47817,7 +47817,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_entity_ts_createdatecolumn",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "createdatecolumn"
     },
     {
@@ -47828,7 +47828,7 @@
       "_origin": "ast",
       "id": "server_src_orders_entities_order_entity_ts_updatedatecolumn",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "updatedatecolumn"
     },
     {
@@ -47838,7 +47838,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_orders_enums_order_status_enum",
-      "community": 70,
+      "community": 200,
       "community_name": "orders.service.ts",
       "norm_label": "order-status.enum.ts"
     },
@@ -47849,7 +47849,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_orders_enums_order_status_enum_orderstatus",
-      "community": 70,
+      "community": 200,
       "community_name": "orders.service.ts",
       "norm_label": "orderstatus"
     },
@@ -47860,7 +47860,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_orders_orders_controller",
-      "community": 70,
+      "community": 200,
       "community_name": "orders.service.ts",
       "norm_label": "orders.controller.ts"
     },
@@ -47871,7 +47871,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_authenticatedrequest",
-      "community": 70,
+      "community": 200,
       "community_name": "orders.service.ts",
       "norm_label": "authenticatedrequest"
     },
@@ -47883,7 +47883,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_orderscontroller",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": "orderscontroller"
     },
     {
@@ -47894,7 +47894,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_ts_controller",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": "controller"
     },
     {
@@ -47905,7 +47905,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_ts_useguards",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": "useguards"
     },
     {
@@ -47916,7 +47916,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_ts_post",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": "post"
     },
     {
@@ -47927,7 +47927,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_ts_body",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": "body"
     },
     {
@@ -47938,7 +47938,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_ts_req",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": "req"
     },
     {
@@ -47949,7 +47949,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_ts_get",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": "get"
     },
     {
@@ -47960,7 +47960,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_ts_query",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": "query"
     },
     {
@@ -47971,7 +47971,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_ts_param",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": "param"
     },
     {
@@ -47982,7 +47982,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_ts_patch",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": "patch"
     },
     {
@@ -47993,7 +47993,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_ts_httpcode",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": "httpcode"
     },
     {
@@ -48004,7 +48004,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_orderscontroller_constructor",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": ".constructor()"
     },
     {
@@ -48015,7 +48015,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_orderscontroller_create",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": ".create()"
     },
     {
@@ -48026,7 +48026,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_orderscontroller_findmine",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": ".findmine()"
     },
     {
@@ -48037,7 +48037,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_orderscontroller_findall",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": ".findall()"
     },
     {
@@ -48048,7 +48048,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_orderscontroller_findoneadmin",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": ".findoneadmin()"
     },
     {
@@ -48059,7 +48059,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_orderscontroller_updatestatus",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": ".updatestatus()"
     },
     {
@@ -48070,7 +48070,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_orderscontroller_updatestatusbyuser",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": ".updatestatusbyuser()"
     },
     {
@@ -48081,7 +48081,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_controller_orderscontroller_findone",
       "community": 180,
-      "community_name": "OrdersController",
+      "community_name": "CreateOrderDto",
       "norm_label": ".findone()"
     },
     {
@@ -48125,7 +48125,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_spec",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "orders.service.spec.ts"
     },
     {
@@ -48136,7 +48136,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_spec_buildmanager",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "buildmanager()"
     },
     {
@@ -48146,7 +48146,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_orders_orders_service",
-      "community": 70,
+      "community": 200,
       "community_name": "orders.service.ts",
       "norm_label": "orders.service.ts"
     },
@@ -48158,7 +48158,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": "ordersservice"
     },
     {
@@ -48169,7 +48169,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ts_injectable",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": "injectable"
     },
     {
@@ -48202,7 +48202,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_create",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".create()"
     },
     {
@@ -48213,7 +48213,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_findallforuser",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".findallforuser()"
     },
     {
@@ -48224,7 +48224,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_findallforadmin",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".findallforadmin()"
     },
     {
@@ -48235,7 +48235,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_findoneforuser",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".findoneforuser()"
     },
     {
@@ -48246,7 +48246,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_findoneforadmin",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".findoneforadmin()"
     },
     {
@@ -48257,7 +48257,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_updatestatus",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".updatestatus()"
     },
     {
@@ -48268,7 +48268,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_findmany",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".findmany()"
     },
     {
@@ -48279,7 +48279,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_loadorder",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".loadorder()"
     },
     {
@@ -48290,7 +48290,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_buildordernumber",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".buildordernumber()"
     },
     {
@@ -48301,7 +48301,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_isstockreleasedstatus",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".isstockreleasedstatus()"
     },
     {
@@ -48312,7 +48312,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_isstockholdingstatus",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".isstockholdingstatus()"
     },
     {
@@ -48323,7 +48323,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_assertcartstockavailable",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".assertcartstockavailable()"
     },
     {
@@ -48334,7 +48334,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_applystockchange",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".applystockchange()"
     },
     {
@@ -48345,7 +48345,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_adjustproductstock",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".adjustproductstock()"
     },
     {
@@ -48356,7 +48356,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_adjustvariantstock",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".adjustvariantstock()"
     },
     {
@@ -48367,7 +48367,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_statusnotification",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".statusnotification()"
     },
     {
@@ -48378,7 +48378,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_updatestatusbyuser",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".updatestatusbyuser()"
     },
     {
@@ -48389,7 +48389,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_tonumber",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".tonumber()"
     },
     {
@@ -48400,7 +48400,7 @@
       "_origin": "ast",
       "id": "server_src_orders_orders_service_ordersservice_toresponse",
       "community": 70,
-      "community_name": "orders.service.ts",
+      "community_name": "OrdersService",
       "norm_label": ".toresponse()"
     },
     {
@@ -48411,7 +48411,7 @@
       "_origin": "ast",
       "id": "server_src_orders_types_order_snapshot",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "order-snapshot.ts"
     },
     {
@@ -48422,7 +48422,7 @@
       "_origin": "ast",
       "id": "server_src_orders_types_order_snapshot_orderaddresssnapshot",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "orderaddresssnapshot"
     },
     {
@@ -48433,7 +48433,7 @@
       "_origin": "ast",
       "id": "server_src_orders_types_order_snapshot_orderselectedoptionsnapshot",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "orderselectedoptionsnapshot"
     },
     {
@@ -48444,7 +48444,7 @@
       "_origin": "ast",
       "id": "server_src_orders_types_order_snapshot_ordervariantsnapshot",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "ordervariantsnapshot"
     },
     {
@@ -50192,8 +50192,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_src_product_dto_create_product_variant_dto",
-      "community": 97,
-      "community_name": "product.service.ts",
+      "community": 374,
+      "community_name": "CreateProductVariantDto",
       "norm_label": "create-product-variant.dto.ts"
     },
     {
@@ -50203,8 +50203,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "server_src_product_dto_create_product_variant_dto_createproductvariantdto",
-      "community": 97,
-      "community_name": "product.service.ts",
+      "community": 374,
+      "community_name": "CreateProductVariantDto",
       "norm_label": "createproductvariantdto"
     },
     {
@@ -50214,8 +50214,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_dto_create_product_variant_dto_ts_isstring",
-      "community": 97,
-      "community_name": "product.service.ts",
+      "community": 374,
+      "community_name": "CreateProductVariantDto",
       "norm_label": "isstring"
     },
     {
@@ -50225,8 +50225,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_dto_create_product_variant_dto_ts_isoptional",
-      "community": 97,
-      "community_name": "product.service.ts",
+      "community": 374,
+      "community_name": "CreateProductVariantDto",
       "norm_label": "isoptional"
     },
     {
@@ -50236,8 +50236,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_dto_create_product_variant_dto_ts_isnumber",
-      "community": 97,
-      "community_name": "product.service.ts",
+      "community": 374,
+      "community_name": "CreateProductVariantDto",
       "norm_label": "isnumber"
     },
     {
@@ -50247,8 +50247,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_dto_create_product_variant_dto_ts_min",
-      "community": 97,
-      "community_name": "product.service.ts",
+      "community": 374,
+      "community_name": "CreateProductVariantDto",
       "norm_label": "min"
     },
     {
@@ -50258,8 +50258,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_dto_create_product_variant_dto_ts_isboolean",
-      "community": 97,
-      "community_name": "product.service.ts",
+      "community": 374,
+      "community_name": "CreateProductVariantDto",
       "norm_label": "isboolean"
     },
     {
@@ -51788,7 +51788,7 @@
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity",
       "community": 200,
-      "community_name": "Product",
+      "community_name": "orders.service.ts",
       "norm_label": "product-variant.entity.ts"
     },
     {
@@ -51798,8 +51798,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity_productvariant",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "productvariant"
     },
     {
@@ -51809,8 +51809,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity_ts_entity",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "entity"
     },
     {
@@ -51820,8 +51820,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity_ts_index",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "index"
     },
     {
@@ -51831,8 +51831,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity_ts_primarygeneratedcolumn",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "primarygeneratedcolumn"
     },
     {
@@ -51842,8 +51842,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity_ts_column",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "column"
     },
     {
@@ -51853,8 +51853,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity_ts_manytoone",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "manytoone"
     },
     {
@@ -51864,8 +51864,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity_ts_joincolumn",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "joincolumn"
     },
     {
@@ -51875,8 +51875,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity_ts_onetomany",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "onetomany"
     },
     {
@@ -51886,8 +51886,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity_ts_createdatecolumn",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "createdatecolumn"
     },
     {
@@ -51897,8 +51897,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity_ts_updatedatecolumn",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "updatedatecolumn"
     },
     {
@@ -51908,8 +51908,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_variant_entity_ts_deletedatecolumn",
-      "community": 200,
-      "community_name": "Product",
+      "community": 326,
+      "community_name": "ProductVariant",
       "norm_label": "deletedatecolumn"
     },
     {
@@ -51941,7 +51941,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "server_src_product_entities_product_entity_product",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "product"
     },
@@ -51952,7 +51952,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_entity_ts_entity",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "entity"
     },
@@ -51963,7 +51963,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_entity_ts_index",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "index"
     },
@@ -51974,7 +51974,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_entity_ts_primarygeneratedcolumn",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "primarygeneratedcolumn"
     },
@@ -51985,7 +51985,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_entity_ts_column",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "column"
     },
@@ -51996,7 +51996,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_entity_ts_manytoone",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "manytoone"
     },
@@ -52007,7 +52007,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_entity_ts_joincolumn",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "joincolumn"
     },
@@ -52018,7 +52018,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_entity_ts_onetomany",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "onetomany"
     },
@@ -52029,7 +52029,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_entity_ts_createdatecolumn",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "createdatecolumn"
     },
@@ -52040,7 +52040,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_entity_ts_updatedatecolumn",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "updatedatecolumn"
     },
@@ -52051,7 +52051,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_product_entities_product_entity_ts_deletedatecolumn",
-      "community": 200,
+      "community": 22,
       "community_name": "Product",
       "norm_label": "deletedatecolumn"
     },
@@ -53778,8 +53778,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "server_src_users_admin_users_service_ts_injectrepository",
-      "community": 22,
-      "community_name": "Comment",
+      "community": 359,
+      "community_name": "Address",
       "norm_label": "injectrepository"
     },
     {
@@ -53789,8 +53789,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "server_src_users_admin_users_service_adminusersservice_constructor",
-      "community": 22,
-      "community_name": "Comment",
+      "community": 359,
+      "community_name": "Address",
       "norm_label": ".constructor()"
     },
     {
@@ -102000,111 +102000,111 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_app_pages_profile_orders_id_index",
-      "target": "client_app_pages_profile_orders_id_index_fetching",
+      "source": "client_app_pages_profile_orders_id",
+      "target": "client_app_pages_profile_orders_id_fetching",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_app_pages_profile_orders_id_index",
-      "target": "client_app_pages_profile_orders_id_index_loadorder",
+      "source": "client_app_pages_profile_orders_id",
+      "target": "client_app_pages_profile_orders_id_loadorder",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_app_pages_profile_orders_id_index",
-      "target": "client_app_pages_profile_orders_id_index_markassuccess",
+      "source": "client_app_pages_profile_orders_id",
+      "target": "client_app_pages_profile_orders_id_markassuccess",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_app_pages_profile_orders_id_index",
-      "target": "client_app_pages_profile_orders_id_index_order",
+      "source": "client_app_pages_profile_orders_id",
+      "target": "client_app_pages_profile_orders_id_order",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_app_pages_profile_orders_id_index",
-      "target": "client_app_pages_profile_orders_id_index_orderid",
+      "source": "client_app_pages_profile_orders_id",
+      "target": "client_app_pages_profile_orders_id_orderid",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_app_pages_profile_orders_id_index",
-      "target": "client_app_pages_profile_orders_id_index_ordersds",
+      "source": "client_app_pages_profile_orders_id",
+      "target": "client_app_pages_profile_orders_id_ordersds",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_app_pages_profile_orders_id_index",
-      "target": "client_app_pages_profile_orders_id_index_pageloading",
+      "source": "client_app_pages_profile_orders_id",
+      "target": "client_app_pages_profile_orders_id_pageloading",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_app_pages_profile_orders_id_index",
-      "target": "client_app_pages_profile_orders_id_index_route",
+      "source": "client_app_pages_profile_orders_id",
+      "target": "client_app_pages_profile_orders_id_route",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_app_pages_profile_orders_id_index",
-      "target": "client_app_pages_profile_orders_id_index_statussubmitting",
+      "source": "client_app_pages_profile_orders_id",
+      "target": "client_app_pages_profile_orders_id_statussubmitting",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "client/app/pages/profile/orders/[id]/index.vue",
+      "source_file": "client/app/pages/profile/orders/[id].vue",
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "client_app_pages_profile_orders_id_index",
-      "target": "client_app_pages_profile_orders_id_index_toast",
+      "source": "client_app_pages_profile_orders_id",
+      "target": "client_app_pages_profile_orders_id_toast",
       "confidence_score": 1.0
     },
     {
