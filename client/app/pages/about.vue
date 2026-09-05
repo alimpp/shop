@@ -140,13 +140,6 @@ useSchemaOrg(() => {
     class="pb-16"
     dir="rtl"
   >
-    <PublicPageBreadcrumb
-      :items="[
-        { label: 'خانه', to: '/' },
-        { label: 'درباره ما' }
-      ]"
-    />
-
     <PublicPageHero
       :brand="content.brand"
       :headline="content.hero.headline"
