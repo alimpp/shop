@@ -32,6 +32,10 @@ describe('OrdersService (critical)', () => {
   const discountsService = {
     consumeForOrder: jest.fn(),
   };
+  const chatService = {
+    findOrCreateSupportChatForUser: jest.fn(),
+    sendMessage: jest.fn(),
+  };
 
   let service: OrdersService;
 
@@ -45,6 +49,7 @@ describe('OrdersService (critical)', () => {
       notificationsService as any,
       paymentsService as any,
       discountsService as any,
+      chatService as any,
     );
   });
 

@@ -5,14 +5,18 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, FindOptionsWhere, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { AddressesService } from '../addresses/addresses.service';
 import { CartService } from '../cart/cart.service';
 import { CartItem } from '../cart/entities/cart-item.entity';
+import { ChatService } from '../chat/chat.service';
 import { NotificationType } from '../notifications/enums/notification-type.enum';
 import { NotificationsService } from '../notifications/notifications.service';
 import { PaymentsService } from '../payments/payments.service';
-import { PaymentTransactionStatus } from '../payments/enums/payment-transaction-status.enum';
+import {
+  PaymentTransactionStatus,
+  PAYMENT_TRANSACTION_STATUS_LABELS,
+} from '../payments/enums/payment-transaction-status.enum';
 import { DiscountsService } from '../discounts/discounts.service';
 import { ProductVariant } from '../product/entities/product-variant.entity';
 import { Product } from '../product/entities/product.entity';
@@ -21,7 +25,11 @@ import { QueryOrdersDto } from './dto/query-orders.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { OrderItem } from './entities/order-item.entity';
 import { Order } from './entities/order.entity';
-import { OrderStatus } from './enums/order-status.enum';
+import {
+  OrderStatus,
+  ORDER_STATUS_GUIDANCE,
+  ORDER_STATUS_LABELS,
+} from './enums/order-status.enum';
 
 @Injectable()
 export class OrdersService {
@@ -36,6 +44,7 @@ export class OrdersService {
     private readonly notificationsService: NotificationsService,
     private readonly paymentsService: PaymentsService,
     private readonly discountsService: DiscountsService,
+    private readonly chatService: ChatService,
   ) {}
 
   async create(userId: string, dto: CreateOrderDto) {
@@ -195,6 +204,46 @@ export class OrdersService {
     return await this.toResponse(order);
   }
 
+  async getTrackingPreview(id: string) {
+    const order = await this.loadOrder(id);
+    const payment = await this.paymentsService.findLatestByOrderId(order.id);
+    return {
+      content: this.buildTrackingMessage(order, payment),
+    };
+  }
+
+  async sendTrackingUpdate(id: string, adminId: string) {
+    const order = await this.loadOrder(id);
+    const payment = await this.paymentsService.findLatestByOrderId(order.id);
+    const content = this.buildTrackingMessage(order, payment);
+
+    const chat = await this.chatService.findOrCreateSupportChatForUser(
+      order.userId,
+      adminId,
+    );
+
+    const message = await this.chatService.sendMessage(
+      chat.id,
+      { content },
+      adminId,
+      true,
+    );
+
+    await this.notificationsService.notify({
+      userId: order.userId,
+      title: 'پیگیری سفارش',
+      description: `وضعیت سفارش ${order.orderNumber}: ${ORDER_STATUS_LABELS[order.status] ?? order.status}`,
+      type: NotificationType.MESSAGE,
+      link: '/profile/support',
+    });
+
+    return {
+      chatId: chat.id,
+      content,
+      message,
+    };
+  }
+
   async updateStatus(id: string, dto: UpdateOrderStatusDto) {
     const order = await this.loadOrder(id);
 
@@ -251,26 +300,32 @@ export class OrdersService {
   ) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
-    const filters: FindOptionsWhere<Order> = {};
+    const search = query.search?.trim();
+
+    const qb = this.orderRepository
+      .createQueryBuilder('orders')
+      .leftJoinAndSelect('orders.items', 'items')
+      .leftJoinAndSelect('orders.user', 'user')
+      .orderBy('orders.created_at', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
 
     if (where.userId) {
-      filters.userId = where.userId;
+      qb.andWhere('orders.userId = :userId', { userId: where.userId });
     }
 
     if (query.status) {
-      filters.status = query.status;
+      qb.andWhere('orders.status = :status', { status: query.status });
     }
 
-    const [orders, total] = await this.orderRepository.findAndCount({
-      where: filters,
-      relations: {
-        items: true,
-        user: true,
-      },
-      order: { created_at: 'DESC' },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+    if (search) {
+      qb.andWhere(
+        '(CAST(orders.id AS text) ILIKE :search OR orders.orderNumber ILIKE :search)',
+        { search: `%${search}%` },
+      );
+    }
+
+    const [orders, total] = await qb.getManyAndCount();
 
     return {
       items: await Promise.all(orders.map((order) => this.toResponse(order))),
@@ -585,6 +640,111 @@ export class OrdersService {
     }
 
     return await this.toResponse(await this.loadOrder(id));
+  }
+
+  private buildTrackingMessage(
+    order: Order,
+    payment: {
+      trackingCode?: string;
+      status?: PaymentTransactionStatus | string;
+      amount?: number;
+    } | null,
+  ): string {
+    const statusLabel =
+      ORDER_STATUS_LABELS[order.status] ?? String(order.status);
+    const statusGuide =
+      ORDER_STATUS_GUIDANCE[order.status] ?? 'وضعیت سفارش در حال پیگیری است.';
+
+    const createdAt = order.created_at
+      ? new Date(order.created_at).toLocaleString('fa-IR', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : '—';
+
+    const paidAmount = this.toNumber(order.paidAmount).toLocaleString('fa-IR');
+    const paymentStatus =
+      payment?.status &&
+      PAYMENT_TRANSACTION_STATUS_LABELS[
+        payment.status as PaymentTransactionStatus
+      ]
+        ? PAYMENT_TRANSACTION_STATUS_LABELS[
+            payment.status as PaymentTransactionStatus
+          ]
+        : payment
+          ? String(payment.status)
+          : 'ثبت نشده';
+
+    const items = order.items ?? [];
+    const itemCount = items.length;
+    const totalQuantity = items.reduce(
+      (sum, item) => sum + Number(item.quantity ?? 0),
+      0,
+    );
+
+    const itemLines = items.map((item, index) => {
+      const options = Array.isArray(item.selectedOptions)
+        ? item.selectedOptions
+            .map((option) => {
+              const name = String(
+                (option as { attributeName?: string }).attributeName ?? '',
+              ).trim();
+              const value = String(
+                (option as { value?: string }).value ?? '',
+              ).trim();
+              if (name && value) return `${name}: ${value}`;
+              return value || name;
+            })
+            .filter(Boolean)
+            .join(' · ')
+        : '';
+
+      const qty = Number(item.quantity ?? 0).toLocaleString('fa-IR');
+      const lineTotal = this.toNumber(item.lineTotal).toLocaleString('fa-IR');
+      const optionPart = options ? ` (${options})` : '';
+      return `${index + 1}) ${item.productName}${optionPart} × ${qty} — ${lineTotal} تومان`;
+    });
+
+    const address = order.address;
+    const destination = [address?.province, address?.city]
+      .filter(Boolean)
+      .join('، ');
+
+    const lines = [
+      'سلام، گزارش پیگیری سفارش شما از پشتیبانی:',
+      '',
+      `شماره سفارش: ${order.orderNumber}`,
+      `شناسه سفارش: ${order.id}`,
+      `وضعیت فعلی: ${statusLabel}`,
+      `توضیح وضعیت: ${statusGuide}`,
+      '',
+      `تاریخ ثبت: ${createdAt}`,
+      `مبلغ قابل پرداخت: ${paidAmount} تومان`,
+      `وضعیت پرداخت: ${paymentStatus}`,
+    ];
+
+    if (payment?.trackingCode) {
+      lines.push(`کد تراکنش پرداخت: ${payment.trackingCode}`);
+    }
+
+    lines.push(
+      '',
+      `گیرنده: ${address?.name || '—'}`,
+      `مقصد ارسال: ${destination || '—'}`,
+      `تعداد اقلام: ${itemCount.toLocaleString('fa-IR')} · مجموع تعداد: ${totalQuantity.toLocaleString('fa-IR')}`,
+      '',
+      'اقلام سفارش:',
+      ...(itemLines.length ? itemLines : ['—']),
+      '',
+      `مشاهده جزئیات سفارش: /profile/orders/${order.id}`,
+      '',
+      'اگر سوالی دارید همین‌جا پاسخ دهید؛ پشتیبانی در خدمت شماست.',
+    );
+
+    return lines.join('\n');
   }
 
   private toNumber(value: unknown): number {

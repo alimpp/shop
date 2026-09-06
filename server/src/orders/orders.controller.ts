@@ -63,6 +63,24 @@ export class OrdersController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @Get('admin/:id/tracking-preview')
+  async trackingPreview(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.ordersService.getTrackingPreview(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Post('admin/:id/tracking')
+  @HttpCode(HttpStatus.CREATED)
+  async sendTracking(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return await this.ordersService.sendTrackingUpdate(id, req.user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Patch('admin/:id/status')
   @HttpCode(HttpStatus.OK)
   async updateStatus(

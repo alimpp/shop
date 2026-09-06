@@ -19,7 +19,6 @@ type TNumberInput = number | "";
 interface TProductVariantFormState {
   name: string;
   sku: string;
-  barcode: string;
   price: TNumberInput;
   salePrice: TNumberInput;
   stock: TNumberInput;
@@ -43,17 +42,11 @@ interface TProductFormState {
   description: string;
   shortDescription: string;
   sku: string;
-  barcode: string;
   price: TNumberInput;
   salePrice: TNumberInput;
-  costPrice: TNumberInput;
   stock: TNumberInput;
   manageStock: boolean;
   allowBackorder: boolean;
-  weight: TNumberInput;
-  length: TNumberInput;
-  width: TNumberInput;
-  height: TNumberInput;
   categoryId: string;
   brandId: string;
   status: TProductStatus;
@@ -118,7 +111,6 @@ const numberField = (label: string, required: boolean = false) => z.preprocess(
 const variantSchema = z.object({
   name: z.string().trim().min(1, "نام واریانت الزامی است").max(160, "نام واریانت باید حداکثر ۱۶۰ کاراکتر باشد"),
   sku: z.string().trim().min(1, "SKU واریانت الزامی است").max(120, "SKU واریانت باید حداکثر ۱۲۰ کاراکتر باشد"),
-  barcode: z.string().max(120, "بارکد واریانت باید حداکثر ۱۲۰ کاراکتر باشد"),
   price: numberField("قیمت واریانت", true),
   salePrice: numberField("قیمت تخفیف واریانت"),
   stock: numberField("موجودی واریانت"),
@@ -156,17 +148,11 @@ const productSchema = z.object({
   description: z.string().trim().min(3, "توضیحات محصول الزامی است"),
   shortDescription: z.string().max(2000, "توضیح کوتاه باید حداکثر ۲۰۰۰ کاراکتر باشد"),
   sku: z.string().trim().min(1, "SKU محصول الزامی است").max(120, "SKU محصول باید حداکثر ۱۲۰ کاراکتر باشد"),
-  barcode: z.string().max(120, "بارکد باید حداکثر ۱۲۰ کاراکتر باشد"),
   price: numberField("قیمت اصلی", true),
   salePrice: numberField("قیمت تخفیف"),
-  costPrice: numberField("قیمت تمام‌شده"),
   stock: numberField("موجودی"),
   manageStock: z.boolean(),
   allowBackorder: z.boolean(),
-  weight: numberField("وزن"),
-  length: numberField("طول"),
-  width: numberField("عرض"),
-  height: numberField("ارتفاع"),
   categoryId: z.string().uuid("انتخاب دسته‌بندی الزامی است"),
   brandId: uuidField,
   status: z.enum(["draft", "published", "archived"]),
@@ -253,17 +239,11 @@ const state = reactive<TProductFormState>({
   description: "",
   shortDescription: "",
   sku: "",
-  barcode: "",
   price: 0,
   salePrice: "",
-  costPrice: "",
   stock: 0,
   manageStock: true,
   allowBackorder: false,
-  weight: "",
-  length: "",
-  width: "",
-  height: "",
   categoryId: "",
   brandId: "",
   status: "draft",
@@ -435,17 +415,11 @@ function resetState(): void {
   state.description = "";
   state.shortDescription = "";
   state.sku = "";
-  state.barcode = "";
   state.price = 0;
   state.salePrice = "";
-  state.costPrice = "";
   state.stock = 0;
   state.manageStock = true;
   state.allowBackorder = false;
-  state.weight = "";
-  state.length = "";
-  state.width = "";
-  state.height = "";
   state.categoryId = "";
   state.brandId = "";
   state.status = "draft";
@@ -475,17 +449,11 @@ function syncState(product: TProduct | null): void {
   state.description = product.description;
   state.shortDescription = product.shortDescription ?? "";
   state.sku = product.sku;
-  state.barcode = product.barcode ?? "";
   state.price = product.price;
   state.salePrice = product.salePrice ?? "";
-  state.costPrice = product.costPrice ?? "";
   state.stock = product.stock;
   state.manageStock = product.manageStock;
   state.allowBackorder = product.allowBackorder;
-  state.weight = product.weight ?? "";
-  state.length = product.length ?? "";
-  state.width = product.width ?? "";
-  state.height = product.height ?? "";
   state.categoryId = product.categoryId;
   state.brandId = product.brandId ?? "";
   state.status = product.status;
@@ -508,7 +476,6 @@ function syncState(product: TProduct | null): void {
   state.variants = product.variants.map((variant) => ({
     name: variant.name,
     sku: variant.sku,
-    barcode: variant.barcode ?? "",
     price: variant.price,
     salePrice: variant.salePrice ?? "",
     stock: variant.stock,
@@ -537,7 +504,6 @@ function normalizePayload(data: ProductSchema): TProductPayload {
     ? data.variants.map<TProductVariantPayload>((variant) => ({
         name: variant.name.trim(),
         sku: variant.sku.trim(),
-        barcode: variant.barcode.trim() || undefined,
         price: Number(variant.price),
         salePrice: variant.salePrice,
         stock: variant.stock,
@@ -568,18 +534,13 @@ function normalizePayload(data: ProductSchema): TProductPayload {
     description: data.description.trim(),
     shortDescription: data.shortDescription.trim() || undefined,
     sku: data.sku.trim(),
-    barcode: data.barcode.trim() || undefined,
     price: Number(data.price),
     salePrice: data.salePrice,
-    costPrice: data.costPrice,
     stock: data.stock,
     manageStock: data.manageStock,
     allowBackorder: data.allowBackorder,
-    // وزن و ابعاد فعلا از فرم حذف شده‌اند؛ خالی به بک‌اند می‌روند
-    weight: undefined,
-    length: undefined,
-    width: undefined,
-    height: undefined,
+    // فیلدهای اختیاری فیزیکی/بارکد/قیمت تمام‌شده از فرم حذف شده‌اند؛
+    // عمداً ارسال نمی‌شوند تا مقادیر موجود در دیتابیس حفظ بمانند.
     categoryId: data.categoryId,
     brandId: data.brandId || undefined,
     status: data.status,
@@ -608,7 +569,6 @@ function addVariant(): void {
   state.variants.push({
     name: "",
     sku: `${baseSku}-V${index}`,
-    barcode: "",
     price: productPrice,
     salePrice: state.salePrice,
     stock: getVariantStockRemaining(),
@@ -745,15 +705,9 @@ watch(
               </UFormField>
             </div>
 
-            <div class="grid gap-4 lg:grid-cols-2">
-              <UFormField label="SKU" name="sku">
-                <UInput v-model="state.sku" class="w-full" dir="ltr" placeholder="PRD-1001" />
-              </UFormField>
-
-              <UFormField label="بارکد" name="barcode">
-                <UInput v-model="state.barcode" class="w-full" dir="ltr" placeholder="اختیاری" />
-              </UFormField>
-            </div>
+            <UFormField label="SKU" name="sku">
+              <UInput v-model="state.sku" class="w-full" dir="ltr" placeholder="PRD-1001" />
+            </UFormField>
 
             <UFormField label="توضیحات کامل" name="description">
               <UTextarea
@@ -779,17 +733,13 @@ watch(
               <h3 class="font-semibold text-highlighted">قیمت و موجودی</h3>
             </div>
 
-            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               <UFormField label="قیمت اصلی" name="price">
                 <UInput v-model.number="state.price" type="number" min="0" class="w-full" />
               </UFormField>
 
               <UFormField label="قیمت تخفیف" name="salePrice">
                 <UInput v-model.number="state.salePrice" type="number" min="0" class="w-full" />
-              </UFormField>
-
-              <UFormField label="قیمت تمام‌شده" name="costPrice">
-                <UInput v-model.number="state.costPrice" type="number" min="0" class="w-full" />
               </UFormField>
 
               <UFormField label="موجودی" name="stock">
@@ -1044,10 +994,6 @@ watch(
 
                   <UFormField :name="`variants.${index}.sku`" label="SKU واریانت">
                     <UInput v-model="variant.sku" class="w-full" dir="ltr" />
-                  </UFormField>
-
-                  <UFormField :name="`variants.${index}.barcode`" label="بارکد واریانت">
-                    <UInput v-model="variant.barcode" class="w-full" dir="ltr" />
                   </UFormField>
 
                   <UFormField :name="`variants.${index}.price`" label="قیمت واریانت">

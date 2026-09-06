@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressesModule } from '../addresses/addresses.module';
 import { CartModule } from '../cart/cart.module';
+import { ChatModule } from '../chat/chat.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { PaymentsModule } from '../payments/payments.module';
 import { DiscountsModule } from '../discounts/discounts.module';
@@ -20,6 +21,7 @@ import { OrdersService } from './orders.service';
     NotificationsModule,
     PaymentsModule,
     DiscountsModule,
+    ChatModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService],

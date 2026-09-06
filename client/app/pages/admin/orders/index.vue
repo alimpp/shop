@@ -27,6 +27,8 @@ const detailLoading = ref(false)
 const ALL_STATUSES_VALUE = 'all'
 
 const statusFilter = ref(ALL_STATUSES_VALUE)
+const search = ref('')
+let searchTimer: ReturnType<typeof setTimeout> | null = null
 
 const statusItems = (
   Object.entries(ORDER_STATUS_LABELS) as Array<[TOrderStatus, string]>
@@ -47,13 +49,14 @@ function resetDetailState(): void {
   ordersDS.setSelectedOrder(null)
 }
 
-async function fetchOrders(): Promise<void> {
+async function fetchOrders(options?: { openSingle?: boolean }): Promise<void> {
   const response = await ordersController.getAdminOrders({
     page: 1,
     limit: 50,
     status: statusFilter.value !== ALL_STATUSES_VALUE
       ? (statusFilter.value as TOrderStatus)
-      : undefined
+      : undefined,
+    search: search.value.trim() || undefined
   })
 
   if (!response.success) {
@@ -61,6 +64,15 @@ async function fetchOrders(): Promise<void> {
       title: response.message || 'دریافت سفارش‌ها ناموفق بود',
       color: 'error'
     })
+    return
+  }
+
+  if (
+    options?.openSingle
+    && search.value.trim()
+    && orders.value.length === 1
+  ) {
+    await openDetail(orders.value[0]!)
   }
 }
 
@@ -96,8 +108,13 @@ async function handleStatusChange(
   })
 }
 
+function submitSearch(): void {
+  if (searchTimer) clearTimeout(searchTimer)
+  void fetchOrders({ openSingle: true })
+}
+
 onMounted(() => {
-  fetchOrders()
+  void fetchOrders()
 })
 
 onBeforeRouteLeave(() => {
@@ -105,11 +122,19 @@ onBeforeRouteLeave(() => {
 })
 
 onUnmounted(() => {
+  if (searchTimer) clearTimeout(searchTimer)
   resetDetailState()
 })
 
 watch(statusFilter, () => {
-  fetchOrders()
+  void fetchOrders()
+})
+
+watch(search, () => {
+  if (searchTimer) clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => {
+    void fetchOrders({ openSingle: true })
+  }, 400)
 })
 </script>
 
@@ -141,6 +166,25 @@ watch(statusFilter, () => {
 
     <template #body>
       <BaseDashboardPanelBody>
+        <div class="mb-4 flex flex-wrap items-center gap-2">
+          <UInput
+            v-model="search"
+            icon="i-lucide-search"
+            placeholder="جستجو با شناسه یا شماره سفارش..."
+            class="max-w-md flex-1"
+            @keydown.enter.prevent="submitSearch"
+          />
+          <UButton
+            color="primary"
+            variant="soft"
+            icon="i-lucide-search"
+            :loading="loading"
+            @click="submitSearch"
+          >
+            پیدا کردن
+          </UButton>
+        </div>
+
         <div
           v-if="loading && !orders.length"
           class="flex justify-center py-16"
@@ -217,6 +261,7 @@ watch(statusFilter, () => {
           v-model:open="detailOpen"
           :loading="detailLoading"
           :order="selectedOrder"
+          enable-tracking
           @after-leave="resetDetailState"
         />
       </BaseDashboardPanelBody>

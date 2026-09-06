@@ -1,5 +1,5 @@
-import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { OrderStatus } from '../enums/order-status.enum';
 
 export class QueryOrdersDto {
@@ -19,4 +19,9 @@ export class QueryOrdersDto {
   @IsOptional()
   @IsEnum(OrderStatus, { message: 'وضعیت سفارش نامعتبر است' })
   status?: OrderStatus;
+
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @IsString()
+  search?: string;
 }

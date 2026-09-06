@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import OrderDetailView from '~/features/orders/components/OrderDetailView.vue'
+import OrderTrackingAsk from '~/features/orders/components/OrderTrackingAsk.vue'
 import type { OrderModel } from '~/features/orders/models/index.model'
 
-const props = defineProps<{
-  open: boolean
-  loading: boolean
-  order: OrderModel | null
-}>()
+const props = withDefaults(
+  defineProps<{
+    open: boolean
+    loading: boolean
+    order: OrderModel | null
+    enableTracking?: boolean
+  }>(),
+  {
+    enableTracking: false
+  }
+)
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
@@ -38,11 +45,20 @@ const modalOpen = computed({
         />
       </div>
 
-      <OrderDetailView
+      <div
         v-else-if="order"
-        :order="order"
-        show-customer
-      />
+        class="space-y-4"
+      >
+        <OrderTrackingAsk
+          v-if="enableTracking"
+          :order="order"
+        />
+
+        <OrderDetailView
+          :order="order"
+          show-customer
+        />
+      </div>
     </template>
   </UModal>
 </template>
