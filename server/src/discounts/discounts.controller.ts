@@ -45,6 +45,20 @@ export class DiscountsController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  @Get('report')
+  getUsageReport() {
+    return this.discountsService.getUsageReport();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Get(':id/usage')
+  getUsageDetail(@Param('id', ParseUUIDPipe) id: string) {
+    return this.discountsService.getUsageDetail(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.discountsService.findOne(id);

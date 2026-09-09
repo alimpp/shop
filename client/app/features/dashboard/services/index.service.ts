@@ -1,6 +1,10 @@
 import type { ServerResponse } from '~/types/common'
 import { BaseApp } from '~/core/BaseApp'
-import type { TDashboardData } from '../types/index.type'
+import type {
+  TDashboardData,
+  TLowStockListData,
+  TLowStockListQuery
+} from '../types/index.type'
 
 type TRaw = Record<string, unknown>
 
@@ -153,6 +157,50 @@ export class DashboardService extends BaseApp<TDashboardData> {
       return {
         ...response,
         data: this.normalizeDashboard(response.data ?? {})
+      }
+    })
+  }
+
+  public async getLowStockProducts(
+    query?: TLowStockListQuery
+  ): Promise<ServerResponse<TLowStockListData>> {
+    return this.executeRequest<TLowStockListData>(async () => {
+      const response = await this.Get<ServerResponse<TRaw>>(
+        '/admin/dashboard/low-stock',
+        query
+      )
+      const raw = (response.data ?? {}) as TRaw
+      const items = Array.isArray(raw.items) ? raw.items : []
+      const meta = (raw.meta ?? {}) as TRaw
+
+      return {
+        ...response,
+        data: {
+          items: items.map((item) => {
+            const row = item as TRaw
+            return {
+              id: String(row.id ?? ''),
+              name: String(row.name ?? ''),
+              slug: String(row.slug ?? ''),
+              sku: String(row.sku ?? ''),
+              stock: toNumber(row.stock),
+              image: (row.image as string | null) ?? null,
+              price: toNumber(row.price),
+              status: String(row.status ?? ''),
+              categoryName: (row.categoryName as string | null) ?? null,
+              isOutOfStock: Boolean(row.isOutOfStock) || toNumber(row.stock) === 0
+            }
+          }),
+          meta: {
+            total: toNumber(meta.total),
+            page: toNumber(meta.page, 1),
+            limit: toNumber(meta.limit, 20),
+            totalPages: toNumber(meta.totalPages, 1),
+            threshold: toNumber(meta.threshold, 5),
+            lowCount: toNumber(meta.lowCount),
+            outCount: toNumber(meta.outCount)
+          }
+        }
       }
     })
   }

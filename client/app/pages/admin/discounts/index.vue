@@ -2,7 +2,9 @@
 import { discountsController } from '~/features/discounts/controllers/index.controller'
 import type {
   TDiscountCode,
-  TDiscountPayload
+  TDiscountPayload,
+  TDiscountUsageDetail,
+  TDiscountUsageReportSummary
 } from '~/features/discounts/types/index.type'
 
 definePageMeta({
@@ -13,10 +15,20 @@ definePageMeta({
 const toast = useToast()
 const loading = ref(false)
 const submitting = ref(false)
+const usageLoading = ref(false)
 const items = ref<TDiscountCode[]>([])
 const search = ref('')
 const formOpen = ref(false)
+const usageOpen = ref(false)
 const editing = ref<TDiscountCode | null>(null)
+const usageDetail = ref<TDiscountUsageDetail | null>(null)
+const summary = ref<TDiscountUsageReportSummary>({
+  codesCount: 0,
+  totalUses: 0,
+  totalDiscountAmount: 0,
+  totalPaidAmount: 0,
+  totalSubtotalAmount: 0
+})
 let searchTimer: ReturnType<typeof setTimeout> | null = null
 
 const form = reactive({
@@ -40,22 +52,28 @@ function formatDate(value?: string | null): string {
 
 async function fetchItems(): Promise<void> {
   loading.value = true
-  const response = await discountsController.getDiscounts({
-    page: 1,
-    limit: 50,
-    search: search.value.trim() || undefined
-  })
+  const [listResponse, reportResponse] = await Promise.all([
+    discountsController.getDiscounts({
+      page: 1,
+      limit: 50,
+      search: search.value.trim() || undefined
+    }),
+    discountsController.getUsageReport()
+  ])
   loading.value = false
 
-  if (!response.success) {
+  if (!listResponse.success) {
     toast.add({
-      title: response.message || 'دریافت کدهای تخفیف ناموفق بود',
+      title: listResponse.message || 'دریافت کدهای تخفیف ناموفق بود',
       color: 'error'
     })
     return
   }
 
-  items.value = response.data?.items ?? []
+  items.value = listResponse.data?.items ?? []
+  if (reportResponse.success && reportResponse.data?.summary) {
+    summary.value = reportResponse.data.summary
+  }
 }
 
 function openCreate(): void {
@@ -82,6 +100,25 @@ function openEdit(item: TDiscountCode): void {
     ? new Date(item.expiresAt).toISOString().slice(0, 16)
     : ''
   formOpen.value = true
+}
+
+async function openUsage(item: TDiscountCode): Promise<void> {
+  usageOpen.value = true
+  usageLoading.value = true
+  usageDetail.value = null
+  const response = await discountsController.getUsageDetail(item.id)
+  usageLoading.value = false
+
+  if (!response.success || !response.data) {
+    toast.add({
+      title: response.message || 'دریافت گزارش استفاده ناموفق بود',
+      color: 'error'
+    })
+    usageOpen.value = false
+    return
+  }
+
+  usageDetail.value = response.data
 }
 
 async function save(): Promise<void> {
@@ -176,6 +213,41 @@ onBeforeUnmount(() => {
 
     <template #body>
       <BaseDashboardPanelBody>
+        <div class="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-2xl border border-default bg-elevated/40 p-4">
+            <p class="text-xs text-toned">
+              تعداد کدها
+            </p>
+            <p class="mt-1 text-lg font-black text-highlighted">
+              {{ summary.codesCount.toLocaleString('fa-IR') }}
+            </p>
+          </div>
+          <div class="rounded-2xl border border-default bg-elevated/40 p-4">
+            <p class="text-xs text-toned">
+              کل استفاده‌ها
+            </p>
+            <p class="mt-1 text-lg font-black text-highlighted">
+              {{ summary.totalUses.toLocaleString('fa-IR') }}
+            </p>
+          </div>
+          <div class="rounded-2xl border border-default bg-elevated/40 p-4">
+            <p class="text-xs text-toned">
+              مجموع تخفیف داده‌شده
+            </p>
+            <p class="mt-1 text-lg font-black text-primary">
+              {{ formatPrice(summary.totalDiscountAmount) }}
+            </p>
+          </div>
+          <div class="rounded-2xl border border-default bg-elevated/40 p-4">
+            <p class="text-xs text-toned">
+              فروش خالص با کد
+            </p>
+            <p class="mt-1 text-lg font-black text-highlighted">
+              {{ formatPrice(summary.totalPaidAmount) }}
+            </p>
+          </div>
+        </div>
+
         <div class="mb-4">
           <UInput
             v-model="search"
@@ -209,12 +281,30 @@ onBeforeUnmount(() => {
           <table class="min-w-full text-sm">
             <thead class="bg-elevated/60 text-toned">
               <tr>
-                <th class="px-4 py-3 text-start font-medium">کد</th>
-                <th class="px-4 py-3 text-start font-medium">مبلغ تخفیف</th>
-                <th class="px-4 py-3 text-start font-medium">استفاده</th>
-                <th class="px-4 py-3 text-start font-medium">وضعیت</th>
-                <th class="px-4 py-3 text-start font-medium">انقضا</th>
-                <th class="px-4 py-3 text-start font-medium">عملیات</th>
+                <th class="px-4 py-3 text-start font-medium">
+                  کد
+                </th>
+                <th class="px-4 py-3 text-start font-medium">
+                  مبلغ تخفیف
+                </th>
+                <th class="px-4 py-3 text-start font-medium">
+                  استفاده
+                </th>
+                <th class="px-4 py-3 text-start font-medium">
+                  مجموع تخفیف
+                </th>
+                <th class="px-4 py-3 text-start font-medium">
+                  فروش خالص
+                </th>
+                <th class="px-4 py-3 text-start font-medium">
+                  وضعیت
+                </th>
+                <th class="px-4 py-3 text-start font-medium">
+                  انقضا
+                </th>
+                <th class="px-4 py-3 text-start font-medium">
+                  عملیات
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -223,8 +313,9 @@ onBeforeUnmount(() => {
                 :key="item.id"
                 class="border-t border-default"
               >
-                <td class="px-4 py-3 font-bold text-highlighted"
-                    dir="ltr"
+                <td
+                  class="px-4 py-3 font-bold text-highlighted"
+                  dir="ltr"
                 >
                   {{ item.code }}
                 </td>
@@ -232,9 +323,15 @@ onBeforeUnmount(() => {
                   {{ formatPrice(item.amount) }}
                 </td>
                 <td class="px-4 py-3 text-toned">
-                  {{ item.usedCount.toLocaleString('fa-IR') }}
+                  {{ (item.usage?.ordersCount ?? item.usedCount).toLocaleString('fa-IR') }}
                   /
                   {{ item.maxUses == null ? '∞' : item.maxUses.toLocaleString('fa-IR') }}
+                </td>
+                <td class="px-4 py-3 text-toned">
+                  {{ formatPrice(item.usage?.totalDiscountAmount ?? 0) }}
+                </td>
+                <td class="px-4 py-3 text-toned">
+                  {{ formatPrice(item.usage?.totalPaidAmount ?? 0) }}
                 </td>
                 <td class="px-4 py-3">
                   <UBadge
@@ -249,6 +346,13 @@ onBeforeUnmount(() => {
                 </td>
                 <td class="px-4 py-3">
                   <div class="flex gap-2">
+                    <UButton
+                      size="sm"
+                      color="neutral"
+                      variant="soft"
+                      icon="i-lucide-bar-chart-3"
+                      @click="openUsage(item)"
+                    />
                     <UButton
                       size="sm"
                       color="neutral"
@@ -367,6 +471,111 @@ onBeforeUnmount(() => {
         >
           ذخیره
         </UButton>
+      </div>
+    </template>
+  </UModal>
+
+  <UModal
+    v-model:open="usageOpen"
+    :title="usageDetail ? `گزارش استفاده ${usageDetail.code}` : 'گزارش استفاده'"
+  >
+    <template #body>
+      <div
+        v-if="usageLoading"
+        class="flex justify-center py-10"
+      >
+        <UIcon
+          name="i-lucide-loader-2"
+          class="size-6 animate-spin text-primary"
+        />
+      </div>
+
+      <div
+        v-else-if="usageDetail"
+        class="space-y-4"
+      >
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div class="rounded-xl border border-default p-3">
+            <p class="text-xs text-toned">
+              تعداد سفارش
+            </p>
+            <p class="mt-1 font-bold text-highlighted">
+              {{ usageDetail.usage.ordersCount.toLocaleString('fa-IR') }}
+            </p>
+          </div>
+          <div class="rounded-xl border border-default p-3">
+            <p class="text-xs text-toned">
+              مجموع تخفیف
+            </p>
+            <p class="mt-1 font-bold text-primary">
+              {{ formatPrice(usageDetail.usage.totalDiscountAmount) }}
+            </p>
+          </div>
+          <div class="rounded-xl border border-default p-3">
+            <p class="text-xs text-toned">
+              فروش خالص
+            </p>
+            <p class="mt-1 font-bold text-highlighted">
+              {{ formatPrice(usageDetail.usage.totalPaidAmount) }}
+            </p>
+          </div>
+        </div>
+
+        <div
+          v-if="!usageDetail.orders.length"
+          class="rounded-xl border border-dashed border-default px-4 py-8 text-center text-sm text-toned"
+        >
+          هنوز سفارشی با این کد ثبت نشده است.
+        </div>
+
+        <div
+          v-else
+          class="overflow-x-auto rounded-xl border border-default"
+        >
+          <table class="min-w-full text-sm">
+            <thead class="bg-elevated/60 text-toned">
+              <tr>
+                <th class="px-3 py-2 text-start font-medium">
+                  سفارش
+                </th>
+                <th class="px-3 py-2 text-start font-medium">
+                  تخفیف
+                </th>
+                <th class="px-3 py-2 text-start font-medium">
+                  پرداخت
+                </th>
+                <th class="px-3 py-2 text-start font-medium">
+                  تاریخ
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="order in usageDetail.orders"
+                :key="order.id"
+                class="border-t border-default"
+              >
+                <td class="px-3 py-2">
+                  <NuxtLink
+                    :to="`/admin/orders/${order.id}`"
+                    class="font-medium text-primary hover:underline"
+                  >
+                    {{ order.orderNumber }}
+                  </NuxtLink>
+                </td>
+                <td class="px-3 py-2 text-toned">
+                  {{ formatPrice(order.discountAmount) }}
+                </td>
+                <td class="px-3 py-2 text-toned">
+                  {{ formatPrice(order.paidAmount) }}
+                </td>
+                <td class="px-3 py-2 text-toned">
+                  {{ formatDate(order.createdAt) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </template>
   </UModal>

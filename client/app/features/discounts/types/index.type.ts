@@ -1,3 +1,10 @@
+export interface TDiscountUsageStats {
+  ordersCount: number
+  totalDiscountAmount: number
+  totalPaidAmount: number
+  totalSubtotalAmount: number
+}
+
 export interface TDiscountCode {
   id: string
   code: string
@@ -10,6 +17,7 @@ export interface TDiscountCode {
   expiresAt?: string | null
   createdAt: string
   updatedAt: string
+  usage?: TDiscountUsageStats
 }
 
 export interface TDiscountListMeta {
@@ -53,4 +61,32 @@ export interface TValidateDiscountResult {
   discountAmount: number
   payableAmount: number
   description?: string | null
+}
+
+export interface TDiscountUsageOrder {
+  id: string
+  orderNumber: string
+  status: string
+  subtotalAmount: number
+  discountAmount: number
+  paidAmount: number
+  createdAt: string
+}
+
+export interface TDiscountUsageDetail extends TDiscountCode {
+  usage: TDiscountUsageStats
+  orders: TDiscountUsageOrder[]
+}
+
+export interface TDiscountUsageReportSummary {
+  codesCount: number
+  totalUses: number
+  totalDiscountAmount: number
+  totalPaidAmount: number
+  totalSubtotalAmount: number
+}
+
+export interface TDiscountUsageReport {
+  summary: TDiscountUsageReportSummary
+  items: TDiscountCode[]
 }

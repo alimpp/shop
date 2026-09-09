@@ -10,14 +10,24 @@ import {
   Patch,
   Post,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 
 import { ProductService } from './product.service';
 
+import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { RolesGuard } from '../common/guards/roles.guard';
 import { ChangeProductStatusDto } from './dto/change-product-status.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { QueryProductDto } from './dto/query-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+
+type AuthenticatedRequest = Request & {
+  user: { sub: string; role?: string };
+};
 
 @Controller('products')
 export class ProductController {
@@ -83,6 +93,17 @@ export class ProductController {
     return await this.productService.findBySlug(slug);
   }
 
+  @Get(':id/related')
+  async findRelated(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query('limit') limit?: string,
+  ) {
+    return await this.productService.findRelated(
+      id,
+      limit ? Number(limit) : 8,
+    );
+  }
+
   @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe)
@@ -98,14 +119,19 @@ export class ProductController {
   */
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async update(
     @Param('id', ParseUUIDPipe)
     id: string,
 
     @Body()
     dto: UpdateProductDto,
+
+    @Req()
+    req: AuthenticatedRequest,
   ) {
-    return await this.productService.update(id, dto);
+    return await this.productService.update(id, dto, req.user.sub);
   }
 
   /*

@@ -20,6 +20,9 @@ import { Product } from './entities/product.entity';
 import { Tag } from './entities/tag.entity';
 
 import { Brand } from './entities/brand.entity';
+import { StockMovement } from './entities/stock-movement.entity';
+import { StockMovementsController } from './stock-movements.controller';
+import { StockMovementsService } from './stock-movements.service';
 
 @Module({
   imports: [
@@ -36,13 +39,20 @@ import { Brand } from './entities/brand.entity';
       Tag,
       Brand,
       Category,
+      StockMovement,
     ]),
   ],
 
-  controllers: [ProductController, ProductPricingController, BrandController, AttributeController],
+  controllers: [
+    ProductController,
+    ProductPricingController,
+    BrandController,
+    AttributeController,
+    StockMovementsController,
+  ],
 
-  providers: [ProductService],
+  providers: [ProductService, StockMovementsService],
 
-  exports: [ProductService],
+  exports: [ProductService, StockMovementsService],
 })
 export class ProductModule {}

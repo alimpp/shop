@@ -32,6 +32,18 @@ export const navigation: AppNavigationItem[][] = [
       permission: true,
     },
     {
+      label: "هشدار موجودی",
+      icon: "i-lucide-triangle-alert",
+      to: "/admin/stock",
+      permission: true,
+    },
+    {
+      label: "تاریخچه موجودی",
+      icon: "i-lucide-history",
+      to: "/admin/stock-history",
+      permission: true,
+    },
+    {
       label: "بنرها",
       icon: "i-lucide-images",
       to: "/admin/banners",

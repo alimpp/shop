@@ -15,6 +15,13 @@ const actions = [
     color: 'primary' as const
   },
   {
+    label: 'هشدار موجودی',
+    description: 'محصولات کم‌موجود و تمام‌شده',
+    icon: 'i-lucide-triangle-alert',
+    to: '/admin/stock',
+    color: 'warning' as const
+  },
+  {
     label: 'افزودن محصول',
     description: 'ثبت محصول جدید در فروشگاه',
     icon: 'i-lucide-package-plus',

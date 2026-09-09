@@ -11,13 +11,18 @@ import { Order } from '../orders/entities/order.entity';
 import { OrderStatus } from '../orders/enums/order-status.enum';
 import { Product } from '../product/entities/product.entity';
 import { ProductStatus } from '../product/enums/product-status.enum';
+import {
+  LowStockFilter,
+  QueryLowStockDto,
+} from './dto/query-low-stock.dto';
+
+export const LOW_STOCK_THRESHOLD = 5;
 
 const REVENUE_EXCLUDED_STATUSES = [
   OrderStatus.CANCELLED,
   OrderStatus.RETURNED,
 ];
 
-const LOW_STOCK_THRESHOLD = 5;
 const CHART_DAYS = 30;
 
 interface RevenueBucketRow {
@@ -76,7 +81,7 @@ export class DashboardService {
       this.getRevenueChart(),
       this.getRecentOrders(),
       this.getTopProducts(),
-      this.getLowStockProducts(),
+      this.getLowStockProductsPreview(),
       this.getRecentUsers(),
       this.getOrdersByStatus(),
     ]);
@@ -96,6 +101,162 @@ export class DashboardService {
       lowStockProducts,
       recentUsers,
       generatedAt: new Date().toISOString(),
+      lowStockThreshold: LOW_STOCK_THRESHOLD,
+    };
+  }
+
+  async findLowStockProducts(query: QueryLowStockDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const filter = query.filter ?? LowStockFilter.ALL;
+    const search = query.search?.trim();
+
+    const qb = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoin(
+        'product_medias',
+        'media',
+        'media.productId = product.id AND media.isThumbnail = true',
+      )
+      .leftJoin('product.category', 'category')
+      .select([
+        'product.id AS id',
+        'product.name AS name',
+        'product.slug AS slug',
+        'product.sku AS sku',
+        'product.stock AS stock',
+        'product.price AS price',
+        'product.status AS status',
+        'product.manageStock AS "manageStock"',
+        'category.name AS "categoryName"',
+        'media.url AS image',
+      ])
+      .where('product.deletedAt IS NULL')
+      .andWhere('product.manageStock = true')
+      .andWhere('product.isActive = true');
+
+    if (filter === LowStockFilter.OUT) {
+      qb.andWhere('product.stock = 0');
+    } else if (filter === LowStockFilter.LOW) {
+      qb.andWhere('product.stock > 0').andWhere(
+        'product.stock <= :threshold',
+        { threshold: LOW_STOCK_THRESHOLD },
+      );
+    } else {
+      qb.andWhere('product.stock <= :threshold', {
+        threshold: LOW_STOCK_THRESHOLD,
+      });
+    }
+
+    if (search) {
+      qb.andWhere(
+        '(product.name ILIKE :search OR product.sku ILIKE :search)',
+        { search: `%${search}%` },
+      );
+    }
+
+    const countQb = this.productRepository
+      .createQueryBuilder('product')
+      .where('product.deletedAt IS NULL')
+      .andWhere('product.manageStock = true')
+      .andWhere('product.isActive = true');
+
+    if (filter === LowStockFilter.OUT) {
+      countQb.andWhere('product.stock = 0');
+    } else if (filter === LowStockFilter.LOW) {
+      countQb
+        .andWhere('product.stock > 0')
+        .andWhere('product.stock <= :threshold', {
+          threshold: LOW_STOCK_THRESHOLD,
+        });
+    } else {
+      countQb.andWhere('product.stock <= :threshold', {
+        threshold: LOW_STOCK_THRESHOLD,
+      });
+    }
+
+    if (search) {
+      countQb.andWhere(
+        '(product.name ILIKE :search OR product.sku ILIKE :search)',
+        { search: `%${search}%` },
+      );
+    }
+
+    const total = await countQb.getCount();
+
+    const rows = await qb
+      .orderBy('product.stock', 'ASC')
+      .addOrderBy('product.name', 'ASC')
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .getRawMany<{
+        id: string;
+        name: string;
+        slug: string;
+        sku: string;
+        stock: string;
+        price: string;
+        status: string;
+        manageStock: boolean | string;
+        categoryName: string | null;
+        image: string | null;
+      }>();
+
+    const lowCountQb = this.productRepository
+      .createQueryBuilder('product')
+      .where('product.deletedAt IS NULL')
+      .andWhere('product.manageStock = true')
+      .andWhere('product.isActive = true')
+      .andWhere('product.stock > 0')
+      .andWhere('product.stock <= :threshold', {
+        threshold: LOW_STOCK_THRESHOLD,
+      });
+
+    const outCountQb = this.productRepository
+      .createQueryBuilder('product')
+      .where('product.deletedAt IS NULL')
+      .andWhere('product.manageStock = true')
+      .andWhere('product.isActive = true')
+      .andWhere('product.stock = 0');
+
+    if (search) {
+      lowCountQb.andWhere(
+        '(product.name ILIKE :search OR product.sku ILIKE :search)',
+        { search: `%${search}%` },
+      );
+      outCountQb.andWhere(
+        '(product.name ILIKE :search OR product.sku ILIKE :search)',
+        { search: `%${search}%` },
+      );
+    }
+
+    const [lowCount, outCount] = await Promise.all([
+      lowCountQb.getCount(),
+      outCountQb.getCount(),
+    ]);
+
+    return {
+      items: rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        slug: row.slug,
+        sku: row.sku,
+        stock: Number(row.stock ?? 0),
+        price: Number(row.price ?? 0),
+        status: row.status,
+        categoryName: row.categoryName ?? null,
+        image: row.image ?? null,
+        isOutOfStock: Number(row.stock ?? 0) === 0,
+      })),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+        threshold: LOW_STOCK_THRESHOLD,
+        lowCount,
+        outCount,
+      },
     };
   }
 
@@ -510,7 +671,7 @@ export class DashboardService {
     }));
   }
 
-  private async getLowStockProducts() {
+  private async getLowStockProductsPreview() {
     const rows = await this.productRepository
       .createQueryBuilder('product')
       .leftJoin(

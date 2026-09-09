@@ -144,6 +144,19 @@ function onLowStockChange(): void {
 }
 
 onMounted(async () => {
+  const route = useRoute()
+  const querySearch = String(route.query.search ?? '').trim()
+  const queryLowStock = String(route.query.lowStockOnly ?? '')
+
+  if (querySearch) {
+    searchInput.value = querySearch
+    debouncedSearch.value = querySearch
+  }
+
+  if (queryLowStock === '1' || queryLowStock === 'true') {
+    lowStockOnly.value = true
+  }
+
   await Promise.all([fetchCategories(), fetchPricingProducts()])
 })
 

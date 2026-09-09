@@ -6,8 +6,11 @@ import { ProductMedia } from './entities/product-media.entity';
 import { ProductVariant } from './entities/product-variant.entity';
 import { Category } from '../categories/entities/categories.entity';
 import { Brand } from './entities/brand.entity';
+import { Attribute } from './entities/attribute.entity';
+import { AttributeValue } from './entities/attribute-value.entity';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ProductStatus } from './enums/product-status.enum';
+import { StockMovementsService } from './stock-movements.service';
 
 describe('ProductService', () => {
   let service: ProductService;
@@ -77,6 +80,21 @@ describe('ProductService', () => {
           provide: getRepositoryToken(Brand),
           useValue: {
             exists: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(Attribute),
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(AttributeValue),
+          useValue: {},
+        },
+        {
+          provide: StockMovementsService,
+          useValue: {
+            record: jest.fn(),
+            findAll: jest.fn(),
           },
         },
       ],

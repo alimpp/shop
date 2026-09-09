@@ -21,13 +21,13 @@ const numberFormatter = new Intl.NumberFormat('fa-IR')
       </div>
 
       <UButton
-        to="/admin/products"
+        to="/admin/stock"
         color="neutral"
         variant="ghost"
         size="sm"
         trailing-icon="i-lucide-arrow-left"
       >
-        مدیریت
+        مشاهده همه
       </UButton>
     </div>
 

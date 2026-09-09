@@ -185,13 +185,18 @@ onMounted(() => {
               icon="i-lucide-message-circle"
               color="primary"
             />
-            <DashboardStatCard
-              label="موجودی کم / تمام‌شده"
-              :value="numberFormatter.format(data.products.lowStock + data.products.outOfStock)"
-              :hint="`${numberFormatter.format(data.products.outOfStock)} تمام‌شده`"
-              icon="i-lucide-triangle-alert"
-              color="error"
-            />
+            <NuxtLink
+              to="/admin/stock"
+              class="block transition-opacity hover:opacity-90"
+            >
+              <DashboardStatCard
+                label="موجودی کم / تمام‌شده"
+                :value="numberFormatter.format(data.products.lowStock + data.products.outOfStock)"
+                :hint="`${numberFormatter.format(data.products.outOfStock)} تمام‌شده · کلیک برای جزئیات`"
+                icon="i-lucide-triangle-alert"
+                color="error"
+              />
+            </NuxtLink>
           </section>
 
           <section class="grid gap-4 xl:grid-cols-3">

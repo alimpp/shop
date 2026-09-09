@@ -2,7 +2,11 @@ import type { ControllerResponse, ServerResponse } from '~/types/common'
 import { BaseController } from '~/core/BaseController'
 import { DashboardDS } from '../data/index.store'
 import { DashboardService } from '../services/index.service'
-import type { TDashboardData } from '../types/index.type'
+import type {
+  TDashboardData,
+  TLowStockListData,
+  TLowStockListQuery
+} from '../types/index.type'
 
 class DashboardController extends BaseController<DashboardService> {
   constructor() {
@@ -22,6 +26,13 @@ class DashboardController extends BaseController<DashboardService> {
     }
 
     this.dashboardDS.setLoading(false)
+    return this.handleResponse(response)
+  }
+
+  public async getLowStockProducts(
+    query?: TLowStockListQuery
+  ): Promise<ControllerResponse<TLowStockListData>> {
+    const response = await this.service.getLowStockProducts(query)
     return this.handleResponse(response)
   }
 }

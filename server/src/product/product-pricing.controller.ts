@@ -6,14 +6,20 @@ import {
   ParseUUIDPipe,
   Patch,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { QueryPricingProductsDto } from './dto/query-pricing-products.dto';
 import { UpdateProductPricingDto } from './dto/update-product-pricing.dto';
 import { ProductService } from './product.service';
+
+type AuthenticatedRequest = Request & {
+  user: { sub: string; role?: string };
+};
 
 @Controller('admin/products/pricing')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -30,7 +36,8 @@ export class ProductPricingController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateProductPricingDto,
+    @Req() req: AuthenticatedRequest,
   ) {
-    return await this.productService.updatePricing(id, dto);
+    return await this.productService.updatePricing(id, dto, req.user.sub);
   }
 }

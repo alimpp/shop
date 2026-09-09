@@ -8,6 +8,7 @@ import { useFavoritesDS } from '~/features/favorites/data/index.store'
 import { TInteractionTargetType } from '~/features/interactions/types/index.type'
 import type { TProduct, TProductVariant } from '~/features/products/types/index.type'
 import ProductSupportAsk from '~/features/products/components/ProductSupportAsk.vue'
+import PublicProductRail from '~/components/public/PublicProductRail.vue'
 import {
   DEFAULT_ROBOTS,
   NOINDEX_ROBOTS,
@@ -28,11 +29,13 @@ const interactionsDS = useInteractionsDS()
 const favoritesDS = useFavoritesDS()
 const { track } = useBehaviorTracker()
 
-const slug = String(route.params.slug ?? '')
+const slug = computed(() => String(route.params.slug ?? ''))
 
 const product = ref<TProduct | null>(null)
 const loading = ref(true)
 const notFound = ref(false)
+const relatedProducts = ref<TProduct[]>([])
+const relatedLoading = ref(false)
 
 const commentText = ref('')
 const commentsLimit = 10
@@ -261,11 +264,25 @@ function requireLogin(): boolean {
   return true
 }
 
+async function loadRelatedProducts(productId: string): Promise<void> {
+  relatedLoading.value = true
+  const response = await productsController.getRelatedProducts(productId, 12)
+  relatedLoading.value = false
+
+  if (response.success && response.data) {
+    relatedProducts.value = response.data
+    return
+  }
+
+  relatedProducts.value = []
+}
+
 async function loadProduct(): Promise<TProduct | null> {
   loading.value = true
   notFound.value = false
+  relatedProducts.value = []
 
-  const response = await productsController.getProductBySlug(slug)
+  const response = await productsController.getProductBySlug(slug.value)
 
   if (response.success && response.data) {
     product.value = response.data
@@ -277,6 +294,7 @@ async function loadProduct(): Promise<TProduct | null> {
       distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
     })
     applyProductDefaults(response.data)
+    void loadRelatedProducts(response.data.id)
   } else {
     notFound.value = true
     if (import.meta.client) {
@@ -292,9 +310,12 @@ async function loadProduct(): Promise<TProduct | null> {
 }
 
 const { data: ssrProduct, pending: ssrPending } = await useAsyncData(
-  () => `product-${slug}`,
+  () => `product-${slug.value}`,
   () => loadProduct(),
-  { default: () => null }
+  {
+    default: () => null,
+    watch: [slug]
+  }
 )
 
 watchEffect(() => {
@@ -815,6 +836,35 @@ watch(selectedMediaIndex, async (index, previous) => {
         @submit="submitComment"
         @load-more="loadComments(commentsMeta.page + 1)"
       />
+
+      <section
+        v-if="relatedLoading || relatedProducts.length"
+        class="space-y-4"
+      >
+        <div>
+          <h2 class="text-lg font-black text-highlighted sm:text-xl">
+            محصولات مرتبط
+          </h2>
+          <p class="mt-1 text-sm text-toned">
+            پیشنهادهایی از همین دسته و برندهای مشابه
+          </p>
+        </div>
+
+        <div
+          v-if="relatedLoading && !relatedProducts.length"
+          class="flex justify-center py-10"
+        >
+          <UIcon
+            name="i-lucide-loader-2"
+            class="size-6 animate-spin text-primary"
+          />
+        </div>
+
+        <PublicProductRail
+          v-else
+          :products="relatedProducts"
+        />
+      </section>
     </div>
   </div>
 </template>

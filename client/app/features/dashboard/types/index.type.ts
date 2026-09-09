@@ -91,6 +91,37 @@ export interface TDashboardLowStockProduct {
   image: string | null
 }
 
+export type TLowStockFilter = 'all' | 'low' | 'out'
+
+export interface TLowStockItem extends TDashboardLowStockProduct {
+  price: number
+  status: string
+  categoryName: string | null
+  isOutOfStock: boolean
+}
+
+export interface TLowStockListMeta {
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+  threshold: number
+  lowCount: number
+  outCount: number
+}
+
+export interface TLowStockListData {
+  items: TLowStockItem[]
+  meta: TLowStockListMeta
+}
+
+export interface TLowStockListQuery {
+  page?: number
+  limit?: number
+  filter?: TLowStockFilter
+  search?: string
+}
+
 export interface TDashboardRecentUser {
   id: string
   fristname: string

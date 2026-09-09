@@ -98,25 +98,35 @@ export class BlogsPublicService extends BaseApp<TBlogPublicCard> {
     query?: TBlogPublicListQuery
   ): Promise<ServerResponse<TBlogPublicListData>> {
     return this.executeRequest<TBlogPublicListData>(async () => {
-      const response = await this.Get<ServerResponse<TRaw>>('/blogs/public', query)
-      const payload = (response.data ?? {}) as TRaw
-      const items = Array.isArray(payload.data)
-        ? payload.data
-        : Array.isArray(payload.items)
-          ? payload.items
-          : []
+      const response = await this.Get<ServerResponse<TRaw | TRaw[]>>('/blogs/public', query)
+      const payload = response.data as TRaw | TRaw[] | null | undefined
 
-      const meta = (payload.meta ?? {}) as TRaw
+      const items = Array.isArray(payload)
+        ? payload
+        : Array.isArray((payload as TRaw | undefined)?.items)
+          ? ((payload as TRaw).items as TRaw[])
+          : Array.isArray((payload as TRaw | undefined)?.data)
+            ? ((payload as TRaw).data as TRaw[])
+            : []
+
+      const meta = (
+        !Array.isArray(payload) && payload && typeof payload === 'object'
+          ? ((payload.meta as TRaw | undefined) ?? {})
+          : {}
+      ) as TRaw
 
       return {
         ...response,
         data: {
           items: items.map(item => this.normalizeCard(item as TRaw)),
           meta: {
-            total: toNumber(meta.total),
+            total: toNumber(meta.total, items.length),
             page: toNumber(meta.page, 1),
             limit: toNumber(meta.limit, 12),
-            totalPages: toNumber(meta.totalPages)
+            totalPages: toNumber(
+              meta.totalPages,
+              Math.max(1, Math.ceil(items.length / 12))
+            )
           }
         }
       }

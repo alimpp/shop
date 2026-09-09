@@ -20,6 +20,11 @@ import {
 import { DiscountsService } from '../discounts/discounts.service';
 import { ProductVariant } from '../product/entities/product-variant.entity';
 import { Product } from '../product/entities/product.entity';
+import {
+  StockMovementActorType,
+  StockMovementReason,
+} from '../product/enums/stock-movement.enum';
+import { StockMovementsService } from '../product/stock-movements.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { QueryOrdersDto } from './dto/query-orders.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
@@ -30,6 +35,14 @@ import {
   ORDER_STATUS_GUIDANCE,
   ORDER_STATUS_LABELS,
 } from './enums/order-status.enum';
+
+type StockChangeContext = {
+  orderId?: string | null;
+  reason: StockMovementReason;
+  actorType: StockMovementActorType;
+  actorId?: string | null;
+  note?: string | null;
+};
 
 @Injectable()
 export class OrdersService {
@@ -45,6 +58,7 @@ export class OrdersService {
     private readonly paymentsService: PaymentsService,
     private readonly discountsService: DiscountsService,
     private readonly chatService: ChatService,
+    private readonly stockMovementsService: StockMovementsService,
   ) {}
 
   async create(userId: string, dto: CreateOrderDto) {
@@ -147,7 +161,13 @@ export class OrdersService {
         );
 
         await manager.getRepository(OrderItem).save(items);
-        await this.applyStockChange(manager, items, 'decrement');
+        await this.applyStockChange(manager, items, 'decrement', {
+          orderId: persisted.id,
+          reason: StockMovementReason.ORDER_PLACED,
+          actorType: StockMovementActorType.USER,
+          actorId: userId,
+          note: `کاهش موجودی بابت سفارش ${persisted.orderNumber}`,
+        });
         await manager.getRepository(CartItem).delete({ userId });
 
         const payment = await this.paymentsService.createForOrder(manager, {
@@ -271,12 +291,32 @@ export class OrdersService {
         this.isStockHoldingStatus(previousStatus) &&
         this.isStockReleasedStatus(dto.status)
       ) {
-        await this.applyStockChange(manager, items, 'increment');
+        await this.applyStockChange(
+          manager,
+          items,
+          'increment',
+          this.resolveStatusStockContext(
+            id,
+            dto.status,
+            'increment',
+            StockMovementActorType.ADMIN,
+          ),
+        );
       } else if (
         this.isStockReleasedStatus(previousStatus) &&
         this.isStockHoldingStatus(dto.status)
       ) {
-        await this.applyStockChange(manager, items, 'decrement');
+        await this.applyStockChange(
+          manager,
+          items,
+          'decrement',
+          this.resolveStatusStockContext(
+            id,
+            dto.status,
+            'decrement',
+            StockMovementActorType.ADMIN,
+          ),
+        );
       }
 
       locked.status = dto.status;
@@ -439,8 +479,13 @@ export class OrdersService {
 
   private async applyStockChange(
     manager: EntityManager,
-    items: Array<Pick<OrderItem, 'productId' | 'variantId' | 'quantity' | 'productName'>>,
+    items: Array<
+      Pick<OrderItem, 'productId' | 'variantId' | 'quantity' | 'productName'> & {
+        variantSnapshot?: OrderItem['variantSnapshot'];
+      }
+    >,
     direction: 'decrement' | 'increment',
+    context: StockChangeContext,
   ) {
     const multiplier = direction === 'decrement' ? -1 : 1;
 
@@ -455,6 +500,7 @@ export class OrdersService {
           item.productName,
           quantity,
           multiplier,
+          context,
         );
       }
 
@@ -463,11 +509,42 @@ export class OrdersService {
           manager,
           item.variantId,
           item.productName,
+          item.variantSnapshot?.name ?? null,
           quantity,
           multiplier,
+          context,
         );
       }
     }
+  }
+
+  private resolveStatusStockContext(
+    orderId: string,
+    status: OrderStatus,
+    direction: 'increment' | 'decrement',
+    actorType: StockMovementActorType,
+    actorId?: string | null,
+  ): StockChangeContext {
+    if (direction === 'increment') {
+      return {
+        orderId,
+        reason:
+          status === OrderStatus.RETURNED
+            ? StockMovementReason.ORDER_RETURNED
+            : StockMovementReason.ORDER_CANCELLED,
+        actorType,
+        actorId,
+        note: `بازگشت موجودی بابت تغییر وضعیت سفارش به ${status}`,
+      };
+    }
+
+    return {
+      orderId,
+      reason: StockMovementReason.ORDER_RESTOCKED,
+      actorType,
+      actorId,
+      note: `کاهش مجدد موجودی بابت بازگشت سفارش به وضعیت ${status}`,
+    };
   }
 
   private async adjustProductStock(
@@ -476,6 +553,7 @@ export class OrdersService {
     productName: string,
     quantity: number,
     multiplier: number,
+    context: StockChangeContext,
   ) {
     const product = await manager.findOne(Product, {
       where: { id: productId },
@@ -490,28 +568,48 @@ export class OrdersService {
       return;
     }
 
-    const nextStock = Number(product.stock ?? 0) + quantity * multiplier;
+    const stockBefore = Number(product.stock ?? 0);
+    const nextStock = stockBefore + quantity * multiplier;
 
     if (multiplier < 0 && !product.allowBackorder && nextStock < 0) {
       throw new BadRequestException(
-        `موجودی محصول «${productName}» کافی نیست. موجودی فعلی ${Number(product.stock ?? 0).toLocaleString('fa-IR')} و تعداد درخواستی ${quantity.toLocaleString('fa-IR')} است.`,
+        `موجودی محصول «${productName}» کافی نیست. موجودی فعلی ${stockBefore.toLocaleString('fa-IR')} و تعداد درخواستی ${quantity.toLocaleString('fa-IR')} است.`,
       );
     }
 
-    product.stock = Math.max(0, nextStock);
+    const stockAfter = Math.max(0, nextStock);
+    product.stock = stockAfter;
     product.soldCount = Math.max(
       0,
       Number(product.soldCount ?? 0) + quantity * (multiplier < 0 ? 1 : -1),
     );
     await manager.save(Product, product);
+
+    await this.stockMovementsService.record(
+      {
+        productId,
+        productName,
+        orderId: context.orderId,
+        quantityChange: stockAfter - stockBefore,
+        stockBefore,
+        stockAfter,
+        reason: context.reason,
+        actorType: context.actorType,
+        actorId: context.actorId,
+        note: context.note,
+      },
+      manager,
+    );
   }
 
   private async adjustVariantStock(
     manager: EntityManager,
     variantId: string,
     productName: string,
+    variantName: string | null,
     quantity: number,
     multiplier: number,
+    context: StockChangeContext,
   ) {
     const variant = await manager.findOne(ProductVariant, {
       where: { id: variantId },
@@ -528,16 +626,36 @@ export class OrdersService {
       return;
     }
 
-    const nextStock = Number(variant.stock ?? 0) + quantity * multiplier;
+    const stockBefore = Number(variant.stock ?? 0);
+    const nextStock = stockBefore + quantity * multiplier;
 
     if (multiplier < 0 && !variant.allowBackorder && nextStock < 0) {
       throw new BadRequestException(
-        `موجودی واریانت «${variant.name}» از محصول «${productName}» کافی نیست. موجودی فعلی ${Number(variant.stock ?? 0).toLocaleString('fa-IR')} و تعداد درخواستی ${quantity.toLocaleString('fa-IR')} است.`,
+        `موجودی واریانت «${variant.name}» از محصول «${productName}» کافی نیست. موجودی فعلی ${stockBefore.toLocaleString('fa-IR')} و تعداد درخواستی ${quantity.toLocaleString('fa-IR')} است.`,
       );
     }
 
-    variant.stock = Math.max(0, nextStock);
+    const stockAfter = Math.max(0, nextStock);
+    variant.stock = stockAfter;
     await manager.save(ProductVariant, variant);
+
+    await this.stockMovementsService.record(
+      {
+        productId: variant.productId,
+        variantId,
+        productName,
+        variantName: variantName || variant.name,
+        orderId: context.orderId,
+        quantityChange: stockAfter - stockBefore,
+        stockBefore,
+        stockAfter,
+        reason: context.reason,
+        actorType: context.actorType,
+        actorId: context.actorId,
+        note: context.note,
+      },
+      manager,
+    );
   }
 
   private statusNotification(status: OrderStatus, orderNumber: string) {
@@ -619,12 +737,34 @@ export class OrdersService {
         this.isStockHoldingStatus(previousStatus) &&
         this.isStockReleasedStatus(dto.status)
       ) {
-        await this.applyStockChange(manager, items, 'increment');
+        await this.applyStockChange(
+          manager,
+          items,
+          'increment',
+          this.resolveStatusStockContext(
+            id,
+            dto.status,
+            'increment',
+            StockMovementActorType.USER,
+            userId,
+          ),
+        );
       } else if (
         this.isStockReleasedStatus(previousStatus) &&
         this.isStockHoldingStatus(dto.status)
       ) {
-        await this.applyStockChange(manager, items, 'decrement');
+        await this.applyStockChange(
+          manager,
+          items,
+          'decrement',
+          this.resolveStatusStockContext(
+            id,
+            dto.status,
+            'decrement',
+            StockMovementActorType.USER,
+            userId,
+          ),
+        );
       }
 
       locked.status = dto.status;

@@ -6,6 +6,8 @@ import type {
   TDiscountListData,
   TDiscountListQuery,
   TDiscountPayload,
+  TDiscountUsageDetail,
+  TDiscountUsageReport,
   TValidateDiscountPayload,
   TValidateDiscountResult
 } from '../types/index.type'
@@ -27,6 +29,16 @@ class DiscountsController extends BaseController<DiscountsService> {
     const response: ServerResponse<TDiscountListData>
       = await this.service.getDiscounts(query)
     return this.handleResponse(response)
+  }
+
+  public async getUsageReport(): Promise<ControllerResponse<TDiscountUsageReport>> {
+    return this.handleResponse(await this.service.getUsageReport())
+  }
+
+  public async getUsageDetail(
+    id: string
+  ): Promise<ControllerResponse<TDiscountUsageDetail>> {
+    return this.handleResponse(await this.service.getUsageDetail(id))
   }
 
   public async createDiscount(

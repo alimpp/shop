@@ -23,6 +23,11 @@ import { Product } from './entities/product.entity';
 import { MediaType } from './enums/media-type.enum';
 import { ProductStatus } from './enums/product-status.enum';
 import { ProductVisibility } from './enums/product-visibility.enum';
+import {
+  StockMovementActorType,
+  StockMovementReason,
+} from './enums/stock-movement.enum';
+import { StockMovementsService } from './stock-movements.service';
 
 @Injectable()
 export class ProductService {
@@ -55,6 +60,8 @@ export class ProductService {
 
     @InjectRepository(AttributeValue)
     private readonly attributeValueRepository: Repository<AttributeValue>,
+
+    private readonly stockMovementsService: StockMovementsService,
   ) {}
 
   async create(dto: CreateProductDto): Promise<Product> {
@@ -359,6 +366,79 @@ export class ProductService {
     return this.findLatestPublicProducts(safeLimit);
   }
 
+  async findRelated(productId: string, limit = 8) {
+    const safeLimit = Math.min(Math.max(Number(limit) || 8, 1), 24);
+
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+      select: ['id', 'categoryId', 'brandId'],
+    });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    const relatedQb = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.medias', 'medias')
+      .leftJoinAndSelect('product.variants', 'variants')
+      .where('product.deletedAt IS NULL')
+      .andWhere('product.isActive = true')
+      .andWhere('product.status = :status', { status: ProductStatus.PUBLISHED })
+      .andWhere('product.visibility = :visibility', {
+        visibility: ProductVisibility.PUBLIC,
+      })
+      .andWhere('product.id != :productId', { productId })
+      .andWhere('product.categoryId = :categoryId', {
+        categoryId: product.categoryId,
+      });
+
+    if (product.brandId) {
+      relatedQb
+        .addSelect(
+          `CASE WHEN product.brandId = :brandId THEN 0 ELSE 1 END`,
+          'brand_rank',
+        )
+        .setParameter('brandId', product.brandId)
+        .orderBy('brand_rank', 'ASC')
+        .addOrderBy('product.soldCount', 'DESC')
+        .addOrderBy('product.createdAt', 'DESC');
+    } else {
+      relatedQb
+        .orderBy('product.soldCount', 'DESC')
+        .addOrderBy('product.createdAt', 'DESC');
+    }
+
+    const related = await relatedQb.take(safeLimit).getMany();
+
+    if (related.length >= safeLimit) {
+      return related;
+    }
+
+    const excludeIds = [productId, ...related.map((item) => item.id)];
+    const fillers = await this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.medias', 'medias')
+      .leftJoinAndSelect('product.variants', 'variants')
+      .where('product.deletedAt IS NULL')
+      .andWhere('product.isActive = true')
+      .andWhere('product.status = :status', { status: ProductStatus.PUBLISHED })
+      .andWhere('product.visibility = :visibility', {
+        visibility: ProductVisibility.PUBLIC,
+      })
+      .andWhere('product.id NOT IN (:...excludeIds)', { excludeIds })
+      .orderBy('product.soldCount', 'DESC')
+      .addOrderBy('product.createdAt', 'DESC')
+      .take(safeLimit - related.length)
+      .getMany();
+
+    return [...related, ...fillers];
+  }
+
   private async findLatestPublicProducts(limit: number) {
     return this.productRepository
       .createQueryBuilder('product')
@@ -631,7 +711,7 @@ export class ProductService {
     return product;
   }
 
-  async update(id: string, dto: UpdateProductDto) {
+  async update(id: string, dto: UpdateProductDto, actorId?: string) {
     const existingProduct = await this.productRepository.findOne({
       where: { id },
     });
@@ -675,6 +755,7 @@ export class ProductService {
     await this.ensureUniqueVariantSkus(dto.variants, id);
 
     const { medias, variants, options, ...productData } = dto;
+    const stockBefore = Number(existingProduct.stock ?? 0);
 
     await this.productRepository.manager.transaction(async (manager) => {
       if (Object.keys(productData).length > 0) {
@@ -703,6 +784,25 @@ export class ProductService {
           options,
           manager.getRepository(ProductOption),
           manager.getRepository(ProductOptionValue),
+        );
+      }
+
+      if (typeof dto.stock === 'number' || typeof variants !== 'undefined') {
+        const refreshed = await manager.findOne(Product, { where: { id } });
+        const stockAfter = Number(refreshed?.stock ?? stockBefore);
+        await this.stockMovementsService.record(
+          {
+            productId: id,
+            productName: existingProduct.name,
+            quantityChange: stockAfter - stockBefore,
+            stockBefore,
+            stockAfter,
+            reason: StockMovementReason.ADMIN_UPDATE,
+            actorType: StockMovementActorType.ADMIN,
+            actorId: actorId ?? null,
+            note: 'ویرایش موجودی از فرم محصول',
+          },
+          manager,
         );
       }
     });
@@ -786,7 +886,11 @@ export class ProductService {
     return this.mapProductToPricingItem(product);
   }
 
-  async updatePricing(id: string, dto: UpdateProductPricingDto) {
+  async updatePricing(
+    id: string,
+    dto: UpdateProductPricingDto,
+    actorId?: string,
+  ) {
     const product = await this.productRepository.findOne({
       where: { id },
     });
@@ -806,6 +910,8 @@ export class ProductService {
         : Number(nextSalePrice),
       'محصول',
     );
+
+    const productStockBefore = Number(product.stock ?? 0);
 
     await this.productRepository.manager.transaction(async (manager) => {
       const variantRepo = manager.getRepository(ProductVariant);
@@ -835,7 +941,24 @@ export class ProductService {
           }
 
           if (typeof patch.stock === 'number') {
+            const variantStockBefore = Number(variant.stock ?? 0);
             variant.stock = patch.stock;
+            await this.stockMovementsService.record(
+              {
+                productId: id,
+                variantId: variant.id,
+                productName: product.name,
+                variantName: variant.name,
+                quantityChange: patch.stock - variantStockBefore,
+                stockBefore: variantStockBefore,
+                stockAfter: patch.stock,
+                reason: StockMovementReason.ADMIN_PRICING,
+                actorType: StockMovementActorType.ADMIN,
+                actorId: actorId ?? null,
+                note: 'تغییر موجودی از قیمت‌گذاری',
+              },
+              manager,
+            );
           }
 
           this.ensureValidSalePrice(
@@ -887,6 +1010,45 @@ export class ProductService {
 
       if (Object.keys(productUpdate).length > 0) {
         await manager.update(Product, id, productUpdate);
+      }
+
+      if (
+        (typeof dto.stock === 'number' || dto.variants?.length) &&
+        nextStock !== productStockBefore &&
+        !dto.variants?.some((item) => typeof item.stock === 'number')
+      ) {
+        await this.stockMovementsService.record(
+          {
+            productId: id,
+            productName: product.name,
+            quantityChange: nextStock - productStockBefore,
+            stockBefore: productStockBefore,
+            stockAfter: nextStock,
+            reason: StockMovementReason.ADMIN_PRICING,
+            actorType: StockMovementActorType.ADMIN,
+            actorId: actorId ?? null,
+            note: 'تغییر موجودی محصول از قیمت‌گذاری',
+          },
+          manager,
+        );
+      } else if (
+        dto.variants?.some((item) => typeof item.stock === 'number') &&
+        nextStock !== productStockBefore
+      ) {
+        await this.stockMovementsService.record(
+          {
+            productId: id,
+            productName: product.name,
+            quantityChange: nextStock - productStockBefore,
+            stockBefore: productStockBefore,
+            stockAfter: nextStock,
+            reason: StockMovementReason.ADMIN_PRICING,
+            actorType: StockMovementActorType.ADMIN,
+            actorId: actorId ?? null,
+            note: 'همگام‌سازی موجودی محصول با واریانت‌ها',
+          },
+          manager,
+        );
       }
     });
 

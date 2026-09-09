@@ -158,13 +158,19 @@ export class BlogService {
   }
 
   async findAllPublic(query: QueryBlogDto) {
-    return this.findAll({
+    const result = await this.findAll({
       ...query,
       status: BlogStatus.PUBLISHED,
       isActive: true,
       sortBy: query.sortBy ?? 'publishedAt',
       sortOrder: query.sortOrder ?? 'DESC',
     });
+
+    // Use `items` (not `data`) so ResponseInterceptor keeps meta pagination.
+    return {
+      items: result.data.map((blog) => this.mapPublicBlogCard(blog)),
+      meta: result.meta,
+    };
   }
 
   async findBySlug(slug: string) {
@@ -205,15 +211,26 @@ export class BlogService {
   }
 
   private async findRelatedBlogs(excludeId: string, limit = 4) {
-    return this.blogRepository
+    const rows = await this.blogRepository
       .createQueryBuilder('blog')
+      .select('blog.id', 'id')
       .where('blog.deletedAt IS NULL')
       .andWhere('blog.status = :status', { status: BlogStatus.PUBLISHED })
       .andWhere('blog.isActive = true')
       .andWhere('blog.id != :excludeId', { excludeId })
       .orderBy('RANDOM()')
       .take(limit)
-      .getMany();
+      .getRawMany<{ id: string }>();
+
+    const ids = rows.map((row) => row.id).filter(Boolean);
+    if (!ids.length) return [];
+
+    const blogs = await this.blogRepository.find({
+      where: { id: In(ids) },
+    });
+
+    const byId = new Map(blogs.map((blog) => [blog.id, blog]));
+    return ids.map((id) => byId.get(id)).filter((blog): blog is Blog => !!blog);
   }
 
   private async enrichBlogProducts(blog: Blog): Promise<Product[]> {
@@ -225,11 +242,12 @@ export class BlogService {
     }
 
     const excludeIds = linked.map((product) => product.id);
-    const qb = this.productRepository
+    const needed = targetCount - linked.length;
+
+    // Select IDs first — ORDER BY RANDOM() with joins fails on Postgres DISTINCT.
+    const idQb = this.productRepository
       .createQueryBuilder('product')
-      .leftJoinAndSelect('product.medias', 'medias')
-      .leftJoinAndSelect('product.brand', 'brand')
-      .leftJoinAndSelect('product.category', 'category')
+      .select('product.id', 'id')
       .where('product.deletedAt IS NULL')
       .andWhere('product.status = :status', {
         status: ProductStatus.PUBLISHED,
@@ -237,12 +255,31 @@ export class BlogService {
       .andWhere('product.isActive = true');
 
     if (excludeIds.length > 0) {
-      qb.andWhere('product.id NOT IN (:...excludeIds)', { excludeIds });
+      idQb.andWhere('product.id NOT IN (:...excludeIds)', { excludeIds });
     }
 
-    const extra = await qb.orderBy('RANDOM()').take(targetCount - linked.length).getMany();
+    const rows = await idQb.orderBy('RANDOM()').take(needed).getRawMany<{ id: string }>();
+    const ids = rows.map((row) => row.id).filter(Boolean);
 
-    return [...linked, ...extra];
+    if (!ids.length) {
+      return linked.slice(0, targetCount);
+    }
+
+    const extras = await this.productRepository.find({
+      where: { id: In(ids) },
+      relations: {
+        medias: true,
+        brand: true,
+        category: true,
+      },
+    });
+
+    const byId = new Map(extras.map((product) => [product.id, product]));
+    const orderedExtras = ids
+      .map((id) => byId.get(id))
+      .filter((product): product is Product => !!product);
+
+    return [...linked, ...orderedExtras].slice(0, targetCount);
   }
 
   private mapPublicBlogCard(blog: Blog) {

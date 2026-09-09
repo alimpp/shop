@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
+import { Order } from '../orders/entities/order.entity';
 import { CreateDiscountCodeDto } from './dto/create-discount-code.dto';
 import { QueryDiscountCodesDto } from './dto/query-discount-codes.dto';
 import { UpdateDiscountCodeDto } from './dto/update-discount-code.dto';
@@ -16,6 +17,9 @@ export class DiscountsService {
   constructor(
     @InjectRepository(DiscountCode)
     private readonly discountRepository: Repository<DiscountCode>,
+
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
   ) {}
 
   async create(dto: CreateDiscountCodeDto) {
@@ -62,8 +66,13 @@ export class DiscountsService {
     }
 
     const [items, total] = await qb.getManyAndCount();
+    const usageMap = await this.getUsageMap(items.map((item) => item.id));
+
     return {
-      items: items.map((item) => this.toResponse(item)),
+      items: items.map((item) => ({
+        ...this.toResponse(item),
+        usage: usageMap.get(item.id) ?? this.emptyUsage(),
+      })),
       meta: {
         total,
         page,
@@ -76,7 +85,73 @@ export class DiscountsService {
   async findOne(id: string) {
     const item = await this.discountRepository.findOne({ where: { id } });
     if (!item) throw new NotFoundException('کد تخفیف یافت نشد');
-    return this.toResponse(item);
+    const usageMap = await this.getUsageMap([id]);
+    return {
+      ...this.toResponse(item),
+      usage: usageMap.get(id) ?? this.emptyUsage(),
+    };
+  }
+
+  async getUsageReport() {
+    const discounts = await this.discountRepository.find({
+      order: { createdAt: 'DESC' },
+    });
+    const usageMap = await this.getUsageMap(discounts.map((item) => item.id));
+
+    const items = discounts.map((item) => {
+      const usage = usageMap.get(item.id) ?? this.emptyUsage();
+      return {
+        ...this.toResponse(item),
+        usage,
+      };
+    });
+
+    const summary = items.reduce(
+      (acc, item) => {
+        acc.codesCount += 1;
+        acc.totalUses += item.usage.ordersCount;
+        acc.totalDiscountAmount += item.usage.totalDiscountAmount;
+        acc.totalPaidAmount += item.usage.totalPaidAmount;
+        acc.totalSubtotalAmount += item.usage.totalSubtotalAmount;
+        return acc;
+      },
+      {
+        codesCount: 0,
+        totalUses: 0,
+        totalDiscountAmount: 0,
+        totalPaidAmount: 0,
+        totalSubtotalAmount: 0,
+      },
+    );
+
+    return { summary, items };
+  }
+
+  async getUsageDetail(id: string) {
+    const discount = await this.discountRepository.findOne({ where: { id } });
+    if (!discount) throw new NotFoundException('کد تخفیف یافت نشد');
+
+    const orders = await this.orderRepository.find({
+      where: { discountCodeId: id },
+      order: { created_at: 'DESC' },
+      take: 100,
+    });
+
+    const usage = (await this.getUsageMap([id])).get(id) ?? this.emptyUsage();
+
+    return {
+      ...this.toResponse(discount),
+      usage,
+      orders: orders.map((order) => ({
+        id: order.id,
+        orderNumber: order.orderNumber,
+        status: order.status,
+        subtotalAmount: this.toNumber(order.subtotalAmount),
+        discountAmount: this.toNumber(order.discountAmount),
+        paidAmount: this.toNumber(order.paidAmount),
+        createdAt: order.created_at,
+      })),
+    };
   }
 
   async update(id: string, dto: UpdateDiscountCodeDto) {
@@ -174,6 +249,57 @@ export class DiscountsService {
       discount,
       discountAmount,
       payableAmount: Math.max(0, cartTotal - discountAmount),
+    };
+  }
+
+  private async getUsageMap(ids: string[]) {
+    const map = new Map<
+      string,
+      {
+        ordersCount: number;
+        totalDiscountAmount: number;
+        totalPaidAmount: number;
+        totalSubtotalAmount: number;
+      }
+    >();
+
+    if (!ids.length) return map;
+
+    const rows = await this.orderRepository
+      .createQueryBuilder('order')
+      .select('order.discountCodeId', 'discountCodeId')
+      .addSelect('COUNT(order.id)', 'ordersCount')
+      .addSelect('COALESCE(SUM(order.discountAmount), 0)', 'totalDiscountAmount')
+      .addSelect('COALESCE(SUM(order.paidAmount), 0)', 'totalPaidAmount')
+      .addSelect('COALESCE(SUM(order.subtotalAmount), 0)', 'totalSubtotalAmount')
+      .where('order.discountCodeId IN (:...ids)', { ids })
+      .groupBy('order.discountCodeId')
+      .getRawMany<{
+        discountCodeId: string;
+        ordersCount: string;
+        totalDiscountAmount: string;
+        totalPaidAmount: string;
+        totalSubtotalAmount: string;
+      }>();
+
+    for (const row of rows) {
+      map.set(row.discountCodeId, {
+        ordersCount: Number(row.ordersCount) || 0,
+        totalDiscountAmount: this.toNumber(row.totalDiscountAmount),
+        totalPaidAmount: this.toNumber(row.totalPaidAmount),
+        totalSubtotalAmount: this.toNumber(row.totalSubtotalAmount),
+      });
+    }
+
+    return map;
+  }
+
+  private emptyUsage() {
+    return {
+      ordersCount: 0,
+      totalDiscountAmount: 0,
+      totalPaidAmount: 0,
+      totalSubtotalAmount: 0,
     };
   }
 

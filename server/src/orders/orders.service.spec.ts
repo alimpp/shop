@@ -36,6 +36,9 @@ describe('OrdersService (critical)', () => {
     findOrCreateSupportChatForUser: jest.fn(),
     sendMessage: jest.fn(),
   };
+  const stockMovementsService = {
+    record: jest.fn(),
+  };
 
   let service: OrdersService;
 
@@ -50,6 +53,7 @@ describe('OrdersService (critical)', () => {
       paymentsService as any,
       discountsService as any,
       chatService as any,
+      stockMovementsService as any,
     );
   });
 

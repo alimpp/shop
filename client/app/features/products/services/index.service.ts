@@ -398,6 +398,27 @@ export class ProductsService extends BaseApp<TProduct> {
     })
   }
 
+  public async getRelatedProducts(
+    productId: string,
+    limit = 8
+  ): Promise<ServerResponse<TProduct[]>> {
+    return this.executeRequest<TProduct[]>(async () => {
+      const response = await this.Get<ServerResponse<TRawProduct[]>>(
+        `/products/${productId}/related`,
+        { limit }
+      )
+
+      const items = Array.isArray(response.data)
+        ? response.data.map(item => this.normalizeProduct(item))
+        : []
+
+      return {
+        ...response,
+        data: items
+      }
+    })
+  }
+
   public async suggest(
     q: string,
     limit = 8

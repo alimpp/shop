@@ -6,6 +6,7 @@ import { ChatModule } from '../chat/chat.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { PaymentsModule } from '../payments/payments.module';
 import { DiscountsModule } from '../discounts/discounts.module';
+import { ProductModule } from '../product/product.module';
 import { ProductVariant } from '../product/entities/product-variant.entity';
 import { Product } from '../product/entities/product.entity';
 import { OrderItem } from './entities/order-item.entity';
@@ -22,6 +23,7 @@ import { OrdersService } from './orders.service';
     PaymentsModule,
     DiscountsModule,
     ChatModule,
+    ProductModule,
   ],
   controllers: [OrdersController],
   providers: [OrdersService],
