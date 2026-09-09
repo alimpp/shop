@@ -261,7 +261,6 @@ watch(search, () => {
           v-model:open="detailOpen"
           :loading="detailLoading"
           :order="selectedOrder"
-          enable-tracking
           @after-leave="resetDetailState"
         />
       </BaseDashboardPanelBody>

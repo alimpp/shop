@@ -136,13 +136,3 @@ export interface TCreateOrderPayload {
 export interface TUpdateOrderStatusPayload {
   status: TOrderStatus
 }
-
-export interface TOrderTrackingPreview {
-  content: string
-}
-
-export interface TOrderTrackingResult {
-  chatId: string
-  content: string
-  message?: unknown
-}

@@ -8,8 +8,6 @@ import type {
   TOrder,
   TOrderListData,
   TOrderListQuery,
-  TOrderTrackingPreview,
-  TOrderTrackingResult,
   TUpdateOrderStatusPayload
 } from '../types/index.type'
 
@@ -124,22 +122,6 @@ class OrdersController extends BaseController<OrdersService> {
       this.ordersDS.setSelectedOrder(response.data)
     }
 
-    this.ordersDS.setSubmitting(false)
-    return this.handleResponse(response)
-  }
-
-  public async getAdminOrderTrackingPreview(
-    id: string
-  ): Promise<ControllerResponse<TOrderTrackingPreview>> {
-    const response = await this.service.getAdminOrderTrackingPreview(id)
-    return this.handleResponse(response)
-  }
-
-  public async sendAdminOrderTracking(
-    id: string
-  ): Promise<ControllerResponse<TOrderTrackingResult>> {
-    this.ordersDS.setSubmitting(true)
-    const response = await this.service.sendAdminOrderTracking(id)
     this.ordersDS.setSubmitting(false)
     return this.handleResponse(response)
   }

@@ -106,3 +106,40 @@ export function buildProductSupportMessage(
 ): string {
   return `${productName.trim()}\n${productUrl.trim()}\nراجع به این محصول من رو راهنمایی می‌کنی؟`;
 }
+
+export function buildOrderSupportMessage(params: {
+  orderNumber: string;
+  orderId: string;
+  statusLabel: string;
+  orderUrl: string;
+  paidAmount?: number;
+  formattedDate?: string;
+  itemCount?: number;
+}): string {
+  const lines = [
+    `پیگیری سفارش ${params.orderNumber.trim()}`,
+    params.orderUrl.trim(),
+    `شناسه سفارش: ${params.orderId.trim()}`,
+    `وضعیت فعلی سفارش من: ${params.statusLabel.trim()}`,
+  ];
+
+  if (params.formattedDate?.trim()) {
+    lines.push(`تاریخ ثبت: ${params.formattedDate.trim()}`);
+  }
+
+  if (typeof params.paidAmount === "number") {
+    lines.push(
+      `مبلغ پرداختی: ${params.paidAmount.toLocaleString("fa-IR")} تومان`
+    );
+  }
+
+  if (typeof params.itemCount === "number") {
+    lines.push(
+      `تعداد اقلام: ${params.itemCount.toLocaleString("fa-IR")}`
+    );
+  }
+
+  lines.push("وضعیت این سفارش رو برام پیگیری می‌کنی؟");
+  return lines.join("\n");
+}
+

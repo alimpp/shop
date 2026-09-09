@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ordersController } from '~/features/orders/controllers/index.controller'
+import { chatController } from '~/features/chat/controllers/index.controller'
+import { useChatDS } from '~/features/chat/data/index.store'
+import { buildOrderSupportMessage } from '~/features/chat/types/index.type'
 import type { OrderModel } from '~/features/orders/models/index.model'
 import {
   ORDER_STATUS_COLORS,
@@ -11,51 +13,62 @@ const props = defineProps<{
 }>()
 
 const toast = useToast()
-const open = ref(false)
-const loadingPreview = ref(false)
-const sending = ref(false)
-const previewContent = ref('')
+const chatDS = useChatDS()
+const token = useCookie<string | null>('token')
+const requestURL = useRequestURL()
 
-const previewLines = computed(() =>
-  previewContent.value ? previewContent.value.split('\n') : []
+const open = ref(false)
+const sending = computed(() => chatDS.getSending)
+
+const orderUrl = computed(() => {
+  const path = `/profile/orders/${props.order.id}`
+  if (import.meta.client) {
+    return `${window.location.origin}${path}`
+  }
+  return `${requestURL.origin}${path}`
+})
+
+const statusLabel = computed(
+  () => ORDER_STATUS_LABELS[props.order.status] ?? props.order.status
 )
 
-async function openModal(): Promise<void> {
-  open.value = true
-  loadingPreview.value = true
-  previewContent.value = ''
+const preparedMessage = computed(() =>
+  buildOrderSupportMessage({
+    orderNumber: props.order.orderNumber,
+    orderId: props.order.id,
+    statusLabel: statusLabel.value,
+    orderUrl: orderUrl.value,
+    paidAmount: props.order.paidAmount,
+    formattedDate: props.order.formattedDate,
+    itemCount: props.order.itemCount
+  })
+)
 
-  const response = await ordersController.getAdminOrderTrackingPreview(
-    props.order.id
-  )
+const previewLines = computed(() => preparedMessage.value.split('\n'))
 
-  loadingPreview.value = false
-
-  if (!response.success || !response.data?.content) {
-    toast.add({
-      title: response.message || 'دریافت پیش‌نمایش پیام ناموفق بود',
-      color: 'error'
-    })
-    open.value = false
-    return
-  }
-
-  previewContent.value = response.data.content
+function requireLogin(): boolean {
+  if (token.value) return true
+  toast.add({
+    title: 'برای پیگیری سفارش ابتدا وارد حساب شوید',
+    color: 'warning'
+  })
+  navigateTo('/auth/login-by-phone')
+  return false
 }
 
-async function confirmSend(): Promise<void> {
+function openModal(): void {
+  if (!requireLogin()) return
+  open.value = true
+}
+
+async function confirmAsk(): Promise<void> {
   if (sending.value) return
-  sending.value = true
 
-  const response = await ordersController.sendAdminOrderTracking(
-    props.order.id
-  )
+  const response = await chatController.sendProductInquiry(preparedMessage.value)
 
-  sending.value = false
-
-  if (!response.success || !response.data?.chatId) {
+  if (!response.success) {
     toast.add({
-      title: response.message || 'ارسال پیگیری سفارش ناموفق بود',
+      title: response.message || 'ارسال پیام به پشتیبانی ناموفق بود',
       color: 'error'
     })
     return
@@ -63,16 +76,16 @@ async function confirmSend(): Promise<void> {
 
   open.value = false
   toast.add({
-    title: 'پیام پیگیری برای مشتری ارسال شد',
-    description: 'در چت پشتیبانی قابل مشاهده است',
+    title: 'پیام برای پشتیبانی ارسال شد',
+    description: 'منتظر پاسخ ادمین بمانید',
     color: 'success'
   })
-  await navigateTo(`/admin/chat/${response.data.chatId}`)
+  await navigateTo('/profile/support')
 }
 </script>
 
 <template>
-  <div class="mt-2">
+  <div class="mt-6 border-t border-default pt-5">
     <button
       type="button"
       class="group flex w-full items-center justify-between gap-4 rounded-2xl bg-gradient-to-l from-primary/10 via-elevated to-transparent px-4 py-3.5 text-right ring-1 ring-primary/15 transition-all hover:ring-primary/40"
@@ -81,7 +94,7 @@ async function confirmSend(): Promise<void> {
       <span class="flex min-w-0 items-center gap-3">
         <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
           <UIcon
-            name="i-lucide-radar"
+            name="i-lucide-message-circle-question"
             class="size-5"
           />
         </span>
@@ -90,7 +103,7 @@ async function confirmSend(): Promise<void> {
             پیگیری سفارش
           </span>
           <span class="mt-0.5 block text-xs leading-5 text-toned">
-            ارسال گزارش وضعیت سفارش به چت پشتیبانی مشتری
+            از پشتیبانی بخواه وضعیت این سفارش را پیگیری کند
           </span>
         </span>
       </span>
@@ -104,7 +117,6 @@ async function confirmSend(): Promise<void> {
   <UModal
     v-model:open="open"
     title="پیگیری سفارش"
-    :description="order.orderNumber"
     :ui="{ content: 'sm:max-w-lg' }"
   >
     <template #body>
@@ -125,10 +137,10 @@ async function confirmSend(): Promise<void> {
               variant="subtle"
               size="sm"
             >
-              {{ ORDER_STATUS_LABELS[order.status] }}
+              {{ statusLabel }}
             </UBadge>
             <p class="text-xs leading-6 text-toned">
-              پیش‌نمایش پیام زیر برای مشتری در چت پشتیبانی ارسال می‌شود.
+              می‌خوای پشتیبانی وضعیت این سفارش رو برات پیگیری کنه؟
             </p>
           </div>
         </div>
@@ -137,23 +149,21 @@ async function confirmSend(): Promise<void> {
           <p class="mb-3 text-[11px] font-bold tracking-wide text-toned">
             پیش‌نمایش پیام ارسالی
           </p>
-
-          <div
-            v-if="loadingPreview"
-            class="flex justify-center py-8"
-          >
-            <UIcon
-              name="i-lucide-loader-2"
-              class="size-6 animate-spin text-primary"
-            />
-          </div>
-
-          <div
-            v-else
-            class="max-h-72 space-y-1 overflow-y-auto rounded-2xl rounded-bl-md bg-primary px-4 py-3 text-sm leading-7 text-white"
-          >
+          <div class="space-y-1 rounded-2xl rounded-bl-md bg-primary px-4 py-3 text-sm leading-7 text-white">
+            <p class="font-bold">
+              {{ previewLines[0] }}
+            </p>
+            <a
+              class="mt-1 block break-all text-xs text-white/85 underline underline-offset-4"
+              :href="orderUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              @click.stop
+            >
+              {{ previewLines[1] }}
+            </a>
             <p
-              v-for="(line, index) in previewLines"
+              v-for="(line, index) in previewLines.slice(2)"
               :key="index"
               :class="line.trim() ? '' : 'h-3'"
             >
@@ -163,7 +173,7 @@ async function confirmSend(): Promise<void> {
         </div>
 
         <p class="text-xs leading-6 text-muted">
-          بعد از تایید، پیام بالا برای مشتری ارسال می‌شود و اعلان پیگیری هم ثبت می‌گردد.
+          بعد از تایید، پیام بالا برای پشتیبانی ارسال می‌شود و به صفحه چت می‌روید تا منتظر پاسخ ادمین بمانید.
         </p>
       </div>
     </template>
@@ -182,8 +192,7 @@ async function confirmSend(): Promise<void> {
           color="primary"
           icon="i-lucide-send"
           :loading="sending"
-          :disabled="loadingPreview || !previewContent"
-          @click="confirmSend"
+          @click="confirmAsk"
         >
           تایید و ارسال
         </UButton>

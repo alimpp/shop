@@ -5,8 +5,6 @@ import type {
   TOrder,
   TOrderListData,
   TOrderListQuery,
-  TOrderTrackingPreview,
-  TOrderTrackingResult,
   TUpdateOrderStatusPayload
 } from '../types/index.type'
 
@@ -204,27 +202,6 @@ export class OrdersService extends BaseApp<TOrder> {
         ...response,
         data: this.normalizeOrder(response.data ?? {})
       }
-    })
-  }
-
-  public async getAdminOrderTrackingPreview(
-    id: string
-  ): Promise<ServerResponse<TOrderTrackingPreview>> {
-    return this.executeRequest<TOrderTrackingPreview>(async () => {
-      return await this.Get<ServerResponse<TOrderTrackingPreview>>(
-        `/orders/admin/${id}/tracking-preview`
-      )
-    })
-  }
-
-  public async sendAdminOrderTracking(
-    id: string
-  ): Promise<ServerResponse<TOrderTrackingResult>> {
-    return this.executeRequest<TOrderTrackingResult>(async () => {
-      return await this.Post<ServerResponse<TOrderTrackingResult>>(
-        `/orders/admin/${id}/tracking`,
-        {}
-      )
     })
   }
 }
