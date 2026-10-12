@@ -1,125 +1,162 @@
-import type { NavigationMenuItem } from "@nuxt/ui";
+import type { NavigationMenuItem } from '@nuxt/ui'
+import type { TPermissionResource } from '~/features/permissions/types/index.type'
 
 export interface AppNavigationItem extends NavigationMenuItem {
-  permission?: boolean;
-  children?: AppNavigationItem[];
+  permissionResource?: TPermissionResource
+  children?: AppNavigationItem[]
 }
 
 export const navigation: AppNavigationItem[][] = [
   [
     {
-      label: "داشبورد",
-      icon: "solar:chart-linear",
-      to: "/admin/dashboard",
-      permission: true,
+      label: 'داشبورد',
+      icon: 'solar:chart-linear',
+      to: '/admin/dashboard',
+      permissionResource: 'dashboard'
     },
     {
-      label: "دسته بندی ها",
-      icon: "iconamoon:category-light",
-      to: "/admin/categories",
-      permission: true,
+      label: 'دسته‌بندی‌ها',
+      icon: 'iconamoon:category-light',
+      to: '/admin/categories',
+      permissionResource: 'categories'
     },
     {
-      label: "محصولات",
-      icon: "lucide:package-2",
-      to: "/admin/products",
-      permission: true,
+      label: 'محصولات',
+      icon: 'lucide:package-2',
+      to: '/admin/products',
+      permissionResource: 'products'
     },
     {
-      label: "قیمت‌گذاری",
-      icon: "i-lucide-tags",
-      to: "/admin/pricing",
-      permission: true,
+      label: 'قیمت‌گذاری',
+      icon: 'i-lucide-tags',
+      to: '/admin/pricing',
+      permissionResource: 'pricing'
     },
     {
-      label: "هشدار موجودی",
-      icon: "i-lucide-triangle-alert",
-      to: "/admin/stock",
-      permission: true,
+      label: 'هشدار موجودی',
+      icon: 'i-lucide-triangle-alert',
+      to: '/admin/stock',
+      permissionResource: 'stock'
     },
     {
-      label: "تاریخچه موجودی",
-      icon: "i-lucide-history",
-      to: "/admin/stock-history",
-      permission: true,
+      label: 'تاریخچه موجودی',
+      icon: 'i-lucide-history',
+      to: '/admin/stock-history',
+      permissionResource: 'stock_history'
     },
     {
-      label: "بنرها",
-      icon: "i-lucide-images",
-      to: "/admin/banners",
-      permission: true,
+      label: 'بنرها',
+      icon: 'i-lucide-images',
+      to: '/admin/banners',
+      permissionResource: 'banners'
     },
     {
-      label: "استوری‌ها",
-      icon: "i-lucide-book-open",
-      to: "/admin/stories",
-      permission: true,
+      label: 'استوری‌ها',
+      icon: 'i-lucide-book-open',
+      to: '/admin/stories',
+      permissionResource: 'stories'
     },
     {
-      label: "بلاگ‌ها",
-      icon: "i-lucide-newspaper",
-      to: "/admin/blogs",
-      permission: true,
+      label: 'بلاگ‌ها',
+      icon: 'i-lucide-newspaper',
+      to: '/admin/blogs',
+      permissionResource: 'blogs'
     },
     {
-      label: "برندها",
-      icon: "i-lucide-badge-percent",
-      to: "/admin/brands",
-      permission: true,
+      label: 'سوالات متداول',
+      icon: 'i-lucide-circle-help',
+      to: '/admin/faqs',
+      permissionResource: 'faqs'
     },
     {
-      label: "ویژگی‌ها",
-      icon: "i-lucide-sliders-horizontal",
-      to: "/admin/attributes",
-      permission: true,
+      label: 'برندها',
+      icon: 'i-lucide-badge-percent',
+      to: '/admin/brands',
+      permissionResource: 'brands'
     },
     {
-      label: "فایل‌ها",
-      icon: "lucide:files",
-      to: "/admin/files",
-      permission: true,
+      label: 'ویژگی‌ها',
+      icon: 'i-lucide-sliders-horizontal',
+      to: '/admin/attributes',
+      permissionResource: 'attributes'
     },
     {
-      label: "چت پشتیبانی",
-      icon: "i-lucide-message-circle",
-      to: "/admin/chat",
-      permission: true,
+      label: 'فایل‌ها',
+      icon: 'lucide:files',
+      to: '/admin/files',
+      permissionResource: 'files'
     },
     {
-      label: "پیام‌های تماس",
-      icon: "i-lucide-mail",
-      to: "/admin/contact",
-      permission: true,
+      label: 'چت پشتیبانی',
+      icon: 'i-lucide-message-circle',
+      to: '/admin/chat',
+      permissionResource: 'chat'
     },
     {
-      label: "کاربران",
-      icon: "i-lucide-users",
-      to: "/admin/users",
-      permission: true,
+      label: 'پیام‌های تماس',
+      icon: 'i-lucide-mail',
+      to: '/admin/contact',
+      permissionResource: 'contact'
     },
     {
-      label: "سفارش‌ها",
-      icon: "i-lucide-shopping-bag",
-      to: "/admin/orders",
-      permission: true,
+      label: 'کاربران',
+      icon: 'i-lucide-users',
+      to: '/admin/users',
+      permissionResource: 'users'
     },
     {
-      label: "تراکنش‌های پرداخت",
-      icon: "i-lucide-credit-card",
-      to: "/admin/payments",
-      permission: true,
+      label: 'سفارش‌ها',
+      icon: 'i-lucide-shopping-bag',
+      to: '/admin/orders',
+      permissionResource: 'orders'
     },
     {
-      label: "کدهای تخفیف",
-      icon: "i-lucide-ticket-percent",
-      to: "/admin/discounts",
-      permission: true,
+      label: 'تراکنش‌های پرداخت',
+      icon: 'i-lucide-credit-card',
+      to: '/admin/payments',
+      permissionResource: 'payments'
     },
     {
-      label: "اعلان‌ها",
-      icon: "i-lucide-bell",
-      to: "/admin/notifications",
-      permission: true,
+      label: 'کدهای تخفیف',
+      icon: 'i-lucide-ticket-percent',
+      to: '/admin/discounts',
+      permissionResource: 'discounts'
     },
-  ],
-];
+    {
+      label: 'اعلان‌ها',
+      icon: 'i-lucide-bell',
+      to: '/admin/notifications',
+      permissionResource: 'notifications'
+    },
+    {
+      label: 'ادمین‌ها',
+      icon: 'i-lucide-shield-check',
+      to: '/admin/admins',
+      permissionResource: 'admins'
+    }
+  ]
+]
+
+export const ADMIN_ROUTE_PERMISSIONS: Record<string, TPermissionResource> = {
+  '/admin/dashboard': 'dashboard',
+  '/admin/categories': 'categories',
+  '/admin/products': 'products',
+  '/admin/pricing': 'pricing',
+  '/admin/stock': 'stock',
+  '/admin/stock-history': 'stock_history',
+  '/admin/banners': 'banners',
+  '/admin/stories': 'stories',
+  '/admin/blogs': 'blogs',
+  '/admin/faqs': 'faqs',
+  '/admin/brands': 'brands',
+  '/admin/attributes': 'attributes',
+  '/admin/files': 'files',
+  '/admin/chat': 'chat',
+  '/admin/contact': 'contact',
+  '/admin/users': 'users',
+  '/admin/orders': 'orders',
+  '/admin/payments': 'payments',
+  '/admin/discounts': 'discounts',
+  '/admin/notifications': 'notifications',
+  '/admin/admins': 'admins'
+}

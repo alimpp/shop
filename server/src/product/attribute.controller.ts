@@ -11,6 +11,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
 import slugify from 'slugify';
 import { IsNull, Repository } from 'typeorm';
@@ -62,6 +63,7 @@ export class AttributeController {
     }));
   }
 
+  @AdminAuth('attributes', 'create')
   @Post()
   async create(@Body() dto: CreateAttributeDto) {
     const slugSource = dto.slug?.trim() || dto.name;
@@ -91,6 +93,7 @@ export class AttributeController {
     return this.attributeRepository.save(created);
   }
 
+  @AdminAuth('attributes', 'edit')
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -137,6 +140,7 @@ export class AttributeController {
     return this.attributeRepository.save(attribute);
   }
 
+  @AdminAuth('attributes', 'delete')
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     const attribute = await this.attributeRepository.findOne({
@@ -154,6 +158,7 @@ export class AttributeController {
     };
   }
 
+  @AdminAuth('attributes', 'create')
   @Post(':id/values')
   async createValue(
     @Param('id', ParseUUIDPipe) attributeId: string,
@@ -184,6 +189,7 @@ export class AttributeController {
     return this.attributeValueRepository.save(created);
   }
 
+  @AdminAuth('attributes', 'edit')
   @Patch('values/:valueId')
   async updateValue(
     @Param('valueId', ParseUUIDPipe) valueId: string,
@@ -216,6 +222,7 @@ export class AttributeController {
     return this.attributeValueRepository.save(value);
   }
 
+  @AdminAuth('attributes', 'delete')
   @Delete('values/:valueId')
   async removeValue(@Param('valueId', ParseUUIDPipe) valueId: string) {
     const value = await this.attributeValueRepository.findOne({

@@ -10,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
+import { AdminAuth } from 'src/common/decorators/admin-auth.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CategoriesService } from './categories.service';
@@ -20,8 +21,7 @@ import { UpdateCategoryDto } from './dto/update.dto';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('categories', 'create')
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.create(createCategoryDto);
@@ -40,8 +40,7 @@ export class CategoriesController {
     return this.categoriesService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('categories', 'edit')
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe)
@@ -52,8 +51,7 @@ export class CategoriesController {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('categories', 'delete')
   @Delete(':id')
   remove(
     @Param('id', ParseUUIDPipe)

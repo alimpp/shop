@@ -6,12 +6,14 @@ import type { TPricingSaveState } from '~/features/pricing/types/index.type'
 import type { TUpdateProductPricingPayload } from '~/features/pricing/types/index.type'
 import { categoriesController } from '~/features/categories/controllers/index.controller'
 import { useCategoriesDS } from '~/features/categories/data/index.store'
+import { useAdminPermissions } from '~/composables/useAdminPermissions'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'auth'
 })
 
+const { can } = useAdminPermissions()
 const toast = useToast()
 const pricingDS = usePricingDS()
 const categoriesDS = useCategoriesDS()
@@ -286,6 +288,7 @@ watch(page, () => {
             :product="product"
             :saving="pricingDS.isSaving(product.id)"
             :save-state="saveStates[product.id] ?? 'idle'"
+            :readonly="!can('pricing', 'edit')"
             @save="(payload) => handleSave(product.id, payload)"
           />
         </div>

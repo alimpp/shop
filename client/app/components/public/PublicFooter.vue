@@ -14,6 +14,7 @@ const shopLinks = [
 
 const helpLinks = [
   ...publicNavigation.filter(item => ['/about', '/contact'].includes(item.to)),
+  { label: 'سوالات متداول', to: '/faq' },
   { label: 'قوانین و مقررات', to: '/terms' },
   { label: 'حریم خصوصی', to: '/privacy' },
   { label: 'شرایط مرجوعی', to: '/returns' }

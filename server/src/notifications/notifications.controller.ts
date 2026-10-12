@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { CreateNotificationDto } from './dto/create-notification.dto';
@@ -28,8 +29,7 @@ type AuthenticatedRequest = Request & {
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('notifications', 'create')
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateNotificationDto) {

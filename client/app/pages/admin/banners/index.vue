@@ -5,12 +5,14 @@ import BannerFormModal from "~/features/banners/components/BannerFormModal.vue";
 import BannersTable from "~/features/banners/components/BannersTable.vue";
 import { BannersDS } from "~/features/banners/data/index.store";
 import type { TBanner, TBannerPayload } from "~/features/banners/types/index.type";
+import { useAdminPermissions } from "~/composables/useAdminPermissions";
 
 definePageMeta({
   layout: "admin",
   middleware: "auth"
 });
 
+const { can } = useAdminPermissions();
 const bannersDS = BannersDS.getInstance();
 const toast = useToast();
 
@@ -123,6 +125,7 @@ watch(isDeleteConfirmOpen, (isOpen) => {
 
         <template #right>
           <UButton
+            v-if="can('banners', 'create')"
             color="primary"
             icon="i-lucide-image-plus"
             @click="openCreateModal"
@@ -148,6 +151,8 @@ watch(isDeleteConfirmOpen, (isOpen) => {
           :banners="banners"
           :loading="loading"
           :submitting="submitting"
+          :can-edit="can('banners', 'edit')"
+          :can-delete="can('banners', 'delete')"
           @edit="openEditModal"
           @delete="openDeleteConfirm"
         />

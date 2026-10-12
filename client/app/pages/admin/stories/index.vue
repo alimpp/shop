@@ -5,12 +5,14 @@ import StoryFormModal from "~/features/stories/components/StoryFormModal.vue";
 import StoriesTable from "~/features/stories/components/StoriesTable.vue";
 import { useStoriesDS } from "~/dataStore/index";
 import type { TStory, TStoryPayload } from "~/features/stories/types/index.type";
+import { useAdminPermissions } from "~/composables/useAdminPermissions";
 
 definePageMeta({
   layout: "admin",
   middleware: "auth",
 });
 
+const { can } = useAdminPermissions();
 const storiesDS = useStoriesDS();
 const toast = useToast();
 
@@ -123,6 +125,7 @@ watch(isDeleteConfirmOpen, (isOpen) => {
 
         <template #right>
           <UButton
+            v-if="can('stories', 'create')"
             color="primary"
             icon="i-lucide-image-plus"
             @click="openCreateModal"
@@ -148,6 +151,8 @@ watch(isDeleteConfirmOpen, (isOpen) => {
           :stories="stories"
           :loading="loading"
           :submitting="submitting"
+          :can-edit="can('stories', 'edit')"
+          :can-delete="can('stories', 'delete')"
           @edit="openEditModal"
           @remove="openDeleteConfirm"
         />

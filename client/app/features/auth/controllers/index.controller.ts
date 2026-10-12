@@ -30,8 +30,14 @@ class AuthController extends BaseController<AuthService> {
       this.adminDS.setAdmin({
         id: response.data.id,
         username: response.data.username,
-        role: "admin",
+        role: response.data.role || "admin",
       });
+
+      // Load full profile + permissions after login.
+      const { profileAdminController } = await import(
+        "~/features/profile/admin/controllers/index.controller"
+      );
+      await profileAdminController.getAdminProfile({ silent: true });
     }
 
     return this.handleResponse(response);

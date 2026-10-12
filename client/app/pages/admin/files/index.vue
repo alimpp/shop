@@ -5,12 +5,14 @@ import FileUploadModal from "~/features/files/components/FileUploadModal.vue";
 import FileDeleteConfirmModal from "~/features/files/components/FileDeleteConfirmModal.vue";
 import { useFilesDS } from "~/dataStore/index";
 import type { TFileItem } from "~/features/files/types/index.type";
+import { useAdminPermissions } from "~/composables/useAdminPermissions";
 
 definePageMeta({
   layout: "admin",
   middleware: "auth"
 });
 
+const { can } = useAdminPermissions();
 const filesDS = useFilesDS();
 const toast = useToast();
 
@@ -103,6 +105,7 @@ watch(isDeleteConfirmOpen, (isOpen) => {
 
         <template #right>
           <UButton
+            v-if="can('files', 'create')"
             color="primary"
             icon="i-lucide-upload"
             @click="openUploadModal"
@@ -128,6 +131,7 @@ watch(isDeleteConfirmOpen, (isOpen) => {
           :files="files"
           :loading="loading"
           :submitting="submitting"
+          :can-delete="can('files', 'delete')"
           @delete="openDeleteConfirm"
         />
 

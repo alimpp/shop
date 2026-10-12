@@ -13,6 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { ContactService } from './contact.service';
@@ -29,15 +30,13 @@ export class ContactController {
     return this.contactService.create(dto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('contact', 'view')
   @Get()
   findAll(@Query() query: QueryContactMessagesDto) {
     return this.contactService.findAll(query);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('contact', 'view')
   @Get(':id')
   findOne(
     @Param('id', ParseUUIDPipe) id: string,
@@ -47,16 +46,14 @@ export class ContactController {
     return this.contactService.findOne(id, shouldMark);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('contact', 'edit')
   @Patch(':id/read')
   @HttpCode(HttpStatus.OK)
   markAsRead(@Param('id', ParseUUIDPipe) id: string) {
     return this.contactService.markAsRead(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('contact', 'delete')
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.contactService.remove(id);

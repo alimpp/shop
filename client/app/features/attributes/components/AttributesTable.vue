@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import type { TAttribute, TAttributeValue } from "../types/index.type";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
+
   attributes: TAttribute[];
   loading: boolean;
   submitting: boolean;
-}>();
+  canEdit?: boolean;
+  canDelete?: boolean;
+}>(), {
+  canEdit: true,
+  canDelete: true
+});
 
 const emit = defineEmits<{
   edit: [attribute: TAttribute];
@@ -144,6 +150,7 @@ watch(totalItems, (value) => {
                     {{ value.value }}
                   </span>
                   <UButton
+                    v-if="canEdit"
                     color="neutral"
                     variant="ghost"
                     size="sm"
@@ -152,6 +159,7 @@ watch(totalItems, (value) => {
                     @click="emit('edit-value', attribute, value)"
                   />
                   <UButton
+                    v-if="canDelete"
                     color="error"
                     variant="ghost"
                     size="sm"
@@ -163,11 +171,11 @@ watch(totalItems, (value) => {
               </div>
               <div v-else class="text-sm text-muted">
                 هنوز مقداری برای این ویژگی ثبت نشده است.
-              </div>
             </div>
 
             <div class="mt-4 flex flex-wrap items-center justify-start gap-2">
               <UButton
+                v-if="canEdit"
                 color="primary"
                 variant="outline"
                 size="sm"
@@ -178,6 +186,7 @@ watch(totalItems, (value) => {
                 افزودن مقدار
               </UButton>
               <UButton
+                v-if="canEdit"
                 color="primary"
                 variant="soft"
                 size="sm"
@@ -187,6 +196,7 @@ watch(totalItems, (value) => {
                 ویرایش
               </UButton>
               <UButton
+                v-if="canDelete"
                 color="error"
                 variant="soft"
                 size="sm"
@@ -251,6 +261,7 @@ watch(totalItems, (value) => {
                       {{ value.value }}
                     </span>
                     <UButton
+                      v-if="canEdit"
                       color="neutral"
                       variant="ghost"
                       size="sm"
@@ -259,6 +270,7 @@ watch(totalItems, (value) => {
                       @click="emit('edit-value', attribute, value)"
                     />
                     <UButton
+                      v-if="canDelete"
                       color="error"
                       variant="ghost"
                       size="sm"
@@ -270,11 +282,11 @@ watch(totalItems, (value) => {
                 </div>
                 <div v-else class="text-sm text-muted">
                   هنوز مقداری برای این ویژگی ثبت نشده است.
-                </div>
               </td>
               <td class="border-b border-default px-4 py-4">
                 <div class="flex flex-wrap items-center justify-start gap-2">
                   <UButton
+                    v-if="canEdit"
                     color="primary"
                     variant="outline"
                     size="sm"
@@ -285,6 +297,7 @@ watch(totalItems, (value) => {
                     افزودن مقدار
                   </UButton>
                   <UButton
+                    v-if="canEdit"
                     color="primary"
                     variant="soft"
                     size="sm"
@@ -294,6 +307,7 @@ watch(totalItems, (value) => {
                     ویرایش
                   </UButton>
                   <UButton
+                    v-if="canDelete"
                     color="error"
                     variant="soft"
                     size="sm"

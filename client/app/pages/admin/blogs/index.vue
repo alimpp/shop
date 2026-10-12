@@ -5,12 +5,14 @@ import BlogFormModal from "~/features/blogs/components/BlogFormModal.vue";
 import BlogsTable from "~/features/blogs/components/BlogsTable.vue";
 import { useBlogsDS } from "~/dataStore/index";
 import type { TBlog, TBlogPayload } from "~/features/blogs/types/index.type";
+import { useAdminPermissions } from "~/composables/useAdminPermissions";
 
 definePageMeta({
   layout: "admin",
   middleware: "auth",
 });
 
+const { can } = useAdminPermissions();
 const blogsDS = useBlogsDS();
 const toast = useToast();
 
@@ -123,6 +125,7 @@ watch(isDeleteConfirmOpen, (isOpen) => {
 
         <template #right>
           <UButton
+            v-if="can('blogs', 'create')"
             color="primary"
             icon="i-lucide-file-plus-2"
             @click="openCreateModal"
@@ -148,6 +151,8 @@ watch(isDeleteConfirmOpen, (isOpen) => {
           :blogs="blogs"
           :loading="loading"
           :submitting="submitting"
+          :can-edit="can('blogs', 'edit')"
+          :can-delete="can('blogs', 'delete')"
           @edit="openEditModal"
           @remove="openDeleteConfirm"
         />

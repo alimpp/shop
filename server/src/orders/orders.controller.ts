@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -47,29 +48,25 @@ export class OrdersController {
     return await this.ordersService.findAllForUser(req.user.sub, query);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('orders', 'view')
   @Get('admin')
   async findAll(@Query() query: QueryOrdersDto) {
     return await this.ordersService.findAllForAdmin(query);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('orders', 'view')
   @Get('admin/:id')
   async findOneAdmin(@Param('id', ParseUUIDPipe) id: string) {
     return await this.ordersService.findOneForAdmin(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('orders', 'view')
   @Get('admin/:id/tracking-preview')
   async trackingPreview(@Param('id', ParseUUIDPipe) id: string) {
     return await this.ordersService.getTrackingPreview(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('orders', 'create')
   @Post('admin/:id/tracking')
   @HttpCode(HttpStatus.CREATED)
   async sendTracking(
@@ -79,8 +76,7 @@ export class OrdersController {
     return await this.ordersService.sendTrackingUpdate(id, req.user.sub);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('orders', 'edit')
   @Patch('admin/:id/status')
   @HttpCode(HttpStatus.OK)
   async updateStatus(

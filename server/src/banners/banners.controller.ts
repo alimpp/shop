@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
+import { AdminAuth } from 'src/common/decorators/admin-auth.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 
@@ -22,8 +23,7 @@ import { UpdateBannerDto } from './dto/update-banner.dto';
 export class BannersController {
   constructor(private readonly bannersService: BannersService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('banners', 'create')
   @Post()
   create(@Body() createBannerDto: CreateBannerDto) {
     return this.bannersService.create(createBannerDto);
@@ -42,8 +42,7 @@ export class BannersController {
     return this.bannersService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('banners', 'edit')
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe)
@@ -54,8 +53,7 @@ export class BannersController {
     return this.bannersService.update(id, updateBannerDto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('banners', 'delete')
   @Delete(':id')
   remove(
     @Param('id', ParseUUIDPipe)

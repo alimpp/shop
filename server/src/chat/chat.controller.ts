@@ -16,6 +16,7 @@ import {
 import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -40,8 +41,7 @@ export class ChatController {
     return await this.chatService.createChat(dto, req.user.sub);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('chat', 'view')
   @Get()
   async getChatsForAdmin(
     @Query() query: QueryChatsDto,

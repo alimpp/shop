@@ -11,6 +11,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { InjectRepository } from '@nestjs/typeorm';
 import slugify from 'slugify';
 import { IsNull, Repository } from 'typeorm';
@@ -44,6 +45,7 @@ export class BrandController {
     });
   }
 
+  @AdminAuth('brands', 'create')
   @Post()
   async create(@Body() dto: CreateBrandDto) {
     const slugSource = dto.slug?.trim() || dto.name;
@@ -73,6 +75,7 @@ export class BrandController {
     return this.brandRepository.save(created);
   }
 
+  @AdminAuth('brands', 'edit')
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -123,6 +126,7 @@ export class BrandController {
     return this.brandRepository.save(brand);
   }
 
+  @AdminAuth('brands', 'delete')
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     const brand = await this.brandRepository.findOne({

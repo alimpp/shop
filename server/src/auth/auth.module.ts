@@ -11,18 +11,18 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { OtpService } from 'src/otp/otp.service';
 import { CacheModule } from '@nestjs/cache-manager';
-import { AdminService } from 'src/admin/admin.service';
-import { AdminEntity } from 'src/entities/admin.entity';
+import { AdminModule } from 'src/admin/admin.module';
+
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity, AdminEntity]),
+    TypeOrmModule.forFeature([UserEntity]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     CacheModule.register(),
+    AdminModule,
   ],
   controllers: [AuthController],
   providers: [
-    AdminService,
     AuthService,
     UsersService,
     OtpService,

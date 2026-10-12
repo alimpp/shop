@@ -105,19 +105,20 @@ export class AuthService {
       throw new UnauthorizedException('نام کاربری یا رمز عبور اشتباه است');
     }
 
-    const token = await this.adminLogin(admin.id);
+    const token = await this.adminLogin(admin.id, admin.role);
 
     return {
       id: admin.id,
       username: admin.username,
+      role: admin.role,
       token,
     };
   }
 
-  async adminLogin(adminId: string) {
+  async adminLogin(adminId: string, role: 'admin' | 'super_admin' = 'admin') {
     const payload: AuthJwtPayload = {
       sub: adminId,
-      role: 'admin',
+      role,
     };
 
     return this.jwtService.sign(payload);

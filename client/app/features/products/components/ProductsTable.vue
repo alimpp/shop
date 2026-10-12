@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import type { TProduct } from "../types/index.type";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
+
   products: TProduct[];
   loading: boolean;
   submitting: boolean;
-}>();
+  canEdit?: boolean;
+  canDelete?: boolean;
+}>(), {
+  canEdit: true,
+  canDelete: true
+});
 
 const emit = defineEmits<{
   view: [product: TProduct];
@@ -209,6 +215,7 @@ watch(totalItems, (value) => {
                 مشاهده
               </UButton>
               <UButton
+                v-if="canEdit"
                 color="primary"
                 variant="soft"
                 size="sm"
@@ -218,6 +225,7 @@ watch(totalItems, (value) => {
                 ویرایش
               </UButton>
               <UButton
+                v-if="canDelete"
                 color="error"
                 variant="soft"
                 size="sm"
@@ -319,6 +327,7 @@ watch(totalItems, (value) => {
                     مشاهده
                   </UButton>
                   <UButton
+                    v-if="canEdit"
                     color="primary"
                     variant="soft"
                     size="sm"
@@ -328,6 +337,7 @@ watch(totalItems, (value) => {
                     ویرایش
                   </UButton>
                   <UButton
+                    v-if="canDelete"
                     color="error"
                     variant="soft"
                     size="sm"

@@ -21,10 +21,16 @@ export const publicNavigation: PublicNavigationItem[] = [
     to: "/blog"
   },
   {
+    label: "سوالات متداول",
+    icon: "i-lucide-circle-help",
+    to: "/faq"
+  },
+  {
     label: "درباره ما",
     icon: "i-lucide-info",
     to: "/about"
   },
+
   {
     label: "تماس با ما",
     icon: "i-lucide-phone",

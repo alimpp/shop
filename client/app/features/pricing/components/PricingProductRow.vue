@@ -8,11 +8,14 @@ import {
   type TPricingDraft
 } from '../utils/pricingDraft'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   product: TPricingProduct
   saving: boolean
   saveState: TPricingSaveState
-}>()
+  readonly?: boolean
+}>(), {
+  readonly: false
+})
 
 const emit = defineEmits<{
   save: [payload: ReturnType<typeof buildPricingPayload>]
@@ -127,7 +130,7 @@ function toggleExpanded(): void {
       <PricingInlineField
         v-model="draft.price"
         label="قیمت"
-        :disabled="saving"
+        :disabled="saving || readonly"
         compact
         @commit="commitProduct"
       />
@@ -135,7 +138,7 @@ function toggleExpanded(): void {
       <PricingInlineField
         v-model="draft.salePrice"
         label="تخفیف"
-        :disabled="saving"
+        :disabled="saving || readonly"
         compact
         @commit="commitProduct"
       />
@@ -143,7 +146,7 @@ function toggleExpanded(): void {
       <PricingInlineField
         v-model="draft.stock"
         label="موجودی"
-        :disabled="saving || hasVariants"
+        :disabled="saving || hasVariants || readonly"
         compact
         @commit="commitProduct"
       />
@@ -165,7 +168,7 @@ function toggleExpanded(): void {
           class="size-4 text-error"
         />
         <UButton
-          v-else-if="isDirty"
+          v-else-if="isDirty && !readonly"
           size="xs"
           color="primary"
           :disabled="saving"
@@ -207,7 +210,7 @@ function toggleExpanded(): void {
             v-if="draft.variants[variant.id]"
             v-model="draft.variants[variant.id].price"
             label="قیمت"
-            :disabled="saving"
+            :disabled="saving || readonly"
             compact
             @commit="commitVariant(variant.id)"
           />
@@ -216,7 +219,7 @@ function toggleExpanded(): void {
             v-if="draft.variants[variant.id]"
             v-model="draft.variants[variant.id].salePrice"
             label="تخفیف"
-            :disabled="saving"
+            :disabled="saving || readonly"
             compact
             @commit="commitVariant(variant.id)"
           />
@@ -225,7 +228,7 @@ function toggleExpanded(): void {
             v-if="draft.variants[variant.id]"
             v-model="draft.variants[variant.id].stock"
             label="موجودی"
-            :disabled="saving"
+            :disabled="saving || readonly"
             compact
             @commit="commitVariant(variant.id)"
           />

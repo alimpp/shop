@@ -5,12 +5,14 @@ import BrandFormModal from "~/features/brands/components/BrandFormModal.vue";
 import BrandsTable from "~/features/brands/components/BrandsTable.vue";
 import { useBrandsDS } from "~/dataStore/index";
 import type { TBrand, TBrandPayload } from "~/features/brands/types/index.type";
+import { useAdminPermissions } from "~/composables/useAdminPermissions";
 
 definePageMeta({
   layout: "admin",
   middleware: "auth"
 });
 
+const { can } = useAdminPermissions();
 const brandsDS = useBrandsDS();
 const toast = useToast();
 
@@ -123,6 +125,7 @@ watch(isDeleteConfirmOpen, (isOpen) => {
 
         <template #right>
           <UButton
+            v-if="can('brands', 'create')"
             color="primary"
             icon="i-lucide-badge-plus"
             @click="openCreateModal"
@@ -148,6 +151,8 @@ watch(isDeleteConfirmOpen, (isOpen) => {
           :brands="brands"
           :loading="loading"
           :submitting="submitting"
+          :can-edit="can('brands', 'edit')"
+          :can-delete="can('brands', 'delete')"
           @edit="openEditModal"
           @delete="openDeleteConfirm"
         />

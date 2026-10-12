@@ -12,12 +12,14 @@ import type {
   TAttributeValue,
   TAttributeValuePayload
 } from "~/features/attributes/types/index.type";
+import { useAdminPermissions } from "~/composables/useAdminPermissions";
 
 definePageMeta({
   layout: "admin",
   middleware: "auth"
 });
 
+const { can } = useAdminPermissions();
 const attributesDS = useAttributesDS();
 const toast = useToast();
 
@@ -232,6 +234,7 @@ watch(isValueDeleteConfirmOpen, (isOpen) => {
 
         <template #right>
           <UButton
+            v-if="can('attributes', 'create')"
             color="primary"
             icon="i-lucide-list-plus"
             @click="openCreateAttributeModal"
@@ -257,6 +260,8 @@ watch(isValueDeleteConfirmOpen, (isOpen) => {
           :attributes="attributes"
           :loading="loading"
           :submitting="submitting"
+          :can-edit="can('attributes', 'edit')"
+          :can-delete="can('attributes', 'delete')"
           @edit="openEditAttributeModal"
           @delete="openAttributeDeleteConfirm"
           @add-value="openCreateValueModal"

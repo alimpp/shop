@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import type { TBrand } from "../types/index.type";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
+
   brands: TBrand[];
   loading: boolean;
   submitting: boolean;
-}>();
+  canEdit?: boolean;
+  canDelete?: boolean;
+}>(), {
+  canEdit: true,
+  canDelete: true
+});
 
 const emit = defineEmits<{
   edit: [brand: TBrand];
@@ -131,6 +137,7 @@ watch(totalItems, (value) => {
 
             <div class="mt-4 flex items-center justify-start gap-2">
               <UButton
+                v-if="canEdit"
                 color="primary"
                 variant="soft"
                 size="sm"
@@ -140,6 +147,7 @@ watch(totalItems, (value) => {
                 ویرایش
               </UButton>
               <UButton
+                v-if="canDelete"
                 color="error"
                 variant="soft"
                 size="sm"
@@ -205,6 +213,7 @@ watch(totalItems, (value) => {
               <td class="border-b border-default px-4 py-4">
                 <div class="flex items-center justify-start gap-2">
                   <UButton
+                    v-if="canEdit"
                     color="primary"
                     variant="soft"
                     size="sm"
@@ -214,6 +223,7 @@ watch(totalItems, (value) => {
                     ویرایش
                   </UButton>
                   <UButton
+                    v-if="canDelete"
                     color="error"
                     variant="soft"
                     size="sm"

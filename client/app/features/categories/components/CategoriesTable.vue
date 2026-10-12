@@ -2,11 +2,17 @@
 import type { TCategory } from "../types/index.type";
 import CategoryImagePreview from "./CategoryImagePreview.vue";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
+
   categories: TCategory[];
   loading: boolean;
   submitting: boolean;
-}>();
+  canEdit?: boolean;
+  canDelete?: boolean;
+}>(), {
+  canEdit: true,
+  canDelete: true
+});
 
 const emit = defineEmits<{
   edit: [category: TCategory];
@@ -149,6 +155,7 @@ watch(totalItems, (value) => {
 
             <div class="mt-4 flex items-center justify-start gap-2">
               <UButton
+                v-if="canEdit"
                 color="primary"
                 variant="soft"
                 size="sm"
@@ -158,6 +165,7 @@ watch(totalItems, (value) => {
                 ویرایش
               </UButton>
               <UButton
+                v-if="canDelete"
                 color="error"
                 variant="soft"
                 size="sm"
@@ -232,6 +240,7 @@ watch(totalItems, (value) => {
               <td class="border-b border-default px-4 py-4">
                 <div class="flex items-center justify-start gap-2">
                   <UButton
+                    v-if="canEdit"
                     color="primary"
                     variant="soft"
                     size="sm"
@@ -241,6 +250,7 @@ watch(totalItems, (value) => {
                     ویرایش
                   </UButton>
                   <UButton
+                    v-if="canDelete"
                     color="error"
                     variant="soft"
                     size="sm"

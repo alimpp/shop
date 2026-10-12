@@ -9,6 +9,7 @@ import {
   Res,
   BadRequestException,
 } from '@nestjs/common';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from './file.service';
 import { Response } from 'express';
@@ -19,6 +20,7 @@ import { extname } from 'path';
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
+  @AdminAuth('files', 'create')
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -44,6 +46,7 @@ export class FileController {
     return this.fileService.uploadFile(file, './uploads');
   }
 
+  @AdminAuth('files', 'view')
   @Get()
   async getAllFiles() {
     return this.fileService.getAllFiles();
@@ -54,6 +57,7 @@ export class FileController {
     await this.fileService.downloadFile(id, res);
   }
 
+  @AdminAuth('files', 'delete')
   @Delete(':id')
   async deleteFile(@Param('id') id: string) {
     await this.fileService.deleteFile(id);

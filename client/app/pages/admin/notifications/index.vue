@@ -6,12 +6,14 @@ import type {
   TNotificationType
 } from '~/features/notifications/types/index.type'
 import { NOTIFICATION_TYPE_LABELS } from '~/features/notifications/types/index.type'
+import { useAdminPermissions } from '~/composables/useAdminPermissions'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'auth'
 })
 
+const { can } = useAdminPermissions()
 const toast = useToast()
 const notificationsDS = useNotificationsDS()
 
@@ -177,6 +179,7 @@ onMounted(() => {
 
               <div class="flex justify-end pt-2">
                 <UButton
+                  v-if="can('notifications', 'create')"
                   color="primary"
                   icon="i-lucide-send"
                   :loading="submitting"

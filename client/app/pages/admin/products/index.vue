@@ -8,12 +8,14 @@ import ProductDeleteConfirmModal from "~/features/products/components/ProductDel
 import ProductDetailsModal from "~/features/products/components/ProductDetailsModal.vue";
 import ProductFiltersDrawer from "~/features/products/components/ProductFiltersDrawer.vue";
 import type { TProduct, TProductAttributeWithValues, TProductBrandRef, TProductListQuery, TProductPayload } from "~/features/products/types/index.type";
+import { useAdminPermissions } from "~/composables/useAdminPermissions";
 
 definePageMeta({
   layout: "admin",
   middleware: "auth"
 });
 
+const { can } = useAdminPermissions();
 const productsDS = useProductsDS();
 const categoriesDS = useCategoriesDS();
 const toast = useToast();
@@ -339,6 +341,7 @@ watch(isDetailsModalOpen, (isOpen) => {
 
         <template #right>
           <UButton
+            v-if="can('products', 'create')"
             color="primary"
             icon="i-lucide-package-plus"
             @click="openCreateModal"
@@ -372,6 +375,8 @@ watch(isDetailsModalOpen, (isOpen) => {
           :products="products"
           :loading="loading"
           :submitting="submitting"
+          :can-edit="can('products', 'edit')"
+          :can-delete="can('products', 'delete')"
           @view="openDetailsModal"
           @edit="openEditModal"
           @delete="openDeleteConfirm"

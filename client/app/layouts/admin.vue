@@ -1,34 +1,47 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from 'vue'
+import AdminProfileModal from '~/components/admin/AdminProfileModal.vue'
+import { navigation, type AppNavigationItem } from '~/config/navigation'
+import { useAdminPermissions } from '~/composables/useAdminPermissions'
+import { profileAdminController } from '~/features/profile/admin/controllers/index.controller'
 
-import { navigation } from "../config/navigation";
+const { admin, can } = useAdminPermissions()
+const profileOpen = ref(false)
 
-const links = computed(() => navigation);
-const footerLinks = computed(() => links.value[1] ?? []);
+const links = computed(() => {
+  const filterItems = (items: AppNavigationItem[] = []) =>
+    items.filter(item =>
+      !item.permissionResource || can(item.permissionResource, 'view')
+    )
 
-useDashboard();
+  return navigation.map(group => filterItems(group))
+})
+
+const footerLinks = computed(() => links.value[1] ?? [])
+
+useDashboard()
 
 onMounted(() => {
-  const token = useCookie<string>("token");
-  if (!token.value) return;
+  const token = useCookie<string>('token')
+  if (!token.value) return
 
   const schedule =
-    typeof window.requestIdleCallback === "function"
+    typeof window.requestIdleCallback === 'function'
       ? window.requestIdleCallback
-      : (cb: () => void) => window.setTimeout(cb, 1);
+      : (cb: () => void) => window.setTimeout(cb, 1)
 
   schedule(() => {
-    void import(
-      "~/features/profile/admin/controllers/index.controller"
-    ).then(({ profileAdminController }) =>
-      profileAdminController.getAdminProfile({ silent: true }),
-    );
-  });
-});
+    void profileAdminController.getAdminProfile({ silent: true })
+  })
+})
 </script>
 
 <template>
-  <UDashboardGroup unit="rem" class="rtl-dashboard h-dvh" :persistent="false">
+  <UDashboardGroup
+    unit="rem"
+    class="rtl-dashboard h-dvh"
+    :persistent="false"
+  >
     <UDashboardSidebar
       id="default"
       collapsible
@@ -39,8 +52,12 @@ onMounted(() => {
       }"
     >
       <template #header="{ collapsed }">
-        <div class="flex justify-center w-full mb-3">
-          <img src="/image/logo/logo.png" width="120" class="mt-7" />
+        <div class="mb-3 flex w-full justify-center">
+          <img
+            src="/image/logo/logo.png"
+            width="120"
+            class="mt-7"
+          >
         </div>
       </template>
 
@@ -63,6 +80,24 @@ onMounted(() => {
           class="mt-auto"
         />
       </template>
+
+      <template #footer="{ collapsed }">
+        <UButton
+          :block="!collapsed"
+          color="neutral"
+          variant="ghost"
+          class="justify-start"
+          :icon="collapsed ? 'i-lucide-user-round' : undefined"
+          @click="profileOpen = true"
+        >
+          <span
+            v-if="!collapsed"
+            class="truncate"
+          >
+            {{ admin.displayName || admin.username || 'پروفایل ادمین' }}
+          </span>
+        </UButton>
+      </template>
     </UDashboardSidebar>
 
     <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
@@ -70,6 +105,7 @@ onMounted(() => {
     </div>
 
     <NotificationsSlideover />
+    <AdminProfileModal v-model:open="profileOpen" />
   </UDashboardGroup>
 </template>
 

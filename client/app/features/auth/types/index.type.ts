@@ -7,6 +7,7 @@ export interface TLoginData {
   token: string;
   id: string;
   username: string;
+  role?: string;
 }
 
 export interface TUserOtpPayload {

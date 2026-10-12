@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import type { TFileItem } from "../types/index.type";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
+
   files: TFileItem[];
   loading: boolean;
   submitting: boolean;
-}>();
+  canEdit?: boolean;
+  canDelete?: boolean;
+}>(), {
+  canEdit: true,
+  canDelete: true
+});
 
 const emit = defineEmits<{
   delete: [file: TFileItem];
@@ -150,6 +156,7 @@ watch(totalItems, (value) => {
                 دانلود
               </UButton>
               <UButton
+                v-if="canDelete"
                 color="error"
                 variant="soft"
                 size="sm"
@@ -218,6 +225,7 @@ watch(totalItems, (value) => {
                     دانلود
                   </UButton>
                   <UButton
+                    v-if="canDelete"
                     color="error"
                     variant="soft"
                     size="sm"

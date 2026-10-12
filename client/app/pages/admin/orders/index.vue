@@ -8,12 +8,14 @@ import {
   ORDER_STATUS_COLORS,
   ORDER_STATUS_LABELS
 } from '~/features/orders/types/index.type'
+import { useAdminPermissions } from '~/composables/useAdminPermissions'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'auth'
 })
 
+const { can } = useAdminPermissions()
 const toast = useToast()
 const ordersDS = useOrdersDS()
 
@@ -236,6 +238,7 @@ watch(search, () => {
                   {{ ORDER_STATUS_LABELS[order.status] }}
                 </UBadge>
                 <USelect
+                  v-if="can('orders', 'edit')"
                   :model-value="order.status"
                   :items="statusItems"
                   class="w-48"

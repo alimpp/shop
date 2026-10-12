@@ -6,12 +6,14 @@ import type {
   TDiscountUsageDetail,
   TDiscountUsageReportSummary
 } from '~/features/discounts/types/index.type'
+import { useAdminPermissions } from '~/composables/useAdminPermissions'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'auth'
 })
 
+const { can } = useAdminPermissions()
 const toast = useToast()
 const loading = ref(false)
 const submitting = ref(false)
@@ -201,6 +203,7 @@ onBeforeUnmount(() => {
         </template>
         <template #right>
           <UButton
+            v-if="can('discounts', 'create')"
             color="primary"
             icon="i-lucide-plus"
             @click="openCreate"
@@ -354,6 +357,7 @@ onBeforeUnmount(() => {
                       @click="openUsage(item)"
                     />
                     <UButton
+                      v-if="can('discounts', 'edit')"
                       size="sm"
                       color="neutral"
                       variant="soft"
@@ -361,6 +365,7 @@ onBeforeUnmount(() => {
                       @click="openEdit(item)"
                     />
                     <UButton
+                      v-if="can('discounts', 'delete')"
                       size="sm"
                       color="error"
                       variant="soft"

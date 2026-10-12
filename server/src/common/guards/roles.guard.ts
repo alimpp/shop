@@ -4,10 +4,10 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-
 import { Reflector } from '@nestjs/core';
-
 import { ROLES_KEY } from '../decorators/roles.decorator';
+
+const ADMIN_PANEL_ROLES = new Set(['admin', 'super_admin']);
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -24,15 +24,20 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-
     const user = request.user;
 
     if (!user) {
       throw new ForbiddenException('ابتدا وارد حساب کاربری شوید');
     }
 
-    const hasRole = requiredRoles.some((role) => role === user.role);
-    console.log(hasRole, user);
+    const userRole = String(user.role ?? '');
+    const hasRole = requiredRoles.some((role) => {
+      if (role === 'admin') {
+        return ADMIN_PANEL_ROLES.has(userRole);
+      }
+      return role === userRole;
+    });
+
     if (!hasRole) {
       throw new ForbiddenException('شما دسترسی لازم را ندارید');
     }

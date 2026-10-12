@@ -18,6 +18,7 @@ import { Request } from 'express';
 import { ProductService } from './product.service';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { ChangeProductStatusDto } from './dto/change-product-status.dto';
@@ -39,6 +40,7 @@ export class ProductController {
   |--------------------------------------------------------------------------
   */
 
+  @AdminAuth('products', 'create')
   @Post()
   async create(@Body() dto: CreateProductDto) {
     return await this.productService.create(dto);
@@ -118,9 +120,8 @@ export class ProductController {
   |--------------------------------------------------------------------------
   */
 
+  @AdminAuth('products', 'edit')
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
   async update(
     @Param('id', ParseUUIDPipe)
     id: string,
@@ -140,6 +141,7 @@ export class ProductController {
   |--------------------------------------------------------------------------
   */
 
+  @AdminAuth('products', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   async remove(
@@ -155,6 +157,7 @@ export class ProductController {
   |--------------------------------------------------------------------------
   */
 
+  @AdminAuth('products', 'edit')
   @Patch(':id/restore')
   async restore(
     @Param('id', ParseUUIDPipe)
@@ -169,6 +172,7 @@ export class ProductController {
   |--------------------------------------------------------------------------
   */
 
+  @AdminAuth('products', 'edit')
   @Patch(':id/status')
   async changeStatus(
     @Param('id', ParseUUIDPipe)

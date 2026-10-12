@@ -14,6 +14,7 @@ import {
 import { Request } from 'express';
 import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { BehaviorService } from './behavior.service';
@@ -59,8 +60,7 @@ export class BehaviorController {
     );
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('users', 'view')
   @Get('admin/users/:userId')
   async adminUserBehavior(
     @Param('userId', ParseUUIDPipe) userId: string,

@@ -7,12 +7,9 @@ import {
   Patch,
   Query,
   Req,
-  UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
-import { Roles } from '../common/decorators/roles.decorator';
-import { RolesGuard } from '../common/guards/roles.guard';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { QueryPricingProductsDto } from './dto/query-pricing-products.dto';
 import { UpdateProductPricingDto } from './dto/update-product-pricing.dto';
 import { ProductService } from './product.service';
@@ -22,16 +19,16 @@ type AuthenticatedRequest = Request & {
 };
 
 @Controller('admin/products/pricing')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('admin')
 export class ProductPricingController {
   constructor(private readonly productService: ProductService) {}
 
+  @AdminAuth('pricing', 'view')
   @Get()
   async findAll(@Query() query: QueryPricingProductsDto) {
     return await this.productService.findAllForPricing(query);
   }
 
+  @AdminAuth('pricing', 'edit')
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,

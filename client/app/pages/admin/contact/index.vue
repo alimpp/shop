@@ -4,12 +4,14 @@ import type {
   TContactListMeta,
   TContactMessage
 } from '~/features/contact/types/index.type'
+import { useAdminPermissions } from '~/composables/useAdminPermissions'
 
 definePageMeta({
   layout: 'admin',
   middleware: 'auth'
 })
 
+const { can } = useAdminPermissions()
 const toast = useToast()
 
 const loading = ref(false)
@@ -403,6 +405,7 @@ onBeforeUnmount(() => {
     <template #footer>
       <div class="flex w-full flex-wrap justify-between gap-3">
         <UButton
+          v-if="can('contact', 'delete')"
           color="error"
           variant="soft"
           icon="i-lucide-trash-2"

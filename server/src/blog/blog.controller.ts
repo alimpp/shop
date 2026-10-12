@@ -13,6 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { BlogService } from './blog.service';
@@ -25,8 +26,7 @@ import { BlogStatus } from './enums/blog-status.enum';
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('blogs', 'create')
   @Post()
   async create(@Body() dto: CreateBlogDto) {
     return await this.blogService.create(dto);
@@ -52,8 +52,7 @@ export class BlogController {
     return await this.blogService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('blogs', 'edit')
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -62,23 +61,20 @@ export class BlogController {
     return await this.blogService.update(id, dto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('blogs', 'delete')
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     return await this.blogService.remove(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('blogs', 'edit')
   @Patch(':id/restore')
   async restore(@Param('id', ParseUUIDPipe) id: string) {
     return await this.blogService.restore(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('blogs', 'edit')
   @Patch(':id/status')
   async changeStatus(
     @Param('id', ParseUUIDPipe) id: string,

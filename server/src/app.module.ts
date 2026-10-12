@@ -26,6 +26,7 @@ import { BehaviorModule } from './behavior/behavior.module';
 import { ContactModule } from './contact/contact.module';
 import { PaymentsModule } from './payments/payments.module';
 import { DiscountsModule } from './discounts/discounts.module';
+import { FaqModule } from './faq/faq.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { DiscountsModule } from './discounts/discounts.module';
     ContactModule,
     PaymentsModule,
     DiscountsModule,
+    FaqModule,
     TypeOrmModule.forRoot(pgConfig),
   ],
   controllers: [AppController],

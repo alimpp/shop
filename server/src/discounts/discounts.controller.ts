@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth/jwt-auth.guard';
+import { AdminAuth } from '../common/decorators/admin-auth.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { CreateDiscountCodeDto } from './dto/create-discount-code.dto';
@@ -29,43 +30,37 @@ export class DiscountsController {
     return this.discountsService.validateForCart(dto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('discounts', 'create')
   @Post()
   create(@Body() dto: CreateDiscountCodeDto) {
     return this.discountsService.create(dto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('discounts', 'view')
   @Get()
   findAll(@Query() query: QueryDiscountCodesDto) {
     return this.discountsService.findAll(query);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('discounts', 'view')
   @Get('report')
   getUsageReport() {
     return this.discountsService.getUsageReport();
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('discounts', 'view')
   @Get(':id/usage')
   getUsageDetail(@Param('id', ParseUUIDPipe) id: string) {
     return this.discountsService.getUsageDetail(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('discounts', 'view')
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.discountsService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('discounts', 'edit')
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -74,8 +69,7 @@ export class DiscountsController {
     return this.discountsService.update(id, dto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @AdminAuth('discounts', 'delete')
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.discountsService.remove(id);
