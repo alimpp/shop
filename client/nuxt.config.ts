@@ -10,6 +10,7 @@ export default defineNuxtConfig({
 
   site: {
     url:
+      process.env.NUXT_PUBLIC_SITE_URL ??
       process.env.SITE_URL ??
       (process.env.NODE_ENV === "production"
         ? "https://shop.example.com"
@@ -41,8 +42,11 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: process.env.API_BASE_URL,
-      vesrion: process.env.VESRION,
+      apiBase:
+        process.env.NUXT_PUBLIC_API_BASE ||
+        process.env.API_BASE_URL ||
+        "http://localhost:4000",
+      vesrion: process.env.VESRION || process.env.NUXT_PUBLIC_VESRION || "",
       sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN || "",
       sentryTracesSampleRate:
         process.env.NUXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE || "0.1",

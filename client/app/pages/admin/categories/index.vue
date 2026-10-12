@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { useAdminPermissions } from "~/composables/useAdminPermissions";
 import { categoriesController } from "~/features/categories/controllers/index.controller";
 import CategoriesTable from "~/features/categories/components/CategoriesTable.vue";
 import CategoryFormModal from "~/features/categories/components/CategoryFormModal.vue";
 import CategoryDeleteConfirmModal from "~/features/categories/components/CategoryDeleteConfirmModal.vue";
 import { useCategoriesDS } from "~/dataStore";
 import type { TCategory, TCategoryPayload } from "~/features/categories/types/index.type";
-import { useAdminPermissions } from "~/composables/useAdminPermissions";
 
 definePageMeta({
   layout: "admin",
@@ -13,6 +13,7 @@ definePageMeta({
 });
 
 const { can } = useAdminPermissions();
+
 const categoriesDS = useCategoriesDS();
 const toast = useToast();
 
@@ -141,7 +142,7 @@ watch(isDeleteConfirmOpen, (isOpen) => {
 
         <template #right>
           <UButton
-            v-if="can('categories', 'create')"
+          v-if="can('categories', 'create')"
             color="primary"
             icon="i-lucide-folder-plus"
             @click="openCreateModal"
@@ -167,10 +168,10 @@ watch(isDeleteConfirmOpen, (isOpen) => {
           :categories="categories"
           :loading="loading"
           :submitting="submitting"
-          :can-edit="can('categories', 'edit')"
-          :can-delete="can('categories', 'delete')"
           @edit="openEditModal"
           @delete="openDeleteConfirm"
+        :can-edit="can('categories', 'edit')"
+        :can-delete="can('categories', 'delete')"
         />
 
         <CategoryFormModal

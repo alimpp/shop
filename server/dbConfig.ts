@@ -8,8 +8,17 @@ import { UserEntity } from 'src/entities/user.entity';
 
 const dbPort = Number(process.env.DB_PORT ?? 5432);
 
+function resolveSynchronize(): boolean {
+  if (process.env.DB_SYNCHRONIZE != null) {
+    return process.env.DB_SYNCHRONIZE === 'true';
+  }
+  // Safer default for Liara/production; enable locally unless overridden.
+  return process.env.NODE_ENV !== 'production';
+}
+
 export const migrationPaths = [
   join(process.cwd(), 'src/database/migrations/*{.ts,.js}'),
+  join(process.cwd(), 'dist/src/database/migrations/*{.ts,.js}'),
 ];
 
 export const pgConnectionConfig: DataSourceOptions = {
@@ -20,7 +29,7 @@ export const pgConnectionConfig: DataSourceOptions = {
   password: process.env.DB_PASSWORD ?? 'js68002100',
   database: process.env.DB_NAME ?? 'postgres',
   entities: [UserEntity, File, AdminEntity, Category],
-  synchronize: true,
+  synchronize: resolveSynchronize(),
 };
 
 export const pgConfig: TypeOrmModuleOptions = {

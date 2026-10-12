@@ -1,6 +1,7 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { AppModule } from './app.module';
 
@@ -15,16 +16,31 @@ function translateValidationMessage(message: string): string {
     .replace(/should not be empty/g, 'نباید خالی باشد');
 }
 
+function resolveCorsOrigin(): boolean | string | string[] {
+  const raw = process.env.CORS_ORIGIN?.trim();
+  if (!raw || raw === '*') return true;
+  const origins = raw
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+  return origins.length === 1 ? origins[0] : origins;
+}
+
 async function bootstrap() {
   initSentry();
 
+  const uploadsDir = join(process.cwd(), 'uploads');
+  if (!existsSync(uploadsDir)) {
+    mkdirSync(uploadsDir, { recursive: true });
+  }
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
-    origin: true,
+    origin: resolveCorsOrigin(),
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
-  app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads' });
+  app.useStaticAssets(uploadsDir, { prefix: '/uploads' });
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

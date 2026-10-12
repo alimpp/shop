@@ -171,6 +171,7 @@ watch(totalItems, (value) => {
               </div>
               <div v-else class="text-sm text-muted">
                 هنوز مقداری برای این ویژگی ثبت نشده است.
+              </div>
             </div>
 
             <div class="mt-4 flex flex-wrap items-center justify-start gap-2">
@@ -282,6 +283,7 @@ watch(totalItems, (value) => {
                 </div>
                 <div v-else class="text-sm text-muted">
                   هنوز مقداری برای این ویژگی ثبت نشده است.
+                </div>
               </td>
               <td class="border-b border-default px-4 py-4">
                 <div class="flex flex-wrap items-center justify-start gap-2">
